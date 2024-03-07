@@ -7,7 +7,7 @@ const usersRoutes = express.Router();
 
 usersRoutes.get("/", async (req, res) => {
   const result = await db.select().from(users);
-  res.json(result);
+  res.json(result.map(({ password, ...user }) => user));
 });
 usersRoutes.post("/", async (req, res) => {
   const data = registerSchema.parse(req.body);
