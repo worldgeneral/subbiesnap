@@ -1,15 +1,15 @@
 import express from "express";
-import { registerSchema } from "src/zodSchema/userSehema";
+import { registerSchema } from "../zodSchema/userSehema";
 import { users } from "../models/users";
 import { db } from "../db";
 
-const router = express.Router();
+const usersRoutes = express.Router();
 
-router.get("/", async (req, res) => {
+usersRoutes.get("/", async (req, res) => {
   const result = await db.select().from(users);
   res.json(result);
 });
-router.post("/register", async (req, res) => {
+usersRoutes.post("/", async (req, res) => {
   const data = registerSchema.parse(req.body);
 
   await db.insert(users).values({
@@ -20,4 +20,4 @@ router.post("/register", async (req, res) => {
   });
 });
 
-export { router };
+export { usersRoutes };
