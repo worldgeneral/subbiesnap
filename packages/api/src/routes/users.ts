@@ -2,6 +2,7 @@ import express from "express";
 import { registerSchema } from "../zodSchema/userSehema";
 import { users } from "../models/users";
 import { db } from "../db";
+import { eq } from "drizzle-orm";
 
 const usersRoutes = express.Router();
 
@@ -12,12 +13,17 @@ usersRoutes.get("/", async (req, res) => {
 usersRoutes.post("/", async (req, res) => {
   const data = registerSchema.parse(req.body);
 
-  await db.insert(users).values({
-    password: data.password,
-    email: data.email,
-    firstName: data.firstName,
-    secondName: data.secondName,
-  });
+  const [{ password, ...user }] = await db
+    .insert(users)
+    .values({
+      password: data.password,
+      email: data.email,
+      firstName: data.firstName,
+      secondName: data.secondName,
+    })
+    .returning();
+
+  res.json(user);
 });
 
 export { usersRoutes };
