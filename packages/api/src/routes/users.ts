@@ -1,19 +1,35 @@
-import express from "express";
+import { Router, Request, Response } from "express";
 import { registerSchema } from "../zodSchema/userSchema";
 import { users } from "../models/users";
 import { db } from "../db";
 import { tryCatch } from "../utils/tryCatch";
 import { AppError } from "../utils/ExpressError";
 import { NeonDbError } from "@neondatabase/serverless";
-import { registerUser } from "../services/users";
+import { normalizeUser, registerUser } from "../services/users";
+import { eq } from "drizzle-orm";
 
-const usersRoutes = express.Router();
+const usersRoutes = Router();
 
 usersRoutes.get(
   "/users",
   tryCatch(async (req, res) => {
     const result = await db.select().from(users);
-    res.json(result.map(({ password, ...user }) => user));
+    res.json(result.map(normalizeUser));
+  })
+);
+
+usersRoutes.get(
+  "/users/:id",
+  tryCatch(async (req: Request<{ id: string }>, res) => {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, parseInt(req.params.id)));
+    console.log(user);
+    if (!user) {
+      throw new AppError("user does not exist", 404);
+    }
+    res.json(normalizeUser(user));
   })
 );
 

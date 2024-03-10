@@ -19,3 +19,5 @@ export const users = pgTable("users", {
   firstName: varchar("first_name", { length: 255 }).notNull(),
   secondName: varchar("second_name", { length: 255 }).notNull(),
 });
+
+export type UserSchema = typeof users.$inferSelect;
