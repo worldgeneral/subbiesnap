@@ -1,26 +1,46 @@
 import { NeonDbError } from "@neondatabase/serverless";
 import { db } from "../db";
-import { users } from "../models/users";
+import { UserSchema, users } from "../models/users";
 import { AppError } from "../utils/ExpressError";
+
+type User = {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  email: string;
+  firstName: string;
+  secondName: string;
+};
+
+function normalizeUser(user: UserSchema): User {
+  return {
+    id: user.id,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    email: user.email,
+    firstName: user.firstName,
+    secondName: user.secondName,
+  };
+}
 
 async function registerUser(
   email: string,
-  pass: string,
+  password: string,
   firstName: string,
   secondName: string
-) {
+): Promise<User> {
   try {
-    const [{ password, ...user }] = await db
+    const [user] = await db
       .insert(users)
       .values({
         email: email,
-        password: pass,
+        password: password,
         firstName: firstName,
         secondName: secondName,
       })
       .returning();
 
-    return user;
+    return normalizeUser(user);
   } catch (err) {
     if (err instanceof NeonDbError && err.code === "23505") {
       throw new AppError("User is already registered", 400);
@@ -28,4 +48,4 @@ async function registerUser(
     throw err;
   }
 }
-export { registerUser };
+export { registerUser, normalizeUser };
