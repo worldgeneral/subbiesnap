@@ -3,6 +3,8 @@ import { registerSchema } from "../zodSchema/userSchema";
 import { users } from "../models/users";
 import { db } from "../db";
 import { tryCatch } from "../utils/tryCatch";
+import { AppError } from "../utils/ExpressError";
+import { NeonDbError } from "@neondatabase/serverless";
 
 const usersRoutes = express.Router();
 
@@ -19,17 +21,24 @@ usersRoutes.post(
   tryCatch(async (req, res) => {
     const data = registerSchema.parse(req.body);
 
-    const [{ password, ...user }] = await db
-      .insert(users)
-      .values({
-        password: data.password,
-        email: data.email,
-        firstName: data.firstName,
-        secondName: data.secondName,
-      })
-      .returning();
+    try {
+      const [{ password, ...user }] = await db
+        .insert(users)
+        .values({
+          password: data.password,
+          email: data.email,
+          firstName: data.firstName,
+          secondName: data.secondName,
+        })
+        .returning();
 
-    res.json(user);
+      res.json(user);
+    } catch (err) {
+      if (err instanceof NeonDbError && err.code === "23505") {
+        throw new AppError("User is already registered", 400);
+      }
+      throw err;
+    }
   })
 );
 
