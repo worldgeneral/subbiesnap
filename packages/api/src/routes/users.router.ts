@@ -1,11 +1,10 @@
 import { Router, Request, Response } from "express";
 import { registerSchema } from "../zodSchema/userSchema";
-import { users } from "../models/users";
+import { users } from "../models/user.model";
 import { db } from "../db";
 import { tryCatch } from "../utils/tryCatch";
 import { AppError } from "../utils/ExpressError";
-import { NeonDbError } from "@neondatabase/serverless";
-import { normalizeUser, registerUser } from "../services/users";
+import { normalizeUser, registerUser } from "../services/user.service";
 import { eq } from "drizzle-orm";
 
 const usersRoutes = Router();

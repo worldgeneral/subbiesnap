@@ -1,7 +1,8 @@
 import { NeonDbError } from "@neondatabase/serverless";
 import { db } from "../db";
-import { UserSchema, users } from "../models/users";
+import { UserSchema, users } from "../models/user.model";
 import { AppError } from "../utils/ExpressError";
+import * as argon2 from "argon2";
 
 type User = {
   id: number;
@@ -30,11 +31,12 @@ async function registerUser(
   secondName: string
 ): Promise<User> {
   try {
+    const hashPassword = await argon2.hash(password);
     const [user] = await db
       .insert(users)
       .values({
         email: email,
-        password: password,
+        password: hashPassword,
         firstName: firstName,
         secondName: secondName,
       })

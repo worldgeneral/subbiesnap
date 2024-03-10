@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { NextFunction } from "express";
 import { AppError } from "./utils/ExpressError";
-import { usersRoutes } from "./routes/users";
+import { usersRoutes } from "./routes/users.router";
 import { errorHandler } from "./middleware/errorHandler";
 const app = express();
 app.use(express.json());

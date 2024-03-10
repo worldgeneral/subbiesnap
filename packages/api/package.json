@@ -16,9 +16,11 @@
   "license": "ISC",
   "dependencies": {
     "@neondatabase/serverless": "^0.9.0",
+    "argon2": "^0.40.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.29.4",
     "express": "^4.18.3",
+    "passport-local": "^1.0.0",
     "pg": "^8.11.3",
     "zod": "^3.22.4"
   },

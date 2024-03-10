@@ -3,7 +3,7 @@ import {
   pgTable,
   pgSchema,
   timestamp,
-  varchar,
+  text,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -14,10 +14,10 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
     .defaultNow()
     .notNull(),
-  email: varchar("email", { length: 255 }).unique().notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
-  firstName: varchar("first_name", { length: 255 }).notNull(),
-  secondName: varchar("second_name", { length: 255 }).notNull(),
+  email: text("email").unique().notNull(),
+  password: text("password").notNull(),
+  firstName: text("first_name").notNull(),
+  secondName: text("second_name").notNull(),
 });
 
 export type UserSchema = typeof users.$inferSelect;
