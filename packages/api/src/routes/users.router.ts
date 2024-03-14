@@ -24,7 +24,6 @@ usersRoutes.get(
       .select()
       .from(users)
       .where(eq(users.id, parseInt(req.params.id)));
-    console.log(user);
     if (!user) {
       throw new AppError("user does not exist", 404);
     }
