@@ -16,9 +16,6 @@ importers:
       argon2:
         specifier: ^0.40.1
         version: 0.40.1
-      crypto.js:
-        specifier: ^3.2.1
-        version: 3.2.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -1474,10 +1471,6 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
-
-  /crypto.js@3.2.1:
-    resolution: {integrity: sha512-sp04OVtnR7h/Z20k+dd+DbIj7zXQobcKRHHq6dG8T87Be8mHo0MIl50EdAZw9nxGKS5ykHraqIpLVNqpAE/IiQ==}
-    dev: false
 
   /cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
