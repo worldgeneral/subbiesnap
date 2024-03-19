@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { users } from "../models/user.model";
 import * as argon2 from "argon2";
 
-async function authUser(password: string, email: string) {
+async function loginAuthUser(password: string, email: string) {
   const [user] = await db.select().from(users).where(eq(users.email, email));
 
   if (!user) {
@@ -17,4 +17,4 @@ async function authUser(password: string, email: string) {
   return user;
 }
 
-export { authUser };
+export { loginAuthUser };

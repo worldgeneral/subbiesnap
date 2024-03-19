@@ -4,9 +4,11 @@ import { AppError } from "./utils/ExpressError";
 import { usersRoutes } from "./routes/users.router";
 import { errorHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/auth.router";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(usersRoutes);
 app.use(authRoutes);

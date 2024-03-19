@@ -4,5 +4,6 @@
     "outDir": "dist",
     "baseUrl": "."
   },
-  "include": ["src/**/*", "drizzle.config.ts", "src/models/user.model.ts"]
+  "ts-node": { "files": true },
+  "include": ["src/**/*", "drizzle.config.ts", "global.d.ts"]
 }
