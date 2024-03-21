@@ -39,7 +39,14 @@ const sessionAuth = tryCatch(async function (
         .set({ expiresAt: moment().add(7, "days").toDate() })
         .where(eq(sessions.id, session.sessions.id));
 
-      req.user = { id: session.sessions.userId };
+      req.user = {
+        id: session.sessions.userId,
+        created_at: session.users.createdAt,
+        updated_at: session.users.updatedAt,
+        email: session.users.email,
+        first_name: session.users.firstName,
+        second_name: session.users.secondName,
+      };
       return next();
     }
   }
