@@ -9,6 +9,7 @@ import { normalizeUser } from "../services/user.service";
 import { randomStringAsBase64Url } from "../utils/uniqueString";
 import { createHash } from "crypto";
 import { sessionAuth } from "../middleware/sessionAuth";
+import { eq } from "drizzle-orm";
 
 const authRoutes = Router();
 
@@ -29,6 +30,23 @@ authRoutes.post(
 
     res.cookie("session_id", sessionToken);
     res.json(normalizeUser(user));
+  })
+);
+
+authRoutes.post(
+  "/logout",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const { cookies } = req;
+    const hashToken = createHash("sha256")
+      .update(cookies.session_id)
+      .digest("hex");
+    const deleteSession = await db
+      .delete(sessions)
+      .where(eq(sessions.sessionToken, hashToken));
+
+    res.clearCookie("session_id");
+    res.json(req.user);
   })
 );
 

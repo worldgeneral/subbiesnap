@@ -13,7 +13,6 @@ const sessionAuth = tryCatch(async function (
   next: NextFunction
 ) {
   const { cookies } = req;
-
   if ("session_id" in cookies) {
     const hashedSessionToken = createHash("sha256")
       .update(cookies.session_id)
@@ -38,17 +37,16 @@ const sessionAuth = tryCatch(async function (
         .update(sessions)
         .set({ expiresAt: moment().add(7, "days").toDate() })
         .where(eq(sessions.id, session.sessions.id));
-
-      req.user = {
-        id: session.sessions.userId,
-        created_at: session.users.createdAt,
-        updated_at: session.users.updatedAt,
-        email: session.users.email,
-        first_name: session.users.firstName,
-        second_name: session.users.secondName,
-      };
-      return next();
     }
+    req.user = {
+      id: session.sessions.userId,
+      created_at: session.users.createdAt,
+      updated_at: session.users.updatedAt,
+      email: session.users.email,
+      first_name: session.users.firstName,
+      second_name: session.users.secondName,
+    };
+    return next();
   }
   throw new AppError("not authorized", 401);
 });
