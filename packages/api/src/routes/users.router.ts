@@ -6,11 +6,13 @@ import { tryCatch } from "../utils/tryCatch";
 import { AppError } from "../utils/ExpressError";
 import { normalizeUser, registerUser } from "../services/user.service";
 import { eq } from "drizzle-orm";
+import { sessionAuth } from "../middleware/sessionAuth";
 
 const usersRoutes = Router();
 
 usersRoutes.get(
   "/users",
+  sessionAuth,
   tryCatch(async (req, res) => {
     const result = await db.select().from(users);
     res.json(result.map(normalizeUser));
@@ -24,7 +26,6 @@ usersRoutes.get(
       .select()
       .from(users)
       .where(eq(users.id, parseInt(req.params.id)));
-    console.log(user);
     if (!user) {
       throw new AppError("user does not exist", 404);
     }
