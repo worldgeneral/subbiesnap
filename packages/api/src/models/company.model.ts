@@ -1,7 +1,7 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { users } from "./user.model";
 
-export const companys = pgTable("companys", {
+export const Companies = pgTable("Companies", {
   id: serial("id").primaryKey().notNull(),
   createdAt: timestamp("created_at", { precision: 6, withTimezone: true })
     .defaultNow()
@@ -10,22 +10,21 @@ export const companys = pgTable("companys", {
     .defaultNow()
     .notNull(),
   name: text("name").notNull(),
-  owner: integer("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  logo: text("logo"),
+  blurb: text("blurb"),
 });
 
-export type CompanysSchema = typeof companys.$inferSelect;
+export type CompaniesSchema = typeof Companies.$inferSelect;
 
-export const companyUsers = pgTable("companyUsers", {
+export const Companies_users = pgTable("Companies_users", {
   id: serial("id").primaryKey().notNull(),
   userId: integer("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   companyId: integer("company_id")
     .notNull()
-    .references(() => companys.id, { onDelete: "cascade" }),
-  role: text("name").notNull(),
+    .references(() => Companies.id, { onDelete: "cascade" }),
+  role: text("role").notNull(),
 });
 
-export type CompanyUsersSchema = typeof companyUsers.$inferSelect;
+export type Companies_usersSchema = typeof Companies_users.$inferSelect;
