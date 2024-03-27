@@ -1,7 +1,7 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { users } from "./user.model";
 
-export const Companies = pgTable("Companies", {
+export const companies = pgTable("Companies", {
   id: serial("id").primaryKey().notNull(),
   createdAt: timestamp("created_at", { precision: 6, withTimezone: true })
     .defaultNow()
@@ -14,17 +14,17 @@ export const Companies = pgTable("Companies", {
   blurb: text("blurb"),
 });
 
-export type CompaniesSchema = typeof Companies.$inferSelect;
+export type CompaniesSchema = typeof companies.$inferSelect;
 
-export const Companies_users = pgTable("Companies_users", {
+export const companies_users = pgTable("Companies_users", {
   id: serial("id").primaryKey().notNull(),
   userId: integer("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   companyId: integer("company_id")
     .notNull()
-    .references(() => Companies.id, { onDelete: "cascade" }),
+    .references(() => companies.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
 });
 
-export type Companies_usersSchema = typeof Companies_users.$inferSelect;
+export type Companies_usersSchema = typeof companies_users.$inferSelect;

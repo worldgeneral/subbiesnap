@@ -1,5 +1,4 @@
-import { Companies, CompaniesSchema, Companies_users } from "../schemas";
-import { NeonDbError } from "@neondatabase/serverless";
+import { companies, CompaniesSchema, companies_users } from "../schemas";
 import { db } from "../db";
 
 type Company = {
@@ -13,40 +12,28 @@ type Company = {
 
 export async function registerCompany(
   name: string,
-  logo: string,
-  blurb: string
+  logo: string | undefined,
+  blurb: string | undefined,
+  userId: number
 ): Promise<Company> {
-  try {
-    const [company] = await db
-      .insert(Companies)
-      .values({
-        name: name,
-        logo: logo,
-        blurb: blurb,
-      })
-      .returning();
+  const [company] = await db
+    .insert(companies)
+    .values({
+      name: name,
+      logo: logo,
+      blurb: blurb,
+    })
+    .returning();
+  const [owner] = await db
+    .insert(companies_users)
+    .values({
+      userId: userId,
+      companyId: company.id,
+      role: "owner",
+    })
+    .returning();
 
-    return normalizeCompany(company);
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function setCompanyOwner(userId: number, companyId: number) {
-  try {
-    const [owner] = await db
-      .insert(Companies_users)
-      .values({
-        userId: userId,
-        companyId: companyId,
-        role: "owner",
-      })
-      .returning();
-
-    return owner;
-  } catch (err) {
-    throw err;
-  }
+  return normalizeCompany(company);
 }
 
 export function normalizeCompany(company: CompaniesSchema): Company {
