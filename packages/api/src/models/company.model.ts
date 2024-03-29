@@ -3,12 +3,8 @@ import { users } from "./user.model";
 
 export const companies = pgTable("Companies", {
   id: serial("id").primaryKey().notNull(),
-  createdAt: timestamp("created_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),
@@ -24,7 +20,7 @@ export const companies_users = pgTable("Companies_users", {
   companyId: integer("company_id")
     .notNull()
     .references(() => companies.id, { onDelete: "cascade" }),
-  role: text("role").notNull(),
+  role: integer("role").notNull(),
 });
 
 export type Companies_usersSchema = typeof companies_users.$inferSelect;

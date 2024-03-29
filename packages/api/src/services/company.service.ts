@@ -9,6 +9,12 @@ type Company = {
   logo: string | null;
   blurb: string | null;
 };
+export enum UserCompanyRole {
+  Owner = 0,
+  Admin = 10,
+  Editor = 20,
+  contributor = 30,
+}
 
 export async function registerCompany(
   name: string,
@@ -29,7 +35,7 @@ export async function registerCompany(
     .values({
       userId: userId,
       companyId: company.id,
-      role: "owner",
+      role: UserCompanyRole.Owner,
     })
     .returning();
 

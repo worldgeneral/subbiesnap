@@ -8,12 +8,8 @@ import {
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey().notNull(),
-  createdAt: timestamp("created_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),

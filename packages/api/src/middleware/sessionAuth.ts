@@ -37,18 +37,17 @@ const sessionAuth = tryCatch(async function (
         .update(sessions)
         .set({ expiresAt: moment().add(7, "days").toDate() })
         .where(eq(sessions.id, session.sessions.id));
-
-      req.user = {
-        id: session.sessions.userId,
-        createdAt: session.users.createdAt,
-        updatedAt: session.users.updatedAt,
-        email: session.users.email,
-        firstName: session.users.firstName,
-        secondName: session.users.secondName,
-      };
-
-      return next();
     }
+    req.user = {
+      id: session.sessions.userId,
+      createdAt: session.users.createdAt,
+      updatedAt: session.users.updatedAt,
+      email: session.users.email,
+      firstName: session.users.firstName,
+      secondName: session.users.secondName,
+    };
+
+    return next();
   }
   throw new AppError("not authorized", 401);
 });
