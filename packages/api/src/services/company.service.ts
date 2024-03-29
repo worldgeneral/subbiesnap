@@ -1,5 +1,8 @@
-import { companies, CompaniesSchema, companies_users } from "../schemas";
+import { companies, CompaniesSchema, companies_users, users } from "../schemas";
 import { db } from "../db";
+import { AppError } from "../utils/ExpressError";
+import { normalizeUser } from "./user.service";
+import { eq } from "drizzle-orm";
 
 type Company = {
   id: number;
@@ -13,7 +16,7 @@ export enum UserCompanyRole {
   Owner = 0,
   Admin = 10,
   Editor = 20,
-  contributor = 30,
+  Contributor = 30,
 }
 
 export async function registerCompany(
@@ -51,4 +54,30 @@ export function normalizeCompany(company: CompaniesSchema): Company {
     logo: company.logo,
     blurb: company.blurb,
   };
+}
+
+export async function addCompanyUser(
+  userEmail: string,
+  role: number,
+  companyId: string
+) {
+  const [newUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, userEmail));
+
+  if (!newUser) {
+    throw new AppError("user does not exist", 404);
+  }
+
+  const [newCompanyUser] = await db
+    .insert(companies_users)
+    .values({
+      userId: newUser.id,
+      companyId: Number(companyId),
+      role: role,
+    })
+    .returning();
+
+  return normalizeUser(newUser);
 }
