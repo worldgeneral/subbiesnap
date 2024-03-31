@@ -2,7 +2,8 @@ import { companies, CompaniesSchema, companies_users, users } from "../schemas";
 import { db } from "../db";
 import { AppError } from "../utils/ExpressError";
 import { normalizeUser } from "./user.service";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { number } from "zod";
 
 type Company = {
   id: number;
@@ -70,6 +71,19 @@ export async function addCompanyUser(
     throw new AppError("user does not exist", 404);
   }
 
+  const usersCompanies = await db
+    .select()
+    .from(companies_users)
+    .where(eq(companies_users.userId, newUser.id));
+
+  const userCompany = usersCompanies.find(
+    (data) => data.companyId === Number(companyId)
+  );
+
+  if (userCompany) {
+    throw new AppError("user already has permissions", 400);
+  }
+
   const [newCompanyUser] = await db
     .insert(companies_users)
     .values({
@@ -81,3 +95,9 @@ export async function addCompanyUser(
 
   return normalizeUser(newUser);
 }
+
+// const [session] = await db
+//   .select()
+//   .from(sessions)
+//   .innerJoin(users, eq(users.id, sessions.userId))
+//   .where(eq(sessions.sessionToken, hashedSessionToken));

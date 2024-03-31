@@ -16,10 +16,9 @@ export const companyAuth = (role: UserCompanyRole) =>
       .where(
         and(
           eq(companies_users.userId, user!.id),
-          eq(companies_users.id, companyId)
+          eq(companies_users.companyId, companyId)
         )
       );
-
     if (!userCompany) {
       throw new AppError("user can not access to this company", 403);
     }

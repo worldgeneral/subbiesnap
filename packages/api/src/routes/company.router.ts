@@ -33,7 +33,7 @@ companyRoutes.post(
   tryCatch(async (req: Request, res) => {
     const data = companyRoles.parse(req.body);
 
-    const newCompanyUser = addCompanyUser(
+    const newCompanyUser = await addCompanyUser(
       data.email,
       data.role,
       req.params.companyId
