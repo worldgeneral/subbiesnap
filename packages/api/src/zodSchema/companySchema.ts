@@ -7,7 +7,12 @@ export const companySchema = z.object({
   blurb: z.string().optional(),
 });
 
-export const companyRoles = z.object({
+export const addCompanyUserRoleSchema = z.object({
   role: z.nativeEnum(UserCompanyRole),
   email: z.string().email(),
+});
+
+export const updateCompanyUserRoleSchema = z.object({
+  role: z.nativeEnum(UserCompanyRole),
+  userId: z.number(),
 });

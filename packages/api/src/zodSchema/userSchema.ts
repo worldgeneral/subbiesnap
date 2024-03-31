@@ -33,3 +33,10 @@ export const registerSchema = z
       });
     }
   });
+
+export const userSchema = z.object({
+  userId: z.number(),
+  email: z.string().email().optional(),
+  firstName: z.string().optional(),
+  secondName: z.string().optional(),
+});

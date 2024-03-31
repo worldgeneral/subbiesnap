@@ -96,8 +96,24 @@ export async function addCompanyUser(
   return normalizeUser(newUser);
 }
 
-// const [session] = await db
-//   .select()
-//   .from(sessions)
-//   .innerJoin(users, eq(users.id, sessions.userId))
-//   .where(eq(sessions.sessionToken, hashedSessionToken));
+export async function updateCompanyUser(
+  userId: number,
+  role: number,
+  companyId: string
+) {
+  const [updatedCompanyUser] = await db
+    .update(companies_users)
+    .set({ role: role })
+    .where(
+      and(
+        eq(companies_users.userId, userId),
+        eq(companies_users.companyId, Number(companyId))
+      )
+    )
+    .returning();
+
+  if (!updatedCompanyUser) {
+    throw new AppError("Error can not update role", 400);
+  }
+  return updatedCompanyUser;
+}

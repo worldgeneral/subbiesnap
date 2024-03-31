@@ -1,13 +1,20 @@
 import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/tryCatch";
 import { sessionAuth } from "../middleware/sessionAuth";
-import { companyRoles, companySchema } from "../zodSchema/companySchema";
+import {
+  addCompanyUserRoleSchema,
+  companySchema,
+  updateCompanyUserRoleSchema,
+} from "../zodSchema/companySchema";
 import {
   UserCompanyRole,
   addCompanyUser,
   registerCompany,
+  updateCompanyUser,
 } from "../services/company.service";
 import { companyAuth } from "../middleware/companyAuth";
+import { normalizeUser } from "../services/user.service";
+import { userSchema } from "../zodSchema/userSchema";
 
 const companyRoutes = Router();
 
@@ -31,7 +38,7 @@ companyRoutes.post(
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = companyRoles.parse(req.body);
+    const data = addCompanyUserRoleSchema.parse(req.body);
 
     const newCompanyUser = await addCompanyUser(
       data.email,
@@ -40,6 +47,23 @@ companyRoutes.post(
     );
 
     res.json(newCompanyUser);
+  })
+);
+
+companyRoutes.patch(
+  "/companies/:companyId/users",
+  sessionAuth,
+  companyAuth(UserCompanyRole.Owner),
+  tryCatch(async (req: Request, res) => {
+    const data = updateCompanyUserRoleSchema.parse(req.body, req.body.user);
+    const user = userSchema.parse(req.body);
+    const updatedCompanyUser = await updateCompanyUser(
+      data.userId,
+      data.role,
+      req.params.companyId
+    );
+    console.log(user, updatedCompanyUser.role);
+    res.json({ user, updatedCompanyUser });
   })
 );
 
