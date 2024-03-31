@@ -39,11 +39,11 @@ companyRoutes.post(
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
     const data = addCompanyUserRoleSchema.parse(req.body);
-
+    const companyId = Number(req.params.companyId);
     const newCompanyUser = await addCompanyUser(
       data.email,
       data.role,
-      req.params.companyId
+      companyId
     );
 
     res.json(newCompanyUser);
@@ -57,10 +57,11 @@ companyRoutes.patch(
   tryCatch(async (req: Request, res) => {
     const data = updateCompanyUserRoleSchema.parse(req.body, req.body.user);
     const user = userSchema.parse(req.body);
+    const companyId = Number(req.params.companyId);
     const updatedCompanyUser = await updateCompanyUser(
       data.userId,
       data.role,
-      req.params.companyId
+      companyId
     );
     console.log(user, updatedCompanyUser.role);
     res.json({ user, updatedCompanyUser });

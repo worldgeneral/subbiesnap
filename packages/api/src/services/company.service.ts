@@ -60,7 +60,7 @@ export function normalizeCompany(company: CompaniesSchema): Company {
 export async function addCompanyUser(
   userEmail: string,
   role: number,
-  companyId: string
+  companyId: number
 ) {
   const [newUser] = await db
     .select()
@@ -77,7 +77,7 @@ export async function addCompanyUser(
     .where(eq(companies_users.userId, newUser.id));
 
   const userCompany = usersCompanies.find(
-    (data) => data.companyId === Number(companyId)
+    (data) => data.companyId === companyId
   );
 
   if (userCompany) {
@@ -88,7 +88,7 @@ export async function addCompanyUser(
     .insert(companies_users)
     .values({
       userId: newUser.id,
-      companyId: Number(companyId),
+      companyId: companyId,
       role: role,
     })
     .returning();
@@ -99,7 +99,7 @@ export async function addCompanyUser(
 export async function updateCompanyUser(
   userId: number,
   role: number,
-  companyId: string
+  companyId: number
 ) {
   const [updatedCompanyUser] = await db
     .update(companies_users)
@@ -107,7 +107,7 @@ export async function updateCompanyUser(
     .where(
       and(
         eq(companies_users.userId, userId),
-        eq(companies_users.companyId, Number(companyId))
+        eq(companies_users.companyId, companyId)
       )
     )
     .returning();
