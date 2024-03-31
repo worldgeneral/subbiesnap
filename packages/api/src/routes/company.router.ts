@@ -9,6 +9,7 @@ import {
 import {
   UserCompanyRole,
   addCompanyUser,
+  deleteCompanyUser,
   registerCompany,
   updateCompanyUser,
 } from "../services/company.service";
@@ -63,8 +64,24 @@ companyRoutes.patch(
       data.role,
       companyId
     );
-    console.log(user, updatedCompanyUser.role);
     res.json({ user, updatedCompanyUser });
+  })
+);
+
+companyRoutes.delete(
+  "/companies/:companyId/users",
+  sessionAuth,
+  companyAuth(UserCompanyRole.Owner),
+  tryCatch(async (req: Request, res) => {
+    const data = updateCompanyUserRoleSchema.parse(req.body, req.body.user);
+    const user = userSchema.parse(req.body);
+    const companyId = Number(req.params.companyId);
+    const deletedCompanyUser = await deleteCompanyUser(
+      data.userId,
+      data.role,
+      companyId
+    );
+    res.json({ user, deletedCompanyUser });
   })
 );
 

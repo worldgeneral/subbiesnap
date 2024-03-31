@@ -18,6 +18,7 @@ export enum UserCompanyRole {
   Admin = 10,
   Editor = 20,
   Contributor = 30,
+  deleted = 1000,
 }
 
 export async function registerCompany(
@@ -81,7 +82,8 @@ export async function addCompanyUser(
   );
 
   if (userCompany) {
-    throw new AppError("user already has permissions", 400);
+    updateCompanyUser(newUser.id, role, companyId);
+    return normalizeUser(newUser);
   }
 
   const [newCompanyUser] = await db
@@ -114,6 +116,28 @@ export async function updateCompanyUser(
 
   if (!updatedCompanyUser) {
     throw new AppError("Error can not update role", 400);
+  }
+  return updatedCompanyUser;
+}
+
+export async function deleteCompanyUser(
+  userId: number,
+  role: number,
+  companyId: number
+) {
+  const [updatedCompanyUser] = await db
+    .update(companies_users)
+    .set({ role: role })
+    .where(
+      and(
+        eq(companies_users.userId, userId),
+        eq(companies_users.companyId, companyId)
+      )
+    )
+    .returning();
+
+  if (!updatedCompanyUser) {
+    throw new AppError("Error can not delete role", 400);
   }
   return updatedCompanyUser;
 }
