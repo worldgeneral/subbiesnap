@@ -2,7 +2,7 @@ import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { users } from "./user.model";
 import { CompanyStatus } from "../services/company.service";
 
-export const companies = pgTable("Companies", {
+export const companies = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -15,7 +15,7 @@ export const companies = pgTable("Companies", {
 
 export type CompaniesSchema = typeof companies.$inferSelect;
 
-export const companies_users = pgTable("Companies_users", {
+export const companiesUsers = pgTable("companies_users", {
   id: serial("id").primaryKey().notNull(),
   userId: integer("user_id")
     .notNull()
@@ -27,4 +27,4 @@ export const companies_users = pgTable("Companies_users", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export type Companies_usersSchema = typeof companies_users.$inferSelect;
+export type Companies_usersSchema = typeof companiesUsers.$inferSelect;
