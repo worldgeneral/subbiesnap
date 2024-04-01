@@ -1,4 +1,4 @@
-import { companies, CompaniesSchema, companies_users, users } from "../schemas";
+import { companies, CompaniesSchema, companiesUsers, users } from "../schemas";
 import { db } from "../db";
 import { AppError } from "../utils/ExpressError";
 import { normalizeUser } from "./user.service";
@@ -52,7 +52,7 @@ export async function registerCompany(
     })
     .returning();
   const [owner] = await db
-    .insert(companies_users)
+    .insert(companiesUsers)
     .values({
       userId: userId,
       companyId: company.id,
@@ -109,8 +109,8 @@ export async function addCompanyUser(
 
   const usersCompanies = await db
     .select()
-    .from(companies_users)
-    .where(eq(companies_users.userId, newUser.id));
+    .from(companiesUsers)
+    .where(eq(companiesUsers.userId, newUser.id));
 
   const userCompany = usersCompanies.find(
     (data) => data.companyId === companyId
@@ -122,7 +122,7 @@ export async function addCompanyUser(
   }
 
   const [newCompanyUser] = await db
-    .insert(companies_users)
+    .insert(companiesUsers)
     .values({
       userId: newUser.id,
       companyId: companyId,
@@ -139,12 +139,12 @@ export async function updateCompanyUser(
   companyId: number
 ) {
   const [updatedCompanyUser] = await db
-    .update(companies_users)
+    .update(companiesUsers)
     .set({ role: role })
     .where(
       and(
-        eq(companies_users.userId, userId),
-        eq(companies_users.companyId, companyId)
+        eq(companiesUsers.userId, userId),
+        eq(companiesUsers.companyId, companyId)
       )
     )
     .returning();
@@ -161,12 +161,12 @@ export async function deleteCompanyUser(
   companyId: number
 ) {
   const [updatedCompanyUser] = await db
-    .update(companies_users)
+    .update(companiesUsers)
     .set({ deletedAt: moment().toDate() })
     .where(
       and(
-        eq(companies_users.userId, userId),
-        eq(companies_users.companyId, companyId)
+        eq(companiesUsers.userId, userId),
+        eq(companiesUsers.companyId, companyId)
       )
     )
     .returning();

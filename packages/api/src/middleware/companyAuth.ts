@@ -3,7 +3,7 @@ import { db } from "../db";
 import { tryCatch } from "../utils/tryCatch";
 import { AppError } from "../utils/ExpressError";
 import { and, eq } from "drizzle-orm";
-import { companies, companies_users } from "../schemas";
+import { companies, companiesUsers } from "../schemas";
 import { CompanyStatus, UserCompanyRole } from "../services/company.service";
 
 export const companyAuth = (role: UserCompanyRole) =>
@@ -12,11 +12,11 @@ export const companyAuth = (role: UserCompanyRole) =>
     const companyId = Number(req.params.companyId);
     const [userCompany] = await db
       .select()
-      .from(companies_users)
+      .from(companiesUsers)
       .where(
         and(
-          eq(companies_users.userId, user!.id),
-          eq(companies_users.companyId, companyId)
+          eq(companiesUsers.userId, user!.id),
+          eq(companiesUsers.companyId, companyId)
         )
       );
 
