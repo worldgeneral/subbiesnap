@@ -24,7 +24,6 @@ export enum UserCompanyRole {
   Admin = 10,
   Editor = 20,
   Contributor = 30,
-  deleted = 1000,
 }
 
 export function normalizeCompany(company: CompaniesSchema): Company {
@@ -163,7 +162,7 @@ export async function deleteCompanyUser(
 ) {
   const [updatedCompanyUser] = await db
     .update(companies_users)
-    .set({ role: role })
+    .set({ deletedAt: moment().toDate() })
     .where(
       and(
         eq(companies_users.userId, userId),

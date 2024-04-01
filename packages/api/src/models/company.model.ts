@@ -24,6 +24,7 @@ export const companies_users = pgTable("Companies_users", {
     .notNull()
     .references(() => companies.id, { onDelete: "cascade" }),
   role: integer("role").notNull(),
+  deletedAt: timestamp("deleted_at"),
 });
 
 export type Companies_usersSchema = typeof companies_users.$inferSelect;

@@ -24,7 +24,7 @@ export const companyAuth = (role: UserCompanyRole) =>
       throw new AppError("user does not have access to this company", 403);
     }
 
-    if (role < userCompany.role) {
+    if (role < userCompany.role || userCompany.deletedAt !== null) {
       throw new AppError("user requires permissions", 403);
     }
 
