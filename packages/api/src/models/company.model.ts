@@ -1,5 +1,6 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { users } from "./user.model";
+import { CompanyStatus } from "../services/company.service";
 
 export const companies = pgTable("Companies", {
   id: serial("id").primaryKey().notNull(),
@@ -8,6 +9,8 @@ export const companies = pgTable("Companies", {
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),
+  deletedAt: timestamp("deleted_at"),
+  status: text("status").default(CompanyStatus.active),
 });
 
 export type CompaniesSchema = typeof companies.$inferSelect;

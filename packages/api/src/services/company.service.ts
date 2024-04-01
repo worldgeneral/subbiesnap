@@ -4,6 +4,7 @@ import { AppError } from "../utils/ExpressError";
 import { normalizeUser } from "./user.service";
 import { and, eq } from "drizzle-orm";
 import { number } from "zod";
+import moment from "moment";
 
 type Company = {
   id: number;
@@ -13,12 +14,28 @@ type Company = {
   logo: string | null;
   blurb: string | null;
 };
+
+export enum CompanyStatus {
+  active = "active",
+  deleted = "deleted",
+}
 export enum UserCompanyRole {
   Owner = 0,
   Admin = 10,
   Editor = 20,
   Contributor = 30,
   deleted = 1000,
+}
+
+export function normalizeCompany(company: CompaniesSchema): Company {
+  return {
+    id: company.id,
+    createdAt: company.createdAt,
+    updatedAt: company.updatedAt,
+    name: company.name,
+    logo: company.logo,
+    blurb: company.blurb,
+  };
 }
 
 export async function registerCompany(
@@ -47,15 +64,34 @@ export async function registerCompany(
   return normalizeCompany(company);
 }
 
-export function normalizeCompany(company: CompaniesSchema): Company {
-  return {
-    id: company.id,
-    createdAt: company.createdAt,
-    updatedAt: company.updatedAt,
-    name: company.name,
-    logo: company.logo,
-    blurb: company.blurb,
-  };
+export async function updateCompanyData(
+  name: string,
+  logo: string | undefined,
+  blurb: string | undefined,
+  companyId: number
+) {
+  const [company] = await db
+    .update(companies)
+    .set({ updatedAt: moment().toDate(), name: name, logo: logo, blurb: blurb })
+    .where(eq(companies.id, companyId))
+    .returning();
+
+  if (!companies) {
+    throw new AppError("unable to update company data", 400);
+  }
+  return company;
+}
+
+export async function deleteCompanyData(companyId: number) {
+  const [company] = await db
+    .update(companies)
+    .set({ deletedAt: moment().toDate(), status: CompanyStatus.deleted })
+    .where(eq(companies.id, companyId))
+    .returning();
+  if (!companies) {
+    throw new AppError("unable to delete company data", 400);
+  }
+  return company;
 }
 
 export async function addCompanyUser(
