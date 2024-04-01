@@ -11,6 +11,8 @@ import {
   addCompanyUser,
   deleteCompanyData,
   deleteCompanyUser,
+  getCompany,
+  normalizeCompany,
   registerCompany,
   updateCompanyData,
   updateCompanyUser,
@@ -19,6 +21,16 @@ import { companyAuth } from "../middleware/companyAuth";
 import { userSchema } from "../zodSchema/userSchema";
 
 const companyRoutes = Router();
+
+companyRoutes.get(
+  "/companies/:companyId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const companyId = Number(req.params.companyId);
+    const company = await getCompany(companyId);
+    res.json(normalizeCompany(company));
+  })
+);
 
 companyRoutes.post(
   "/companies",

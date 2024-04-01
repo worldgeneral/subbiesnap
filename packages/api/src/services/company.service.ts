@@ -37,6 +37,18 @@ export function normalizeCompany(company: CompaniesSchema): Company {
   };
 }
 
+export async function getCompany(companyId: number) {
+  const [company] = await db
+    .select()
+    .from(companies)
+    .where(eq(companies.id, companyId));
+
+  if (!company) {
+    throw new AppError("unable to find company", 404);
+  }
+  return company;
+}
+
 export async function registerCompany(
   name: string,
   logo: string | undefined,
