@@ -46,7 +46,7 @@ export async function getCompany(companyId: number) {
   if (!company) {
     throw new AppError("unable to find company", 404);
   }
-  return company;
+  return normalizeCompany(company);
 }
 
 export async function registerCompany(
@@ -102,7 +102,7 @@ export async function deleteCompanyData(companyId: number) {
   if (!companies) {
     throw new AppError("unable to delete company data", 400);
   }
-  return company;
+  return normalizeCompany(company);
 }
 
 export async function addCompanyUser(

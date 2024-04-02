@@ -12,13 +12,11 @@ import {
   deleteCompanyData,
   deleteCompanyUser,
   getCompany,
-  normalizeCompany,
   registerCompany,
   updateCompanyData,
   updateCompanyUser,
 } from "../services/company.service";
 import { companyAuth } from "../middleware/companyAuth";
-import { userSchema } from "../zodSchema/userSchema";
 
 const companyRoutes = Router();
 
@@ -28,7 +26,7 @@ companyRoutes.get(
   tryCatch(async (req: Request, res) => {
     const companyId = Number(req.params.companyId);
     const company = await getCompany(companyId);
-    res.json(normalizeCompany(company));
+    res.json(company);
   })
 );
 
@@ -97,15 +95,14 @@ companyRoutes.patch(
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = updateCompanyUserRoleSchema.parse(req.body, req.body.user);
-    const user = userSchema.parse(req.body);
+    const data = updateCompanyUserRoleSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const updatedCompanyUser = await updateCompanyUser(
       data.userId,
       data.role,
       companyId
     );
-    res.json({ user, updatedCompanyUser });
+    res.json(updatedCompanyUser);
   })
 );
 
@@ -114,15 +111,14 @@ companyRoutes.delete(
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = updateCompanyUserRoleSchema.parse(req.body, req.body.user);
-    const user = userSchema.parse(req.body);
+    const data = updateCompanyUserRoleSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const deletedCompanyUser = await deleteCompanyUser(
       data.userId,
       data.role,
       companyId
     );
-    res.json({ user, deletedCompanyUser });
+    res.json(deletedCompanyUser);
   })
 );
 
