@@ -18,9 +18,9 @@ import {
 } from "../services/company.service";
 import { companyAuth } from "../middleware/companyAuth";
 
-const companyRoutes = Router();
+const companiesRoutes = Router();
 
-companyRoutes.get(
+companiesRoutes.get(
   "/companies/:companyId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -30,7 +30,7 @@ companyRoutes.get(
   })
 );
 
-companyRoutes.post(
+companiesRoutes.post(
   "/companies",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -45,7 +45,7 @@ companyRoutes.post(
   })
 );
 
-companyRoutes.patch(
+companiesRoutes.patch(
   "/companies/:companyId",
   sessionAuth,
   companyAuth(UserCompanyRole.Admin),
@@ -62,7 +62,7 @@ companyRoutes.patch(
   })
 );
 
-companyRoutes.delete(
+companiesRoutes.delete(
   "/companies/:companyId",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
@@ -73,7 +73,7 @@ companyRoutes.delete(
   })
 );
 
-companyRoutes.post(
+companiesRoutes.post(
   "/companies/:companyId/users",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
@@ -90,7 +90,7 @@ companyRoutes.post(
   })
 );
 
-companyRoutes.patch(
+companiesRoutes.patch(
   "/companies/:companyId/users",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
@@ -106,7 +106,7 @@ companyRoutes.patch(
   })
 );
 
-companyRoutes.delete(
+companiesRoutes.delete(
   "/companies/:companyId/users",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
@@ -122,4 +122,4 @@ companyRoutes.delete(
   })
 );
 
-export { companyRoutes };
+export { companiesRoutes };

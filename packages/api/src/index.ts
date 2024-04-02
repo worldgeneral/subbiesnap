@@ -5,7 +5,7 @@ import { usersRoutes } from "./routes/users.router";
 import { errorHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
-import { companyRoutes } from "./routes/company.router";
+import { companiesRoutes } from "./routes/companies.router";
 
 const app = express();
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 app.use(usersRoutes);
 app.use(authRoutes);
-app.use(companyRoutes);
+app.use(companiesRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError("page not found", 404));
