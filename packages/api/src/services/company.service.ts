@@ -63,14 +63,12 @@ export async function registerCompany(
       blurb: blurb,
     })
     .returning();
-  const [owner] = await db
-    .insert(companiesUsers)
-    .values({
-      userId: userId,
-      companyId: company.id,
-      role: UserCompanyRole.Owner,
-    })
-    .returning();
+
+  await db.insert(companiesUsers).values({
+    userId: userId,
+    companyId: company.id,
+    role: UserCompanyRole.Owner,
+  });
 
   return normalizeCompany(company);
 }
@@ -90,7 +88,7 @@ export async function updateCompanyData(
   if (!companies) {
     throw new AppError("unable to update company data", 400);
   }
-  return company;
+  return normalizeCompany(company);
 }
 
 export async function deleteCompanyData(companyId: number) {
@@ -133,14 +131,11 @@ export async function addCompanyUser(
     return normalizeUser(newUser);
   }
 
-  const [newCompanyUser] = await db
-    .insert(companiesUsers)
-    .values({
-      userId: newUser.id,
-      companyId: companyId,
-      role: role,
-    })
-    .returning();
+  await db.insert(companiesUsers).values({
+    userId: newUser.id,
+    companyId: companyId,
+    role: role,
+  });
 
   return normalizeUser(newUser);
 }
