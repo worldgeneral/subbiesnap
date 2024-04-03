@@ -7,7 +7,7 @@ export const companies = pgTable("companies", {
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),
-  status: text("status").default(CompanyStatus.active),
+  status: text("status").default(CompanyStatus.Active),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: timestamp("deleted_at"),

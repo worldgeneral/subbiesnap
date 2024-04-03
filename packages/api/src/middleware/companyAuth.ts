@@ -34,7 +34,7 @@ export const companyAuth = (role: UserCompanyRole) =>
       .from(companies)
       .where(eq(companies.id, companyId));
 
-    if (companyData.status === CompanyStatus.deleted) {
+    if (companyData.status === CompanyStatus.Deleted) {
       throw new AppError("company no loner exists", 404);
     }
 

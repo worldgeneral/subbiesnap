@@ -16,8 +16,8 @@ type Company = {
 };
 
 export enum CompanyStatus {
-  active = "active",
-  deleted = "deleted",
+  Active = "active",
+  Deleted = "deleted",
 }
 export enum UserCompanyRole {
   Owner = 0,
@@ -96,7 +96,7 @@ export async function updateCompanyData(
 export async function deleteCompanyData(companyId: number) {
   const [company] = await db
     .update(companies)
-    .set({ deletedAt: moment().toDate(), status: CompanyStatus.deleted })
+    .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
     .where(eq(companies.id, companyId))
     .returning();
   if (!companies) {
