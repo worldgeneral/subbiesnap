@@ -16,3 +16,7 @@ export const updateCompanyUserRoleSchema = z.object({
   role: z.nativeEnum(UserCompanyRole),
   userId: z.number(),
 });
+
+export const deleteCompanyUserRoleSchema = z.object({
+  userId: z.number(),
+});

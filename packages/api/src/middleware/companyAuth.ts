@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { db } from "../db";
 import { tryCatch } from "../utils/tryCatch";
 import { AppError } from "../utils/ExpressError";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { companies, companiesUsers } from "../schemas";
 import { CompanyStatus, UserCompanyRole } from "../services/company.service";
 
@@ -16,7 +16,8 @@ export const companyAuth = (role: UserCompanyRole) =>
       .where(
         and(
           eq(companiesUsers.userId, user!.id),
-          eq(companiesUsers.companyId, companyId)
+          eq(companiesUsers.companyId, companyId),
+          isNull(companiesUsers.deletedAt)
         )
       );
 
@@ -24,7 +25,7 @@ export const companyAuth = (role: UserCompanyRole) =>
       throw new AppError("user does not have access to this company", 403);
     }
 
-    if (role < userCompany.role || userCompany.deletedAt !== null) {
+    if (role < userCompany.role) {
       throw new AppError("user requires permissions", 403);
     }
 

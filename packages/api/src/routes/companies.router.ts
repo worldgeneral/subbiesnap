@@ -4,6 +4,7 @@ import { sessionAuth } from "../middleware/sessionAuth";
 import {
   addCompanyUserRoleSchema,
   companySchema,
+  deleteCompanyUserRoleSchema,
   updateCompanyUserRoleSchema,
 } from "../zodSchema/companySchema";
 import {
@@ -111,13 +112,9 @@ companiesRoutes.delete(
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = updateCompanyUserRoleSchema.parse(req.body);
+    const data = deleteCompanyUserRoleSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
-    const deletedCompanyUser = await deleteCompanyUser(
-      data.userId,
-      data.role,
-      companyId
-    );
+    const deletedCompanyUser = await deleteCompanyUser(data.userId, companyId);
     res.json(deletedCompanyUser);
   })
 );

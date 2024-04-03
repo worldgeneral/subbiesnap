@@ -167,11 +167,7 @@ export async function updateCompanyUser(
   return updatedCompanyUser;
 }
 
-export async function deleteCompanyUser(
-  userId: number,
-  role: number,
-  companyId: number
-) {
+export async function deleteCompanyUser(userId: number, companyId: number) {
   const [updatedCompanyUser] = await db
     .update(companiesUsers)
     .set({ deletedAt: moment().toDate() })
