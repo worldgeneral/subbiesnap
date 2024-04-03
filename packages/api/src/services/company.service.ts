@@ -129,7 +129,7 @@ export async function addCompanyUser(
   );
 
   if (userCompany) {
-    updateCompanyUser(newUser.id, role, companyId);
+    await updateCompanyUser(newUser.id, role, companyId);
     return normalizeUser(newUser);
   }
 
