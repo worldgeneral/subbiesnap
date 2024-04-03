@@ -6,6 +6,7 @@ import { AppError } from "../utils/ExpressError";
 import { createHash } from "crypto";
 import { tryCatch } from "../utils/tryCatch";
 import moment from "moment";
+import { normalizeUser } from "../services/user.service";
 
 const sessionAuth = tryCatch(async function (
   req: Request,
@@ -38,14 +39,7 @@ const sessionAuth = tryCatch(async function (
         .set({ expiresAt: moment().add(7, "days").toDate() })
         .where(eq(sessions.id, session.sessions.id));
     }
-    req.user = {
-      id: session.sessions.userId,
-      createdAt: session.users.createdAt,
-      updatedAt: session.users.updatedAt,
-      email: session.users.email,
-      firstName: session.users.firstName,
-      secondName: session.users.secondName,
-    };
+    req.user = normalizeUser(session.users);
 
     return next();
   }
