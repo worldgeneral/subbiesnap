@@ -4,13 +4,13 @@ import { CompanyStatus } from "../services/company.service";
 
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),
-  deletedAt: timestamp("deleted_at"),
   status: text("status").default(CompanyStatus.active),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
 });
 
 export type CompaniesSchema = typeof companies.$inferSelect;
