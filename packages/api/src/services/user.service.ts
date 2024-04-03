@@ -4,7 +4,7 @@ import { UserSchema, users } from "../models/user.model";
 import { AppError } from "../utils/ExpressError";
 import * as argon2 from "argon2";
 
-type User = {
+export type User = {
   id: number;
   createdAt: Date;
   updatedAt: Date;
