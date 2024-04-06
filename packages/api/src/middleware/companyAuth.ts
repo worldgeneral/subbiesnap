@@ -5,11 +5,12 @@ import { AppError } from "../utils/ExpressError";
 import { and, eq, isNull } from "drizzle-orm";
 import { companies, companiesUsers } from "../schemas";
 import { CompanyStatus, UserCompanyRole } from "../services/company.service";
+import { companyAuthId } from "../zodSchema/authSchema";
 
 export const companyAuth = (role: UserCompanyRole) =>
   tryCatch(async function (req: Request, Res: Response, next: NextFunction) {
     const user = req.user;
-    const companyId = Number(req.params.companyId);
+    const companyId = companyAuthId.parse(req.params.companyId);
     const [userCompany] = await db
       .select()
       .from(companiesUsers)

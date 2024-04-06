@@ -6,13 +6,16 @@ import {
   integer,
   date,
 } from "drizzle-orm/pg-core";
+import { companies } from "./company.model";
 
-export const jobPosts = pgTable("job_posts", {
+export const jobsTable = pgTable("jobs", {
   id: serial("id").primaryKey().notNull(),
-  companyId: integer("company_id").notNull(),
+  companyId: integer("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
-  startsAt: date("starts_at").notNull(),
-  endsAt: date("ends_at"),
+  startsAt: date("starts_at", { mode: "date" }).notNull(),
+  endsAt: date("ends_at", { mode: "date" }),
   compensation: text("compensation"),
   description: text("description").notNull(),
   location: text("location"),
@@ -22,4 +25,5 @@ export const jobPosts = pgTable("job_posts", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export type jobPostsSchema = typeof jobPosts.$inferSelect;
+export type JobPostsSchema = typeof jobsTable.$inferSelect;
+export type JobPostsSchemaInsert = Omit<typeof jobsTable.$inferInsert, "id">;
