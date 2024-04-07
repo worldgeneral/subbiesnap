@@ -5,7 +5,7 @@ import {
   jobsTable,
   type JobPostsSchemaInsert,
 } from "../models/jobs.model";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { AppError } from "../utils/ExpressError";
 
 export function normalizeJobPost(
@@ -30,28 +30,50 @@ export async function getJobPost(jobPostId: number) {
   const [jobPost] = await db
     .select()
     .from(jobsTable)
-    .where(eq(jobsTable.id, jobPostId));
+    .where(
+      and(
+        eq(jobsTable.id, jobPostId),
+        isNull(jobsTable.deletedAt),
+        isNull(jobsTable.fulfilledAt)
+      )
+    );
+  if (!jobPost) {
+    throw new AppError("Error unable to find job", 400);
+  }
 
   return normalizeJobPost(jobPost);
 }
 
 export async function getCompanyJobPosts(companyId: number) {
-  const [jobPosts] = await db
+  const jobPosts = await db
     .select()
     .from(jobsTable)
-    .where(eq(jobsTable.companyId, companyId));
-
-  return normalizeJobPost(jobPosts);
+    .where(
+      and(
+        eq(jobsTable.companyId, companyId),
+        isNull(jobsTable.deletedAt),
+        isNull(jobsTable.fulfilledAt)
+      )
+    );
+  const normalizedJobs = jobPosts.map((post) => {
+    return normalizeJobPost(post);
+  });
+  return normalizedJobs;
 }
 
 export async function getJobPosts(limit: number, offset: number) {
   const jobPosts = await db
     .select()
     .from(jobsTable)
+    .where(and(isNull(jobsTable.deletedAt), isNull(jobsTable.fulfilledAt)))
     .limit(limit)
     .offset(offset);
-  console.log(jobPosts);
-  return [...jobPosts];
+
+  const normalizedJobs = jobPosts.map((post) => {
+    return normalizeJobPost(post);
+  });
+
+  return normalizedJobs;
 }
 
 export async function createJobPost(jobPostData: JobPostsSchemaInsert) {

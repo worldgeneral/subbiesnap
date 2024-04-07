@@ -52,7 +52,7 @@ jobPostsRoutes.post(
   tryCatch(async (req: Request, res) => {
     const data = jobPostsSchema.parse(req.body);
     const newJobPost = await createJobPost(data);
-    res.json(newJobPost);
+    res.json(newJobPost).status(201);
   })
 );
 
