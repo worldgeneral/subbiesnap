@@ -8,7 +8,7 @@ import {
 import { eq } from "drizzle-orm";
 import { AppError } from "../utils/ExpressError";
 
-export function normalizeCompany(
+export function normalizeJobPost(
   job: JobPostsSchema,
   companyId?: number
 ): JobPostsSchemaInsert {
@@ -26,10 +26,38 @@ export function normalizeCompany(
   };
 }
 
+export async function getJobPost(jobPostId: number) {
+  const [jobPost] = await db
+    .select()
+    .from(jobsTable)
+    .where(eq(jobsTable.id, jobPostId));
+
+  return normalizeJobPost(jobPost);
+}
+
+export async function getCompanyJobPosts(companyId: number) {
+  const [jobPosts] = await db
+    .select()
+    .from(jobsTable)
+    .where(eq(jobsTable.companyId, companyId));
+
+  return normalizeJobPost(jobPosts);
+}
+
+export async function getJobPosts(limit: number, offset: number) {
+  const jobPosts = await db
+    .select()
+    .from(jobsTable)
+    .limit(limit)
+    .offset(offset);
+  console.log(jobPosts);
+  return [...jobPosts];
+}
+
 export async function createJobPost(jobPostData: JobPostsSchemaInsert) {
   const [jobPost] = await db.insert(jobsTable).values(jobPostData).returning();
 
-  return normalizeCompany(jobPost);
+  return normalizeJobPost(jobPost);
 }
 
 export async function updateJobPost(
@@ -46,7 +74,7 @@ export async function updateJobPost(
     throw new AppError("unable to update job post data", 400);
   }
 
-  return normalizeCompany(jobPost, jobPostId);
+  return normalizeJobPost(jobPost, jobPostId);
 }
 
 export async function deleteJobPost(jobPostId: number) {
@@ -60,5 +88,5 @@ export async function deleteJobPost(jobPostId: number) {
     throw new AppError("unable to delete job post data", 400);
   }
 
-  return normalizeCompany(jobPost, jobPostId);
+  return normalizeJobPost(jobPost, jobPostId);
 }

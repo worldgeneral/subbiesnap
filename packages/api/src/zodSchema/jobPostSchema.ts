@@ -10,3 +10,8 @@ export const jobPostsSchema = z.object({
   location: z.string().optional(),
   fulfilledAt: z.coerce.date().optional(),
 });
+
+export const getJobPostsSchema = z.object({
+  limit: z.number(),
+  offset: z.number(),
+});

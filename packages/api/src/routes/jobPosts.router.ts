@@ -3,14 +3,47 @@ import { tryCatch } from "../utils/tryCatch";
 import { sessionAuth } from "../middleware/sessionAuth";
 import { companyAuth } from "../middleware/companyAuth";
 import { UserCompanyRole } from "../services/company.service";
-import { jobPostsSchema } from "../zodSchema/jobPostSchema";
+import { getJobPostsSchema, jobPostsSchema } from "../zodSchema/jobPostSchema";
 import {
   createJobPost,
   deleteJobPost,
+  getCompanyJobPosts,
+  getJobPost,
+  getJobPosts,
   updateJobPost,
 } from "../services/jobPosts.service";
 
 const jobPostsRoutes = Router();
+
+jobPostsRoutes.get(
+  "/jobs",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const data = getJobPostsSchema.parse(req.body);
+    const jobPosts = await getJobPosts(data.limit, data.offset);
+    res.json(jobPosts);
+  })
+);
+
+jobPostsRoutes.get(
+  "/company/:companyId/jobs",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const companyId = Number(req.params.companyId);
+    const jobPosts = await getCompanyJobPosts(companyId);
+    res.json(jobPosts);
+  })
+);
+
+jobPostsRoutes.get(
+  "/jobs/:jobId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const jobPostId = Number(req.params.jobId);
+    const jobPost = await getJobPost(jobPostId);
+    res.json(jobPost);
+  })
+);
 
 jobPostsRoutes.post(
   "/company/:companyId/jobs",
