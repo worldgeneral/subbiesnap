@@ -13,9 +13,9 @@ import {
   updateJobPost,
 } from "../services/jobPosts.service";
 
-const jobPostsRoutes = Router();
+const jobsRoutes = Router();
 
-jobPostsRoutes.get(
+jobsRoutes.get(
   "/jobs",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -25,7 +25,7 @@ jobPostsRoutes.get(
   })
 );
 
-jobPostsRoutes.get(
+jobsRoutes.get(
   "/company/:companyId/jobs",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -35,7 +35,7 @@ jobPostsRoutes.get(
   })
 );
 
-jobPostsRoutes.get(
+jobsRoutes.get(
   "/jobs/:jobId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -45,7 +45,7 @@ jobPostsRoutes.get(
   })
 );
 
-jobPostsRoutes.post(
+jobsRoutes.post(
   "/company/:companyId/jobs",
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
@@ -56,7 +56,7 @@ jobPostsRoutes.post(
   })
 );
 
-jobPostsRoutes.patch(
+jobsRoutes.patch(
   "/company/:companyId/jobs/:jobId",
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
@@ -72,7 +72,7 @@ jobPostsRoutes.patch(
   })
 );
 
-jobPostsRoutes.delete(
+jobsRoutes.delete(
   "/company/:companyId/jobs/:jobId",
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
@@ -83,4 +83,4 @@ jobPostsRoutes.delete(
   })
 );
 
-export { jobPostsRoutes };
+export { jobsRoutes };

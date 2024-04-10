@@ -6,7 +6,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
 import { companiesRoutes } from "./routes/companies.router";
-import { jobPostsRoutes } from "./routes/jobPosts.router";
+import { jobsRoutes } from "./routes/jobs.router";
 
 const app = express();
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(usersRoutes);
 app.use(authRoutes);
 app.use(companiesRoutes);
-app.use(jobPostsRoutes);
+app.use(jobsRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError("page not found", 404));

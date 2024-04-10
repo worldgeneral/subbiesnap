@@ -11,15 +11,19 @@ import { AppError } from "../utils/ExpressError";
 export function normalizeJobPost(
   job: JobPostsSchema,
   companyId?: number
-): JobPostsSchemaInsert {
+): JobPostsSchema {
   return {
+    id: job.id,
     companyId: job.companyId,
     createdAt: job.createdAt,
     updatedAt: job.updatedAt,
+    deletedAt: job.deletedAt,
     title: job.title,
     startsAt: job.startsAt,
     endsAt: job.endsAt,
-    compensation: job.compensation,
+    compensationValueMin: job.compensationValueMin,
+    compensationValueMax: job.compensationValueMax,
+    compensationSuffix: job.compensationSuffix,
     description: job.description,
     location: job.location,
     fulfilledAt: job.fulfilledAt,
