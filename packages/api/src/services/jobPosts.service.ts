@@ -48,7 +48,11 @@ export async function getJobPost(jobPostId: number) {
   return normalizeJobPost(jobPost);
 }
 
-export async function getCompanyJobPosts(companyId: number) {
+export async function getCompanyJobPosts(
+  companyId: number,
+  limit: number,
+  offset: number
+) {
   const jobPosts = await db
     .select()
     .from(jobsTable)
@@ -58,7 +62,9 @@ export async function getCompanyJobPosts(companyId: number) {
         isNull(jobsTable.deletedAt),
         isNull(jobsTable.fulfilledAt)
       )
-    );
+    )
+    .limit(limit)
+    .offset(offset);
   const normalizedJobs = jobPosts.map((post) => {
     return normalizeJobPost(post);
   });
@@ -80,7 +86,13 @@ export async function getJobPosts(limit: number, offset: number) {
   return normalizedJobs;
 }
 
-export async function createJobPost(jobPostData: JobPostsSchemaInsert) {
+export async function createJobPost(
+  jobPostData: JobPostsSchemaInsert,
+  userCompany: number
+) {
+  if (jobPostData.companyId !== userCompany) {
+    throw new AppError("Error company id is incorrect", 400);
+  }
   const [jobPost] = await db.insert(jobsTable).values(jobPostData).returning();
 
   return normalizeJobPost(jobPost);

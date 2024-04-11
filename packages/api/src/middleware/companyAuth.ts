@@ -38,6 +38,7 @@ export const companyAuth = (role: UserCompanyRole) =>
     if (companyData.status === CompanyStatus.Deleted) {
       throw new AppError("company no loner exists", 404);
     }
+    req.usersCompany = companyData.id;
 
     next();
   });

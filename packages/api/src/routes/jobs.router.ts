@@ -30,7 +30,12 @@ jobsRoutes.get(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const companyId = Number(req.params.companyId);
-    const jobPosts = await getCompanyJobPosts(companyId);
+    const data = getJobPostsSchema.parse(req.body);
+    const jobPosts = await getCompanyJobPosts(
+      companyId,
+      data.limit,
+      data.offset
+    );
     res.json(jobPosts);
   })
 );
@@ -51,7 +56,7 @@ jobsRoutes.post(
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
     const data = jobPostsSchema.parse(req.body);
-    const newJobPost = await createJobPost(data);
+    const newJobPost = await createJobPost(data, req.usersCompany!);
     res.json(newJobPost).status(201);
   })
 );
