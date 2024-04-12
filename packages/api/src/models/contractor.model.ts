@@ -18,10 +18,14 @@ export const contractorsTable = pgTable("contractors", {
 });
 
 export type ContractorsSchema = typeof contractorsTable.$inferSelect;
+export type ContractorsSchemaInsert = Omit<
+  typeof contractorsTable.$inferInsert,
+  "id"
+>;
 
 export const contractorsAccreditations = pgTable("contractors_accreditations", {
   id: serial("id").primaryKey().notNull(),
-  subbieId: integer("subbie_id")
+  contractorId: integer("contractor_id")
     .notNull()
     .references(() => contractorsTable.id, { onDelete: "cascade" }),
   accreditationName: text("accreditation_name"),
@@ -31,5 +35,5 @@ export const contractorsAccreditations = pgTable("contractors_accreditations", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export type contractorsAccreditationsSchema =
+export type ContractorsAccreditationsSchema =
   typeof contractorsAccreditations.$inferSelect;

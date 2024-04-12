@@ -1,5 +1,6 @@
 import {
   ContractorsSchema,
+  ContractorsSchemaInsert,
   contractorsAccreditations,
   contractorsTable,
 } from "../schemas";
@@ -51,4 +52,15 @@ export async function getContractors(limit: number, offset: number) {
   });
 
   return normalizedContractors;
+}
+
+export async function registerContractor(
+  contractorsData: ContractorsSchemaInsert
+) {
+  const [contractor] = await db
+    .insert(contractorsTable)
+    .values(contractorsData)
+    .returning();
+
+  return normalizeContractor(contractor);
 }

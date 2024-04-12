@@ -1,12 +1,19 @@
 import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/tryCatch";
 import { sessionAuth } from "../middleware/sessionAuth";
-import { getContractor, getContractors } from "../services/contractor.service";
-import { getContractorSchema } from "../zodSchema/contractorSchema";
+import {
+  getContractor,
+  getContractors,
+  registerContractor,
+} from "../services/contractor.service";
+import {
+  contractorSchema,
+  getContractorSchema,
+} from "../zodSchema/contractorSchema";
 
-const subbiesRoutes = Router();
+const contractorsRoutes = Router();
 
-subbiesRoutes.get(
+contractorsRoutes.get(
   "/contractors/:contractorId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -16,7 +23,7 @@ subbiesRoutes.get(
   })
 );
 
-subbiesRoutes.get(
+contractorsRoutes.get(
   "/contractors",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
@@ -25,3 +32,15 @@ subbiesRoutes.get(
     res.json(contractors);
   })
 );
+
+contractorsRoutes.post(
+  "/contractors",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const contractorData = contractorSchema.parse(req.body);
+    const newContractor = await registerContractor(contractorData);
+    res.json(newContractor).status(201);
+  })
+);
+
+export { contractorsRoutes };
