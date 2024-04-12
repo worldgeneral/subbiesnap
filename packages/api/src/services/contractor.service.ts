@@ -1,4 +1,6 @@
 import {
+  ContractorsAccreditationsSchema,
+  ContractorsAccreditationsSchemaInsert,
   ContractorsSchema,
   ContractorsSchemaInsert,
   contractorsAccreditations,
@@ -23,6 +25,20 @@ export function normalizeContractor(
     createdAt: contractors.createdAt,
     updatedAt: contractors.updatedAt,
     deletedAt: contractors.deletedAt,
+  };
+}
+
+export function normalizeAccreditation(
+  accreditation: ContractorsAccreditationsSchema
+): ContractorsAccreditationsSchema {
+  return {
+    id: accreditation.id,
+    contractorId: accreditation.contractorId,
+    accreditationName: accreditation.accreditationName,
+    accreditation: accreditation.accreditation,
+    createdAt: accreditation.createdAt,
+    updatedAt: accreditation.updatedAt,
+    deletedAt: accreditation.deletedAt,
   };
 }
 
@@ -94,4 +110,63 @@ export async function deleteContractor(contractorId: number) {
   }
 
   return normalizeContractor(contractor);
+}
+
+export async function getAccreditation(accreditationId: number) {
+  const [contractorsAccreditation] = await db
+    .select()
+    .from(contractorsAccreditations)
+    .where(eq(contractorsAccreditations.id, accreditationId));
+
+  if (!contractorsAccreditation) {
+    throw new AppError("unable to find Accreditation", 404);
+  }
+
+  return normalizeAccreditation(contractorsAccreditation);
+}
+
+export async function addAccreditations(
+  accreditationData: Array<ContractorsAccreditationsSchemaInsert>
+) {
+  const accreditations = accreditationData.forEach(async (accreditation) => {
+    const [contractorsAccreditation] = await db
+      .insert(contractorsAccreditations)
+      .values(accreditation)
+      .returning();
+
+    return normalizeAccreditation(contractorsAccreditation);
+  });
+
+  return accreditations;
+}
+
+export async function updateAccreditation(
+  accreditationData: Partial<ContractorsAccreditationsSchemaInsert>,
+  accreditationId: number
+) {
+  const [accreditation] = await db
+    .update(contractorsAccreditations)
+    .set({ updatedAt: moment().toDate(), ...accreditationData })
+    .where(eq(contractorsAccreditations.id, accreditationId))
+    .returning();
+
+  if (!accreditation) {
+    throw new AppError("unable to update accreditation", 400);
+  }
+
+  return normalizeAccreditation(accreditation);
+}
+
+export async function deleteAccreditation(accreditationId: number) {
+  const [accreditation] = await db
+    .update(contractorsTable)
+    .set({ deletedAt: moment().toDate() })
+    .where(eq(contractorsAccreditations.id, accreditationId))
+    .returning();
+
+  if (!accreditation) {
+    throw new AppError("unable to delete accreditation", 400);
+  }
+
+  return normalizeContractor(accreditation);
 }

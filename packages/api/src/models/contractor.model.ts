@@ -37,3 +37,7 @@ export const contractorsAccreditations = pgTable("contractors_accreditations", {
 
 export type ContractorsAccreditationsSchema =
   typeof contractorsAccreditations.$inferSelect;
+export type ContractorsAccreditationsSchemaInsert = Omit<
+  typeof contractorsAccreditations.$inferInsert,
+  "id"
+>;
