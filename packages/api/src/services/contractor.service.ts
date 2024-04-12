@@ -64,3 +64,34 @@ export async function registerContractor(
 
   return normalizeContractor(contractor);
 }
+
+export async function updateContractor(
+  contractorsData: Partial<ContractorsSchemaInsert>,
+  contractorId: number
+) {
+  const [contractor] = await db
+    .update(contractorsTable)
+    .set({ updatedAt: moment().toDate(), ...contractorsData })
+    .where(eq(contractorsTable.id, contractorId))
+    .returning();
+
+  if (!contractor) {
+    throw new AppError("unable to update contractor", 400);
+  }
+
+  return normalizeContractor(contractor);
+}
+
+export async function deleteContractor(contractorId: number) {
+  const [contractor] = await db
+    .update(contractorsTable)
+    .set({ deletedAt: moment().toDate() })
+    .where(eq(contractorsTable.id, contractorId))
+    .returning();
+
+  if (!contractor) {
+    throw new AppError("unable to delete contractor", 400);
+  }
+
+  return normalizeContractor(contractor);
+}

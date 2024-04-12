@@ -2,9 +2,11 @@ import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/tryCatch";
 import { sessionAuth } from "../middleware/sessionAuth";
 import {
+  deleteContractor,
   getContractor,
   getContractors,
   registerContractor,
+  updateContractor,
 } from "../services/contractor.service";
 import {
   contractorSchema,
@@ -40,6 +42,30 @@ contractorsRoutes.post(
     const contractorData = contractorSchema.parse(req.body);
     const newContractor = await registerContractor(contractorData);
     res.json(newContractor).status(201);
+  })
+);
+
+contractorsRoutes.patch(
+  "/contractors/:contractorId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const contractorData = contractorSchema.parse(req.body);
+    const contractorId = Number(req.params.contractorId);
+    const updatedContractor = await updateContractor(
+      contractorData,
+      contractorId
+    );
+    res.json(updatedContractor);
+  })
+);
+
+contractorsRoutes.patch(
+  "/contractors/:contractorId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const contractorId = Number(req.params.contractorId);
+    const deletedContractor = await deleteContractor(contractorId);
+    res.json(deletedContractor);
   })
 );
 
