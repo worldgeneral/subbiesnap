@@ -59,7 +59,7 @@ contractorsRoutes.patch(
   })
 );
 
-contractorsRoutes.patch(
+contractorsRoutes.delete(
   "/contractors/:contractorId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
