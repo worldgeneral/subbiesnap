@@ -10,35 +10,40 @@ import { db } from "../db";
 import { AppError } from "../utils/ExpressError";
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
+import z from "zod";
+import {
+  ContractorsAccreditationSchema,
+  contractorSchema,
+} from "../zodSchema/contractorSchema";
+
+type Contractor = Required<z.infer<typeof contractorSchema>>;
+
+type ContractorsAccreditation = Required<
+  z.infer<typeof ContractorsAccreditationSchema>
+>;
 
 export function normalizeContractor(
   contractors: ContractorsSchema
-): ContractorsSchema {
+): Contractor {
   return {
     id: contractors.id,
     userId: contractors.userId,
-    contractorName: contractors.contractorName,
+    name: contractors.name,
     logo: contractors.logo,
     location: contractors.location,
     profession: contractors.profession,
     yearsExperience: contractors.yearsExperience,
-    createdAt: contractors.createdAt,
-    updatedAt: contractors.updatedAt,
-    deletedAt: contractors.deletedAt,
   };
 }
 
 export function normalizeAccreditation(
   accreditation: ContractorsAccreditationsSchema
-): ContractorsAccreditationsSchema {
+): ContractorsAccreditation {
   return {
     id: accreditation.id,
     contractorId: accreditation.contractorId,
-    accreditationName: accreditation.accreditationName,
+    name: accreditation.name,
     accreditation: accreditation.accreditation,
-    createdAt: accreditation.createdAt,
-    updatedAt: accreditation.updatedAt,
-    deletedAt: accreditation.deletedAt,
   };
 }
 
@@ -49,7 +54,7 @@ export async function getContractor(contractorId: number) {
     .where(eq(contractorsTable.id, contractorId));
 
   if (!contractor) {
-    throw new AppError("unable to find company", 404);
+    throw new AppError("unable to find contractor", 404);
   }
 
   return normalizeContractor(contractor);
@@ -82,7 +87,7 @@ export async function registerContractor(
 }
 
 export async function updateContractor(
-  contractorsData: Partial<ContractorsSchemaInsert>,
+  contractorsData: Partial<Omit<ContractorsSchemaInsert, "userId">>,
   contractorId: number
 ) {
   const [contractor] = await db
@@ -160,36 +165,31 @@ export async function addAccreditations(
   accreditationData: Array<ContractorsAccreditationsSchemaInsert>,
   contractorId: number
 ) {
-  accreditationData.forEach(
-    (accreditation) => (accreditation.contractorId = contractorId)
-  );
-  const [...contractorsAccreditation] = await db
+  const accreditationWithID = accreditationData.map((accreditation) => ({
+    ...accreditation,
+    contractorId,
+  }));
+  console.log(accreditationData, accreditationWithID);
+  const contractorsAccreditation = await db
     .insert(contractorsAccreditations)
-    .values(accreditationData)
+    .values(accreditationWithID)
     .returning();
 
   const accreditations = contractorsAccreditation.map((accreditation) =>
     normalizeAccreditation(accreditation)
   );
+  console.log(accreditationData);
   return accreditations;
 }
 
 export async function updateAccreditation(
   accreditationData: Partial<ContractorsAccreditationsSchemaInsert>,
-  contractorId: number,
   accreditationId: number
 ) {
-  accreditationData.contractorId = contractorId;
-
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ updatedAt: moment().toDate(), ...accreditationData })
-    .where(
-      and(
-        eq(contractorsAccreditations.id, accreditationId),
-        eq(contractorsAccreditations.contractorId, contractorId)
-      )
-    )
+    .where(eq(contractorsAccreditations.id, accreditationId))
     .returning();
 
   if (!accreditation) {

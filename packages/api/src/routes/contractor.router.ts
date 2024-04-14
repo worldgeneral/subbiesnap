@@ -16,8 +16,10 @@ import {
 import {
   ContractorsAccreditationSchema,
   ContractorsAccreditationsSchema,
-  contractorSchema,
-  getContractorSchema,
+  CreateContractorSchema,
+  CreateContractorsAccreditationSchema,
+  UpdateContractorSchema,
+  UpdateContractorsAccreditationSchema,
 } from "../zodSchema/contractorSchema";
 import { paginationSchema } from "../zodSchema/paginationSchema";
 
@@ -37,8 +39,11 @@ contractorsRoutes.get(
   "/contractors",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const data = getContractorSchema.parse(req.body);
-    const contractors = await getContractors(data.limit, data.offset);
+    const pagination = paginationSchema.parse(req.query);
+    const contractors = await getContractors(
+      pagination.limit,
+      pagination.offset
+    );
     res.json(contractors);
   })
 );
@@ -47,7 +52,7 @@ contractorsRoutes.post(
   "/contractors",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const contractorData = contractorSchema.parse(req.body);
+    const contractorData = CreateContractorSchema.parse(req.body);
     const newContractor = await registerContractor(contractorData);
     res.json(newContractor).status(201);
   })
@@ -57,7 +62,7 @@ contractorsRoutes.patch(
   "/contractors/:contractorId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const contractorData = contractorSchema.parse(req.body);
+    const contractorData = UpdateContractorSchema.parse(req.body);
     const contractorId = Number(req.params.contractorId);
     const updatedContractor = await updateContractor(
       contractorData,
@@ -120,12 +125,12 @@ contractorsRoutes.patch(
   "/contractors/:contractorId/accreditations/:accreditationId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const accreditationData = ContractorsAccreditationSchema.parse(req.body);
-    const contractorId = Number(req.params.contractorId);
+    const accreditationData = UpdateContractorsAccreditationSchema.parse(
+      req.body
+    );
     const accreditationId = Number(req.params.accreditationId);
     const updatedContractor = await updateAccreditation(
       accreditationData,
-      contractorId,
       accreditationId
     );
     res.json(updatedContractor);

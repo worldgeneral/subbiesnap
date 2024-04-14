@@ -1,29 +1,48 @@
-import { z } from "zod";
-
-export const getContractorSchema = z.object({
-  limit: z.number(),
-  offset: z.number(),
-});
+import { string, z } from "zod";
 
 export const contractorSchema = z.object({
+  id: z.number(),
   userId: z.number(),
-  contractorName: z.string().optional(),
-  logo: z.string().optional(),
-  location: z.string().optional(),
+  name: z.string().nullable().optional(),
+  logo: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
   profession: z.string(),
   yearsExperience: z.number(),
 });
-//for array of objects
-export const ContractorsAccreditationsSchema = z.array(
-  z.object({
-    contractorId: z.number(),
-    accreditationName: z.string(),
-    accreditation: z.string(),
+
+export const CreateContractorSchema = contractorSchema.omit({
+  id: true,
+});
+
+export const UpdateContractorSchema = contractorSchema
+  .omit({
+    id: true,
+    userId: true,
   })
-);
+  .partial();
+
 // for single objects
 export const ContractorsAccreditationSchema = z.object({
+  id: z.number(),
   contractorId: z.number(),
-  accreditationName: z.string(),
+  name: z.string(),
   accreditation: z.string(),
 });
+//for array of objects
+export const ContractorsAccreditationsSchema = z.array(
+  ContractorsAccreditationSchema.omit({
+    id: true,
+  })
+);
+
+export const CreateContractorsAccreditationSchema =
+  ContractorsAccreditationSchema.omit({
+    id: true,
+    contractorId: true,
+  }).partial();
+
+export const UpdateContractorsAccreditationSchema =
+  ContractorsAccreditationSchema.omit({
+    id: true,
+    contractorId: true,
+  }).partial();
