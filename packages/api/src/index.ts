@@ -6,6 +6,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
 import { companiesRoutes } from "./routes/companies.router";
+import { contractorsRoutes } from "./routes/contractor.router";
 import { jobsRoutes } from "./routes/jobs.router";
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use(usersRoutes);
 app.use(authRoutes);
 app.use(companiesRoutes);
+app.use(contractorsRoutes);
 app.use(jobsRoutes);
 
 app.all("*", (req, res, next) => {
