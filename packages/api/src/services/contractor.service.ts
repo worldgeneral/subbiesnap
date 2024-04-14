@@ -189,7 +189,12 @@ export async function updateAccreditation(
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ updatedAt: moment().toDate(), ...accreditationData })
-    .where(eq(contractorsAccreditations.id, accreditationId))
+    .where(
+      and(
+        eq(contractorsAccreditations.id, accreditationId),
+        isNull(contractorsAccreditations.deletedAt)
+      )
+    )
     .returning();
 
   if (!accreditation) {

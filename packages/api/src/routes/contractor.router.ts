@@ -86,7 +86,7 @@ contractorsRoutes.get(
   "/contractors/:contractorId/accreditations",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const pagination = paginationSchema.parse(req.body);
+    const pagination = paginationSchema.parse(req.query);
     const contractorId = Number(req.params.contractorId);
     const accreditations = await getAccreditations(
       contractorId,

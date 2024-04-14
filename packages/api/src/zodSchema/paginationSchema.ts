@@ -1,6 +1,6 @@
 import { z } from "zod";
 
 export const paginationSchema = z.object({
-  limit: z.number(),
-  offset: z.number(),
+  limit: z.coerce.number(),
+  offset: z.coerce.number(),
 });
