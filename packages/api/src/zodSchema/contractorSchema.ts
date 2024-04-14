@@ -13,8 +13,17 @@ export const contractorSchema = z.object({
   profession: z.string(),
   yearsExperience: z.number(),
 });
-
-export const ContractorsAccreditationsSchema = z.object({
+//for array of objects
+export const ContractorsAccreditationsSchema = z.array(
+  z.object({
+    contractorId: z.number(),
+    accreditationName: z.string(),
+    accreditation: z.string(),
+  })
+);
+// for single objects
+export const ContractorsAccreditationSchema = z.object({
+  contractorId: z.number(),
   accreditationName: z.string(),
   accreditation: z.string(),
 });

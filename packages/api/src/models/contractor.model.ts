@@ -28,7 +28,7 @@ export const contractorsAccreditations = pgTable("contractors_accreditations", {
   contractorId: integer("contractor_id")
     .notNull()
     .references(() => contractorsTable.id, { onDelete: "cascade" }),
-  accreditationName: text("accreditation_name"),
+  accreditationName: text("accreditation_name").notNull(),
   accreditation: text("accreditation").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

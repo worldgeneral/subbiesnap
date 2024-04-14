@@ -6,6 +6,7 @@ import {
   deleteAccreditation,
   deleteContractor,
   getAccreditation,
+  getAccreditations,
   getContractor,
   getContractors,
   registerContractor,
@@ -13,10 +14,12 @@ import {
   updateContractor,
 } from "../services/contractor.service";
 import {
+  ContractorsAccreditationSchema,
   ContractorsAccreditationsSchema,
   contractorSchema,
   getContractorSchema,
 } from "../zodSchema/contractorSchema";
+import { paginationSchema } from "../zodSchema/paginationSchema";
 
 const contractorsRoutes = Router();
 
@@ -78,8 +81,24 @@ contractorsRoutes.get(
   "/contractors/:contractorId/accreditations",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const newContractor = await getAccreditation(contractorData);
-    res.json(newContractor);
+    const pagination = paginationSchema.parse(req.body);
+    const contractorId = Number(req.params.contractorId);
+    const accreditations = await getAccreditations(
+      contractorId,
+      pagination.limit,
+      pagination.offset
+    );
+    res.json(accreditations);
+  })
+);
+
+contractorsRoutes.get(
+  "/contractors/:contractorId/accreditations/:accreditationId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const accreditationId = Number(req.params.accreditationId);
+    const accreditation = await getAccreditation(accreditationId);
+    res.json(accreditation);
   })
 );
 
@@ -88,8 +107,12 @@ contractorsRoutes.post(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = ContractorsAccreditationsSchema.parse(req.body);
-    const newContractor = await addAccreditations(contractorData);
-    res.json(newContractor).status(201);
+    const contractorId = Number(req.params.contractorId);
+    const accreditations = await addAccreditations(
+      contractorData,
+      contractorId
+    );
+    res.json(accreditations).status(201);
   })
 );
 
@@ -97,7 +120,7 @@ contractorsRoutes.patch(
   "/contractors/:contractorId/accreditations/:accreditationId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const accreditationData = ContractorsAccreditationsSchema.parse(req.body);
+    const accreditationData = ContractorsAccreditationSchema.parse(req.body);
     const contractorId = Number(req.params.contractorId);
     const accreditationId = Number(req.params.accreditationId);
     const updatedContractor = await updateAccreditation(
@@ -115,7 +138,10 @@ contractorsRoutes.delete(
   tryCatch(async (req: Request, res) => {
     const contractorId = Number(req.params.contractorId);
     const accreditationId = Number(req.params.accreditationId);
-    const deletedContractor = await deleteAccreditation(accreditationId);
+    const deletedContractor = await deleteAccreditation(
+      accreditationId,
+      contractorId
+    );
     res.json(deletedContractor);
   })
 );
