@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "subbie site monorepo",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "check-format": "pnpm -r check-format",
+    "check-ts": "pnpm -r check-ts"
   },
   "keywords": [],
   "author": "Matthew Harrison",

@@ -9,7 +9,9 @@
     "dev": "nodemon ./src/index.ts",
     "start": "node ./dist/index.js",
     "db:push": "drizzle-kit push:pg",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "check-ts": "tsc --noEmit",
+    "check-format": "prettier . --check"
   },
   "keywords": [],
   "author": "Matthew Harrison",
@@ -32,6 +34,7 @@
     "@types/pg": "^8.11.2",
     "drizzle-kit": "^0.20.14",
     "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
