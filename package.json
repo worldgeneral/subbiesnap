@@ -4,7 +4,8 @@
   "description": "subbie site monorepo",
   "scripts": {
     "check-format": "pnpm -r check-format",
-    "check-ts": "pnpm -r check-ts"
+    "check-ts": "pnpm -r check-ts",
+    "format": "pnpm -r format"
   },
   "keywords": [],
   "author": "Matthew Harrison",

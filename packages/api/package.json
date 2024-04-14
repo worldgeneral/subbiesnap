@@ -11,7 +11,8 @@
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "check-ts": "tsc --noEmit",
-    "check-format": "prettier . --check"
+    "check-format": "prettier . --check",
+    "format": "prettier . --write"
   },
   "keywords": [],
   "author": "Matthew Harrison",
