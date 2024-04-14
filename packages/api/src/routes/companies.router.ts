@@ -25,7 +25,8 @@ companiesRoutes.get(
   "/companies/:companyId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const companyId = Number(req.params.companyId);
+    const companyId = parseInt(req.params.companyId, 10); // could be NaN if undefined
+
     const company = await getCompany(companyId);
     res.json(company);
   })

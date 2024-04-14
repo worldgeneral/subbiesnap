@@ -3,13 +3,12 @@ import { AppError } from "../utils/ExpressError";
 import { ZodError } from "zod";
 
 const errorHandler = (
-  err: unknown,
+  err: Error | unknown,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   console.log(err);
-
   if (err instanceof ZodError) {
     return res
       .status(400)
@@ -22,7 +21,9 @@ const errorHandler = (
     });
   }
 
-  return res.status(500).send("Something went wrong");
+  return res.status(500).json({
+    message: "Something went wrong",
+  });
 };
 
 export { errorHandler };
