@@ -6,18 +6,16 @@ import {
   type JobPostsSchemaInsert,
 } from "../models/jobs.model";
 import { and, eq, isNull } from "drizzle-orm";
-import { AppError } from "../utils/ExpressError";
+import { AppError } from "../utils/express.error";
+import { jobPostsSchema } from "../rules/jobPost.rule";
+import z from "zod";
 
-export function normalizeJobPost(
-  job: JobPostsSchema,
-  companyId?: number
-): JobPostsSchema {
+export type job = Required<z.infer<typeof jobPostsSchema>>;
+
+export function normalizeJobPost(job: JobPostsSchema): job {
   return {
     id: job.id,
     companyId: job.companyId,
-    createdAt: job.createdAt,
-    updatedAt: job.updatedAt,
-    deletedAt: job.deletedAt,
     title: job.title,
     startsAt: job.startsAt,
     endsAt: job.endsAt,
@@ -30,7 +28,7 @@ export function normalizeJobPost(
   };
 }
 
-export async function getJobPost(jobPostId: number) {
+export async function getJobPost(jobPostId: number): Promise<job> {
   const [jobPost] = await db
     .select()
     .from(jobsTable)
@@ -52,7 +50,7 @@ export async function getCompanyJobPosts(
   companyId: number,
   limit: number,
   offset: number
-) {
+): Promise<Array<job>> {
   const jobPosts = await db
     .select()
     .from(jobsTable)
@@ -71,7 +69,10 @@ export async function getCompanyJobPosts(
   return normalizedJobs;
 }
 
-export async function getJobPosts(limit: number, offset: number) {
+export async function getJobPosts(
+  limit: number,
+  offset: number
+): Promise<Array<job>> {
   const jobPosts = await db
     .select()
     .from(jobsTable)
@@ -89,7 +90,7 @@ export async function getJobPosts(limit: number, offset: number) {
 export async function createJobPost(
   jobPostData: JobPostsSchemaInsert,
   userCompany: number
-) {
+): Promise<job> {
   if (jobPostData.companyId !== userCompany) {
     throw new AppError("Error company id is incorrect", 400);
   }
@@ -100,11 +101,12 @@ export async function createJobPost(
 
 export async function updateJobPost(
   jobPostData: Partial<JobPostsSchemaInsert>,
-  jobPostId: number
-) {
+  jobPostId: number,
+  companyId: number
+): Promise<job> {
   const [jobPost] = await db
     .update(jobsTable)
-    .set({ updatedAt: moment().toDate(), ...jobPostData })
+    .set({ updatedAt: moment().toDate(), companyId: companyId, ...jobPostData })
     .where(eq(jobsTable.id, jobPostId))
     .returning();
 
@@ -112,10 +114,10 @@ export async function updateJobPost(
     throw new AppError("unable to update job post data", 400);
   }
 
-  return normalizeJobPost(jobPost, jobPostId);
+  return normalizeJobPost(jobPost);
 }
 
-export async function deleteJobPost(jobPostId: number) {
+export async function deleteJobPost(jobPostId: number): Promise<job> {
   const [jobPost] = await db
     .update(jobsTable)
     .set({ deletedAt: moment().toDate() })
@@ -126,5 +128,5 @@ export async function deleteJobPost(jobPostId: number) {
     throw new AppError("unable to delete job post data", 400);
   }
 
-  return normalizeJobPost(jobPost, jobPostId);
+  return normalizeJobPost(jobPost);
 }

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { tryCatch } from "../utils/tryCatch";
-import { sessionAuth } from "../middleware/sessionAuth";
+import { tryCatch } from "../utils/try.catch";
+import { sessionAuth } from "../middleware/session.auth";
 import {
   addAccreditations,
   deleteAccreditation,
@@ -20,8 +20,8 @@ import {
   CreateContractorsAccreditationSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
-} from "../zodSchema/contractorSchema";
-import { paginationSchema } from "../zodSchema/paginationSchema";
+} from "../rules/contractor.rule";
+import { paginationSchema } from "../rules/pagination.rule";
 
 const contractorsRoutes = Router();
 

@@ -1,9 +1,11 @@
 import { Router, Request, Response } from "express";
-import { tryCatch } from "../utils/tryCatch";
-import { sessionAuth } from "../middleware/sessionAuth";
-import { companyAuth } from "../middleware/companyAuth";
-import { UserCompanyRole } from "../services/company.service";
-import { getJobPostsSchema, jobPostsSchema } from "../zodSchema/jobPostSchema";
+import { tryCatch } from "../utils/try.catch";
+import { sessionAuth } from "../middleware/session.auth";
+import { companyAuth } from "../middleware/company.auth";
+import {
+  CreateJobPostSchema,
+  updateJobPostSchema,
+} from "../rules/jobPost.rule";
 import {
   createJobPost,
   deleteJobPost,
@@ -12,6 +14,8 @@ import {
   getJobPosts,
   updateJobPost,
 } from "../services/jobPosts.service";
+import { paginationSchema } from "../rules/pagination.rule";
+import { UserCompanyRole } from "../utils/magic.numbers";
 
 const jobsRoutes = Router();
 
@@ -19,8 +23,8 @@ jobsRoutes.get(
   "/jobs",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const data = getJobPostsSchema.parse(req.body);
-    const jobPosts = await getJobPosts(data.limit, data.offset);
+    const pagination = paginationSchema.parse(req.query);
+    const jobPosts = await getJobPosts(pagination.limit, pagination.offset);
     res.json(jobPosts);
   })
 );
@@ -30,11 +34,11 @@ jobsRoutes.get(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const companyId = Number(req.params.companyId);
-    const data = getJobPostsSchema.parse(req.body);
+    const pagination = paginationSchema.parse(req.query);
     const jobPosts = await getCompanyJobPosts(
       companyId,
-      data.limit,
-      data.offset
+      pagination.limit,
+      pagination.offset
     );
     res.json(jobPosts);
   })
@@ -55,7 +59,7 @@ jobsRoutes.post(
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
-    const data = jobPostsSchema.parse(req.body);
+    const data = CreateJobPostSchema.parse(req.body);
     const newJobPost = await createJobPost(data, req.usersCompany!);
     res.json(newJobPost).status(201);
   })
@@ -66,13 +70,10 @@ jobsRoutes.patch(
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
-    const data = jobPostsSchema.partial().parse(req.body);
+    const data = updateJobPostSchema.parse(req.body);
     const jobPostId = Number(req.params.jobId);
     const companyId = Number(req.params.companyId);
-    const updatedJobPost = await updateJobPost(
-      { companyId, ...data },
-      jobPostId
-    );
+    const updatedJobPost = await updateJobPost(data, jobPostId, companyId);
     res.json(updatedJobPost);
   })
 );

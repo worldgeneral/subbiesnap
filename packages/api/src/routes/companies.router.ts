@@ -1,23 +1,26 @@
 import { Router, Request, Response } from "express";
-import { tryCatch } from "../utils/tryCatch";
-import { sessionAuth } from "../middleware/sessionAuth";
+import { tryCatch } from "../utils/try.catch";
+import { sessionAuth } from "../middleware/session.auth";
 import {
-  addCompanyUserRoleSchema,
   companySchema,
-  deleteCompanyUserRoleSchema,
-  updateCompanyUserRoleSchema,
-} from "../zodSchema/companySchema";
+  createCompanySchema,
+  createCompanyUserSchema,
+  updateCompanyUserSchema,
+} from "../rules/company.rule";
 import {
-  UserCompanyRole,
   addCompanyUser,
   deleteCompanyData,
   deleteCompanyUser,
+  getCompanies,
   getCompany,
+  getCompanyUser,
   registerCompany,
   updateCompanyData,
   updateCompanyUser,
 } from "../services/company.service";
-import { companyAuth } from "../middleware/companyAuth";
+import { companyAuth } from "../middleware/company.auth";
+import { UserCompanyRole } from "../utils/magic.numbers";
+import { paginationSchema } from "../rules/pagination.rule";
 
 const companiesRoutes = Router();
 
@@ -25,9 +28,18 @@ companiesRoutes.get(
   "/companies/:companyId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const companyId = parseInt(req.params.companyId, 10); // could be NaN if undefined
-
+    const companyId = Number(req.params.companyId);
     const company = await getCompany(companyId);
+    res.json(company);
+  })
+);
+
+companiesRoutes.get(
+  "/companies",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const pagination = paginationSchema.parse(req.query);
+    const company = await getCompanies(pagination.limit, pagination.offset);
     res.json(company);
   })
 );
@@ -36,13 +48,8 @@ companiesRoutes.post(
   "/companies",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const data = companySchema.parse(req.body);
-    const company = await registerCompany(
-      data.name,
-      data.logo,
-      data.blurb,
-      req.user!.id
-    );
+    const data = createCompanySchema.parse(req.body);
+    const company = await registerCompany(data, req.user!.id);
     res.json(company).status(201);
   })
 );
@@ -54,12 +61,7 @@ companiesRoutes.patch(
   tryCatch(async (req: Request, res) => {
     const data = companySchema.parse(req.body);
     const companyId = Number(req.params.companyId);
-    const company = await updateCompanyData(
-      data.name,
-      data.logo,
-      data.blurb,
-      companyId
-    );
+    const company = await updateCompanyData(data, companyId);
     res.json(company);
   })
 );
@@ -75,12 +77,28 @@ companiesRoutes.delete(
   })
 );
 
+companiesRoutes.get(
+  "/companies/:companyId/users",
+  sessionAuth,
+  companyAuth(UserCompanyRole.Owner),
+  tryCatch(async (req: Request, res) => {
+    const pagination = paginationSchema.parse(req.query);
+    const companyId = Number(req.params.companyId);
+    const users = await getCompanyUser(
+      pagination.limit,
+      pagination.offset,
+      companyId
+    );
+    res.json(users);
+  })
+);
+
 companiesRoutes.post(
   "/companies/:companyId/users",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = addCompanyUserRoleSchema.parse(req.body);
+    const data = createCompanyUserSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const newCompanyUser = await addCompanyUser(
       data.email,
@@ -93,29 +111,30 @@ companiesRoutes.post(
 );
 
 companiesRoutes.patch(
-  "/companies/:companyId/users",
+  "/companies/:companyId/users/:userId",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = updateCompanyUserRoleSchema.parse(req.body);
+    const data = updateCompanyUserSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
+    const userId = Number(req.params.userId);
     const updatedCompanyUser = await updateCompanyUser(
-      data.userId,
+      userId,
       data.role,
       companyId
     );
-    res.json(updatedCompanyUser);
+    res.json([updatedCompanyUser[0], updatedCompanyUser[1].role]);
   })
 );
 
 companiesRoutes.delete(
-  "/companies/:companyId/users",
+  "/companies/:companyId/users/:userId",
   sessionAuth,
   companyAuth(UserCompanyRole.Owner),
   tryCatch(async (req: Request, res) => {
-    const data = deleteCompanyUserRoleSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
-    const deletedCompanyUser = await deleteCompanyUser(data.userId, companyId);
+    const userId = Number(req.params.userId);
+    const deletedCompanyUser = await deleteCompanyUser(userId, companyId);
     res.json(deletedCompanyUser);
   })
 );

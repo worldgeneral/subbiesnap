@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { db } from "../db";
-import { tryCatch } from "../utils/tryCatch";
-import { AppError } from "../utils/ExpressError";
+import { tryCatch } from "../utils/try.catch";
+import { AppError } from "../utils/express.error";
 import { and, eq, isNull } from "drizzle-orm";
-import { companies, companiesUsers } from "../schemas";
+import { companiesTable, companiesUsersTable } from "../schemas";
 import { CompanyStatus, UserCompanyRole } from "../services/company.service";
-import { companyAuthId } from "../zodSchema/authSchema";
+import { companyAuthId } from "../rules/auth.rule";
 
 export const companyAuth = (role: UserCompanyRole) =>
   tryCatch(async function (req: Request, Res: Response, next: NextFunction) {
@@ -13,12 +13,12 @@ export const companyAuth = (role: UserCompanyRole) =>
     const companyId = companyAuthId.parse(req.params.companyId);
     const [userCompany] = await db
       .select()
-      .from(companiesUsers)
+      .from(companiesUsersTable)
       .where(
         and(
-          eq(companiesUsers.userId, user!.id),
-          eq(companiesUsers.companyId, companyId),
-          isNull(companiesUsers.deletedAt)
+          eq(companiesUsersTable.userId, user!.id),
+          eq(companiesUsersTable.companyId, companyId),
+          isNull(companiesUsersTable.deletedAt)
         )
       );
 
@@ -32,8 +32,8 @@ export const companyAuth = (role: UserCompanyRole) =>
 
     const [companyData] = await db
       .select()
-      .from(companies)
-      .where(eq(companies.id, companyId));
+      .from(companiesTable)
+      .where(eq(companiesTable.id, companyId));
 
     if (companyData.status === CompanyStatus.Deleted) {
       throw new AppError("company no loner exists", 404);

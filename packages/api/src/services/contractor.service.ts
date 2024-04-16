@@ -7,14 +7,14 @@ import {
   contractorsTable,
 } from "../schemas";
 import { db } from "../db";
-import { AppError } from "../utils/ExpressError";
+import { AppError } from "../utils/express.error";
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
 import {
   ContractorsAccreditationSchema,
   contractorSchema,
-} from "../zodSchema/contractorSchema";
+} from "../rules/contractor.rule";
 
 type Contractor = Required<z.infer<typeof contractorSchema>>;
 
@@ -60,7 +60,10 @@ export async function getContractor(contractorId: number) {
   return normalizeContractor(contractor);
 }
 
-export async function getContractors(limit: number, offset: number) {
+export async function getContractors(
+  limit: number,
+  offset: number
+): Promise<Array<Contractor>> {
   const contractors = await db
     .select()
     .from(contractorsTable)
@@ -77,7 +80,7 @@ export async function getContractors(limit: number, offset: number) {
 
 export async function registerContractor(
   contractorsData: ContractorsSchemaInsert
-) {
+): Promise<Contractor> {
   const [contractor] = await db
     .insert(contractorsTable)
     .values(contractorsData)
@@ -89,7 +92,7 @@ export async function registerContractor(
 export async function updateContractor(
   contractorsData: Partial<Omit<ContractorsSchemaInsert, "userId">>,
   contractorId: number
-) {
+): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
     .set({ updatedAt: moment().toDate(), ...contractorsData })
@@ -103,7 +106,9 @@ export async function updateContractor(
   return normalizeContractor(contractor);
 }
 
-export async function deleteContractor(contractorId: number) {
+export async function deleteContractor(
+  contractorId: number
+): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
     .set({ deletedAt: moment().toDate() })
@@ -117,7 +122,9 @@ export async function deleteContractor(contractorId: number) {
   return normalizeContractor(contractor);
 }
 
-export async function getAccreditation(accreditationsId: number) {
+export async function getAccreditation(
+  accreditationsId: number
+): Promise<ContractorsAccreditation> {
   const [contractorsAccreditation] = await db
     .select()
     .from(contractorsAccreditations)
@@ -139,7 +146,7 @@ export async function getAccreditations(
   contractorId: number,
   limit: number,
   offset: number
-) {
+): Promise<Array<ContractorsAccreditation>> {
   const contractorsAccreditation = await db
     .select()
     .from(contractorsAccreditations)
@@ -164,7 +171,7 @@ export async function getAccreditations(
 export async function addAccreditations(
   accreditationData: Array<ContractorsAccreditationsSchemaInsert>,
   contractorId: number
-) {
+): Promise<Array<ContractorsAccreditation>> {
   const accreditationWithID = accreditationData.map((accreditation) => ({
     ...accreditation,
     contractorId,
@@ -185,7 +192,7 @@ export async function addAccreditations(
 export async function updateAccreditation(
   accreditationData: Partial<ContractorsAccreditationsSchemaInsert>,
   accreditationId: number
-) {
+): Promise<ContractorsAccreditation> {
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ updatedAt: moment().toDate(), ...accreditationData })
@@ -207,7 +214,7 @@ export async function updateAccreditation(
 export async function deleteAccreditation(
   accreditationId: number,
   contractorId: number
-) {
+): Promise<ContractorsAccreditation> {
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ deletedAt: moment().toDate() })
