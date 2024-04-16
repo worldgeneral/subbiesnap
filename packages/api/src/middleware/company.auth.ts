@@ -4,8 +4,8 @@ import { tryCatch } from "../utils/try.catch";
 import { AppError } from "../utils/express.error";
 import { and, eq, isNull } from "drizzle-orm";
 import { companiesTable, companiesUsersTable } from "../schemas";
-import { CompanyStatus, UserCompanyRole } from "../services/company.service";
 import { companyAuthId } from "../rules/auth.rule";
+import { CompanyStatus, UserCompanyRole } from "../utils/magic.numbers";
 
 export const companyAuth = (role: UserCompanyRole) =>
   tryCatch(async function (req: Request, Res: Response, next: NextFunction) {
