@@ -8,7 +8,11 @@ export const userSchema = z.object({
   secondName: z.string(),
 });
 
-export const updateUserSchema = userSchema.omit({ id: true });
+export const updateUserSchema = userSchema.omit({
+  id: true,
+  password: true,
+  email: true,
+});
 
 export const registerSchema = z
   .object({
