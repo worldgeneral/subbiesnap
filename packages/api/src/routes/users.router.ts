@@ -8,7 +8,6 @@ import {
   updateUser,
 } from "../services/user.service";
 import { sessionAuth } from "../middleware/session.auth";
-import { companiesRoutes } from "./companies.router";
 
 const usersRoutes = Router();
 

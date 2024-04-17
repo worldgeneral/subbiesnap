@@ -10,6 +10,10 @@ import { randomStringAsBase64Url } from "../utils/unique.string";
 import moment from "moment";
 import { createHash } from "crypto";
 import { sessionsTable } from "../schemas";
+import {
+  sessionTokenExpireDays,
+  sessionTokenStringLength,
+} from "../utils/magic.numbers";
 
 export type login = Required<
   Omit<z.infer<typeof userSchema>, "id" | "firstName" | "secondName">
@@ -32,13 +36,13 @@ export async function loginAuthUser(password: string, email: string) {
 }
 
 export async function userLogin(userId: number) {
-  const sessionToken = await randomStringAsBase64Url(128);
+  const sessionToken = await randomStringAsBase64Url(sessionTokenStringLength);
   const hashToken = createHash("sha256").update(sessionToken).digest("hex");
 
   await db.insert(sessionsTable).values({
     userId: userId,
     sessionToken: hashToken,
-    expiresAt: moment().add(7, "days").toDate(),
+    expiresAt: moment().add(sessionTokenExpireDays, "days").toDate(),
   });
 
   return sessionToken;

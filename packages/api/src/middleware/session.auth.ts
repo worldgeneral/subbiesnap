@@ -39,7 +39,9 @@ const sessionAuth = tryCatch(async function (
     ) {
       await db
         .update(sessionsTable)
-        .set({ expiresAt: moment().add(7, "days").toDate() })
+        .set({
+          expiresAt: moment().add(sessionTokenExpireDays, "days").toDate(),
+        })
         .where(eq(sessionsTable.id, session.sessions.id));
     }
     req.user = normalizeUser(session.users);
