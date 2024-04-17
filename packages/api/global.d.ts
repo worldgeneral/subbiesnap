@@ -1,8 +1,11 @@
-import { User } from "./src/services/user.service";
-
 declare namespace Express {
   export interface Request {
-    user?: User<Omit<"password">>;
+    user?: {
+      id: number;
+      email: string;
+      firstName: string;
+      secondName: string;
+    };
   }
 }
 declare namespace Express {

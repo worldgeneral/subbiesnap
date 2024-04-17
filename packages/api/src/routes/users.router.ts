@@ -36,7 +36,7 @@ usersRoutes.post(
 );
 
 usersRoutes.patch(
-  "users/:userId",
+  "/users/:userId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const data = updateUserSchema.parse(req.body);
@@ -48,7 +48,7 @@ usersRoutes.patch(
 );
 
 usersRoutes.delete(
-  "users/:userId",
+  "/users/:userId",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const userId = Number(req.params.userId);
