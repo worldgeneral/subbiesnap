@@ -42,7 +42,7 @@ usersRoutes.patch(
   tryCatch(async (req: Request, res) => {
     const data = updateUserSchema.parse(req.body);
     const userId = Number(req.params.userId);
-    const user = updateUser(data, userId);
+    const user = await updateUser(data, userId);
 
     res.json(user);
   })
@@ -53,7 +53,7 @@ usersRoutes.delete(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const userId = Number(req.params.userId);
-    const user = deleteUser(userId);
+    const user = await deleteUser(userId);
     res.json(user);
   })
 );
