@@ -5,6 +5,7 @@ import {
   companySchema,
   createCompanySchema,
   createCompanyUserSchema,
+  updateCompanySchema,
   updateCompanyUserSchema,
 } from "../rules/company.rule";
 import {
@@ -59,7 +60,7 @@ companiesRoutes.patch(
   sessionAuth,
   companyAuth(UserCompanyRole.Admin),
   tryCatch(async (req: Request, res) => {
-    const data = companySchema.parse(req.body);
+    const data = updateCompanySchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const company = await updateCompanyData(data, companyId);
     res.json(company);
@@ -123,7 +124,7 @@ companiesRoutes.patch(
       data.role,
       companyId
     );
-    res.json([updatedCompanyUser[0], updatedCompanyUser[1].role]);
+    res.json({ ...updatedCompanyUser[0], role: updatedCompanyUser[1].role });
   })
 );
 

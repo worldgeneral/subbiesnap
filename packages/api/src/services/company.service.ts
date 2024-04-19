@@ -66,12 +66,12 @@ export async function getCompanies(
 }
 
 export async function registerCompany(
-  companyData: CompaniesSchemaInsert,
+  companyData: Omit<CompaniesSchemaInsert, "ownerId">,
   userId: number
 ): Promise<Company> {
   const [company] = await db
     .insert(companiesTable)
-    .values(companyData)
+    .values({ ownerId: userId, ...companyData })
     .returning();
 
   await db.insert(companiesUsersTable).values({
@@ -84,7 +84,7 @@ export async function registerCompany(
 }
 
 export async function updateCompanyData(
-  companyData: Partial<Omit<CompaniesSchemaInsert, "ownerId">>,
+  companyData: Partial<CompaniesSchemaInsert>,
   companyId: number
 ): Promise<Company> {
   const [company] = await db
@@ -121,12 +121,30 @@ export async function getCompanyUser(
   const result = await db
     .select()
     .from(usersTable)
-    .where(isNull(companiesUsersTable.deletedAt))
-    .leftJoin(companiesUsersTable, eq(companiesUsersTable.companyId, companyId))
+    .where(
+      and(
+        eq(companiesUsersTable.userId, usersTable.id),
+        isNull(usersTable.deletedAt),
+        isNull(companiesUsersTable.deletedAt)
+      )
+    )
+    .innerJoin(
+      companiesUsersTable,
+      and(
+        eq(companiesUsersTable.companyId, companyId),
+        isNull(usersTable.deletedAt),
+        isNull(companiesUsersTable.deletedAt)
+      )
+    )
     .limit(limit)
     .offset(offset);
-
-  const users = result.map((user) => normalizeUser(user.users));
+  console.log(result);
+  const users = result.map((user) => {
+    return {
+      ...normalizeUser(user.users),
+      role: user.companies_users.role,
+    };
+  });
   return users;
 }
 
@@ -144,7 +162,7 @@ export async function addCompanyUser(
     throw new AppError("user does not exist", 404);
   }
 
-  const userCompany = await db
+  const [userCompany] = await db
     .select()
     .from(companiesUsersTable)
     .where(
@@ -192,7 +210,7 @@ export async function updateCompanyUser(
   const [user] = await db
     .select()
     .from(usersTable)
-    .where(eq(usersTable.id, updatedCompanyUser.id));
+    .where(eq(usersTable.id, updatedCompanyUser.userId));
 
   return [normalizeUser(user), normalizeCompanyUser(updatedCompanyUser)];
 }
@@ -201,7 +219,7 @@ export async function deleteCompanyUser(
   userId: number,
   companyId: number
 ): Promise<CompanyUser> {
-  const [updatedCompanyUser] = await db
+  const [deletedCompanyUser] = await db
     .update(companiesUsersTable)
     .set({ deletedAt: moment().toDate() })
     .where(
@@ -212,8 +230,8 @@ export async function deleteCompanyUser(
     )
     .returning();
 
-  if (!updatedCompanyUser) {
+  if (!deletedCompanyUser) {
     throw new AppError("Error can not delete role", 400);
   }
-  return updatedCompanyUser;
+  return normalizeCompanyUser(deletedCompanyUser);
 }

@@ -11,10 +11,12 @@ export const companySchema = z.object({
 
 export const createCompanySchema = companySchema.omit({
   id: true,
+  ownerId: true,
 });
 
 export const updateCompanySchema = companySchema.omit({
   id: true,
+  ownerId: true,
 });
 
 export const companyUserSchema = z.object({
@@ -24,8 +26,6 @@ export const companyUserSchema = z.object({
 });
 
 export const createCompanyUserSchema = z.object({
-  id: z.number(),
-  userId: z.number(),
   role: z.nativeEnum(UserCompanyRole),
   email: z.string().email(),
 });
