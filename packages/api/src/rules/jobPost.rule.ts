@@ -14,7 +14,10 @@ export const jobPostsSchema = z.object({
   fulfilledAt: z.coerce.date().nullable().optional(),
 });
 
-export const CreateJobPostSchema = jobPostsSchema.omit({ id: true });
+export const CreateJobPostSchema = jobPostsSchema.omit({
+  id: true,
+  companyId: true,
+});
 
 export const updateJobPostSchema = jobPostsSchema.omit({
   id: true,

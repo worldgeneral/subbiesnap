@@ -88,13 +88,13 @@ export async function getJobPosts(
 }
 
 export async function createJobPost(
-  jobPostData: JobPostsSchemaInsert,
-  userCompany: number
+  jobPostData: Omit<JobPostsSchemaInsert, "companyId">,
+  companyId: number
 ): Promise<job> {
-  if (jobPostData.companyId !== userCompany) {
-    throw new AppError("Error company id is incorrect", 400);
-  }
-  const [jobPost] = await db.insert(jobsTable).values(jobPostData).returning();
+  const [jobPost] = await db
+    .insert(jobsTable)
+    .values({ ...jobPostData, companyId: companyId })
+    .returning();
 
   return normalizeJobPost(jobPost);
 }

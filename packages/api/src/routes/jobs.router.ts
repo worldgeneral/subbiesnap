@@ -60,7 +60,8 @@ jobsRoutes.post(
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
     const data = CreateJobPostSchema.parse(req.body);
-    const newJobPost = await createJobPost(data, req.usersCompany!);
+    const companyId = Number(req.params.companyId);
+    const newJobPost = await createJobPost(data, companyId);
     res.json(newJobPost).status(201);
   })
 );
