@@ -14,10 +14,8 @@ import {
   updateContractor,
 } from "../services/contractor.service";
 import {
-  ContractorsAccreditationSchema,
   ContractorsAccreditationsSchema,
   CreateContractorSchema,
-  CreateContractorsAccreditationSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
 } from "../rules/contractor.rule";
