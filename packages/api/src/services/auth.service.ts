@@ -11,8 +11,8 @@ import moment from "moment";
 import { createHash } from "crypto";
 import { sessionsTable } from "../schemas";
 import {
-  sessionTokenExpireDays,
-  sessionTokenStringLength,
+  SESSION_TOKEN_EXPIRE_DAYS,
+  SESSION_TOKEN_STRING_LENGTH,
 } from "../utils/magic.numbers";
 
 export type login = Required<
@@ -36,13 +36,15 @@ export async function loginAuthUser(password: string, email: string) {
 }
 
 export async function userLogin(userId: number) {
-  const sessionToken = await randomStringAsBase64Url(sessionTokenStringLength);
+  const sessionToken = await randomStringAsBase64Url(
+    SESSION_TOKEN_STRING_LENGTH
+  );
   const hashToken = createHash("sha256").update(sessionToken).digest("hex");
 
   await db.insert(sessionsTable).values({
     userId: userId,
     sessionToken: hashToken,
-    expiresAt: moment().add(sessionTokenExpireDays, "days").toDate(),
+    expiresAt: moment().add(SESSION_TOKEN_EXPIRE_DAYS, "days").toDate(),
   });
 
   return sessionToken;

@@ -7,7 +7,7 @@ import { createHash } from "crypto";
 import { tryCatch } from "../utils/try.catch";
 import moment from "moment";
 import { normalizeUser } from "../services/user.service";
-import { sessionTokenExpireDays } from "../utils/magic.numbers";
+import { SESSION_TOKEN_EXPIRE_DAYS } from "../utils/magic.numbers";
 
 const sessionAuth = tryCatch(async function (
   req: Request,
@@ -33,14 +33,14 @@ const sessionAuth = tryCatch(async function (
     if (
       moment(session.sessions.expiresAt).isBefore(
         moment()
-          .add(sessionTokenExpireDays - 1, "days")
+          .add(SESSION_TOKEN_EXPIRE_DAYS - 1, "days")
           .toDate()
       )
     ) {
       await db
         .update(sessionsTable)
         .set({
-          expiresAt: moment().add(sessionTokenExpireDays, "days").toDate(),
+          expiresAt: moment().add(SESSION_TOKEN_EXPIRE_DAYS, "days").toDate(),
         })
         .where(eq(sessionsTable.id, session.sessions.id));
     }

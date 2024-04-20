@@ -12,7 +12,7 @@ import z from "zod";
 
 export type Job = Required<z.infer<typeof jobPostsSchema>>;
 
-export function normalizeJobPost(job: JobPostsSchema): job {
+export function normalizeJobPost(job: JobPostsSchema): Job {
   return {
     id: job.id,
     companyId: job.companyId,
@@ -28,7 +28,7 @@ export function normalizeJobPost(job: JobPostsSchema): job {
   };
 }
 
-export async function getJobPost(jobPostId: number): Promise<job> {
+export async function getJobPost(jobPostId: number): Promise<Job> {
   const [jobPost] = await db
     .select()
     .from(jobsTable)
@@ -50,7 +50,7 @@ export async function getCompanyJobPosts(
   companyId: number,
   limit: number,
   offset: number
-): Promise<Array<job>> {
+): Promise<Array<Job>> {
   const jobPosts = await db
     .select()
     .from(jobsTable)
@@ -72,7 +72,7 @@ export async function getCompanyJobPosts(
 export async function getJobPosts(
   limit: number,
   offset: number
-): Promise<Array<job>> {
+): Promise<Array<Job>> {
   const jobPosts = await db
     .select()
     .from(jobsTable)
@@ -90,7 +90,7 @@ export async function getJobPosts(
 export async function createJobPost(
   jobPostData: Omit<JobPostsSchemaInsert, "companyId">,
   companyId: number
-): Promise<job> {
+): Promise<Job> {
   const [jobPost] = await db
     .insert(jobsTable)
     .values({ ...jobPostData, companyId: companyId })
@@ -103,7 +103,7 @@ export async function updateJobPost(
   jobPostData: Partial<JobPostsSchemaInsert>,
   jobPostId: number,
   companyId: number
-): Promise<job> {
+): Promise<Job> {
   const [jobPost] = await db
     .update(jobsTable)
     .set({ updatedAt: moment().toDate(), companyId: companyId, ...jobPostData })
@@ -117,7 +117,7 @@ export async function updateJobPost(
   return normalizeJobPost(jobPost);
 }
 
-export async function deleteJobPost(jobPostId: number): Promise<job> {
+export async function deleteJobPost(jobPostId: number): Promise<Job> {
   const [jobPost] = await db
     .update(jobsTable)
     .set({ deletedAt: moment().toDate() })

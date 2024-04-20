@@ -251,7 +251,10 @@ export async function deleteAccreditation(
     .where(eq(contractorsTable.userId, userId));
 
   if (contractor.id !== contractorId) {
-    throw new AppError("Error unable to update accreditation", 400);
+    throw new AppError(
+      "Error user does not have permission to update accreditation",
+      403
+    );
   }
 
   const [accreditation] = await db
