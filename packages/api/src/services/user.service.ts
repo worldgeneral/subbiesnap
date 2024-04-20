@@ -68,7 +68,6 @@ export async function updateUser(
     .where(and(eq(usersTable.id, userId), isNull(usersTable.deletedAt)))
     .returning();
 
-  console.log(user);
   if (!user) {
     throw new AppError("Error unable to update user", 400);
   }
