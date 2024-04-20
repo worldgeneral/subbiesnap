@@ -32,6 +32,7 @@ export const ContractorsAccreditationSchema = z.object({
 export const ContractorsAccreditationsSchema = z.array(
   ContractorsAccreditationSchema.omit({
     id: true,
+    contractorId: true,
   })
 );
 

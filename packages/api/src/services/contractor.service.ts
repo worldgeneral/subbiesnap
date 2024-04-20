@@ -175,14 +175,26 @@ export async function getAccreditations(
 }
 
 export async function addAccreditations(
-  accreditationData: Array<ContractorsAccreditationsSchemaInsert>,
-  contractorId: number
+  accreditationData: Array<
+    Omit<ContractorsAccreditationsSchemaInsert, "contractorId">
+  >,
+  contractorId: number,
+  userId: number
 ): Promise<Array<ContractorsAccreditation>> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError("Error unable to add accreditation", 400);
+  }
+
   const accreditationWithID = accreditationData.map((accreditation) => ({
     ...accreditation,
-    contractorId,
+    contractorId: contractorId,
   }));
-  console.log(accreditationData, accreditationWithID);
+
   const contractorsAccreditation = await db
     .insert(contractorsAccreditations)
     .values(accreditationWithID)
@@ -191,20 +203,31 @@ export async function addAccreditations(
   const accreditations = contractorsAccreditation.map((accreditation) =>
     normalizeAccreditation(accreditation)
   );
-  console.log(accreditationData);
+
   return accreditations;
 }
 
 export async function updateAccreditation(
   accreditationData: Partial<ContractorsAccreditationsSchemaInsert>,
-  accreditationId: number
+  accreditationId: number,
+  contractorId: number,
+  userId: number
 ): Promise<ContractorsAccreditation> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError("Error unable to update accreditation", 400);
+  }
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ updatedAt: moment().toDate(), ...accreditationData })
     .where(
       and(
         eq(contractorsAccreditations.id, accreditationId),
+        eq(contractorsAccreditations.contractorId, contractorId),
         isNull(contractorsAccreditations.deletedAt)
       )
     )
@@ -219,8 +242,18 @@ export async function updateAccreditation(
 
 export async function deleteAccreditation(
   accreditationId: number,
-  contractorId: number
+  contractorId: number,
+  userId: number
 ): Promise<ContractorsAccreditation> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError("Error unable to update accreditation", 400);
+  }
+
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ deletedAt: moment().toDate() })
@@ -233,7 +266,7 @@ export async function deleteAccreditation(
     .returning();
 
   if (!accreditation) {
-    throw new AppError("unable to delete accreditation", 400);
+    throw new AppError("Error unable to update accreditation", 400);
   }
 
   return normalizeAccreditation(accreditation);

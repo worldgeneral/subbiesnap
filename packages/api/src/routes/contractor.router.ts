@@ -20,6 +20,7 @@ import {
   UpdateContractorsAccreditationSchema,
 } from "../rules/contractor.rule";
 import { paginationSchema } from "../rules/pagination.rule";
+import { number } from "zod";
 
 const contractorsRoutes = Router();
 
@@ -116,7 +117,8 @@ contractorsRoutes.post(
     const contractorId = Number(req.params.contractorId);
     const accreditations = await addAccreditations(
       contractorData,
-      contractorId
+      contractorId,
+      req.user!.id
     );
     res.json(accreditations).status(201);
   })
@@ -130,9 +132,12 @@ contractorsRoutes.patch(
       req.body
     );
     const accreditationId = Number(req.params.accreditationId);
+    const contractorId = Number(req.params.contractorId);
     const updatedContractor = await updateAccreditation(
       accreditationData,
-      accreditationId
+      accreditationId,
+      contractorId,
+      req.user!.id
     );
     res.json(updatedContractor);
   })
@@ -146,7 +151,8 @@ contractorsRoutes.delete(
     const accreditationId = Number(req.params.accreditationId);
     const deletedContractor = await deleteAccreditation(
       accreditationId,
-      contractorId
+      contractorId,
+      req.user!.id
     );
     res.json(deletedContractor);
   })
