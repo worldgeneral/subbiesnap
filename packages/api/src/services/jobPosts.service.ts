@@ -10,7 +10,7 @@ import { AppError } from "../utils/express.error";
 import { jobPostsSchema } from "../rules/jobPost.rule";
 import z from "zod";
 
-export type job = Required<z.infer<typeof jobPostsSchema>>;
+export type Job = Required<z.infer<typeof jobPostsSchema>>;
 
 export function normalizeJobPost(job: JobPostsSchema): job {
   return {
