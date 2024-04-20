@@ -51,7 +51,12 @@ export async function getContractor(contractorId: number) {
   const [contractor] = await db
     .select()
     .from(contractorsTable)
-    .where(eq(contractorsTable.id, contractorId));
+    .where(
+      and(
+        eq(contractorsTable.id, contractorId),
+        isNull(contractorsTable.deletedAt)
+      )
+    );
 
   if (!contractor) {
     throw new AppError("unable to find contractor", 404);
@@ -79,11 +84,12 @@ export async function getContractors(
 }
 
 export async function registerContractor(
-  contractorsData: ContractorsSchemaInsert
+  contractorsData: ContractorsSchemaInsert,
+  userId: number
 ): Promise<Contractor> {
   const [contractor] = await db
     .insert(contractorsTable)
-    .values(contractorsData)
+    .values({ ...contractorsData, userId: userId })
     .returning();
 
   return normalizeContractor(contractor);

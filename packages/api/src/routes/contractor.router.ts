@@ -51,7 +51,10 @@ contractorsRoutes.post(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = CreateContractorSchema.parse(req.body);
-    const newContractor = await registerContractor(contractorData);
+    const newContractor = await registerContractor(
+      contractorData,
+      req.user!.id
+    );
     res.json(newContractor).status(201);
   })
 );
