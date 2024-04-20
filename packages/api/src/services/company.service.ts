@@ -138,7 +138,6 @@ export async function getCompanyUser(
     )
     .limit(limit)
     .offset(offset);
-  console.log(result);
   const users = result.map((user) => {
     return {
       ...normalizeUser(user.users),
