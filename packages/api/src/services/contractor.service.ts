@@ -266,7 +266,7 @@ export async function deleteAccreditation(
     .returning();
 
   if (!accreditation) {
-    throw new AppError("Error unable to update accreditation", 400);
+    throw new AppError("Error unable to delete accreditation", 400);
   }
 
   return normalizeAccreditation(accreditation);
