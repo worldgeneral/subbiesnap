@@ -10,5 +10,5 @@ export enum UserCompanyRole {
   Contributor = 30,
 }
 
-export const sessionTokenExpireDays = 7;
-export const sessionTokenStringLength = 128;
+export const SESSION_TOKEN_EXPIRE_DAYS = 7;
+export const SESSION_TOKEN_STRING_LENGTH = 128;
