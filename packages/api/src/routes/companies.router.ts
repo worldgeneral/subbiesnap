@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/try.catch";
-import { sessionAuth } from "../middleware/session.auth";
+import { sessionAuth } from "../middleware/session-auth.middleware";
 import {
   companySchema,
   createCompanySchema,
@@ -19,7 +19,7 @@ import {
   updateCompanyData,
   updateCompanyUser,
 } from "../services/company.service";
-import { companyAuth } from "../middleware/company.auth";
+import { companyAuth } from "../middleware/company-auth.middleware";
 import { UserCompanyRole } from "../utils/magic.numbers";
 import { paginationSchema } from "../rules/pagination.rule";
 

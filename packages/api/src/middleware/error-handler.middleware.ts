@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/express.error";
 import { ZodError } from "zod";
 
-const errorHandler = (
+export const errorHandler = (
   err: Error | unknown,
   req: Request,
   res: Response,
@@ -25,5 +25,3 @@ const errorHandler = (
     message: "Something went wrong",
   });
 };
-
-export { errorHandler };

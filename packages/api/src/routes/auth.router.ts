@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/try.catch";
 import { authSchema } from "../rules/auth.rule";
 import { loginAuthUser, userLogin, userLogout } from "../services/auth.service";
-import { sessionAuth } from "../middleware/session.auth";
+import { sessionAuth } from "../middleware/session-auth.middleware";
 
 const authRoutes = Router();
 

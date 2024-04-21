@@ -9,7 +9,7 @@ import moment from "moment";
 import { normalizeUser } from "../services/user.service";
 import { SESSION_TOKEN_EXPIRE_DAYS } from "../utils/magic.numbers";
 
-const sessionAuth = tryCatch(async function (
+export const sessionAuth = tryCatch(async function (
   req: Request,
   Res: Response,
   next: NextFunction
@@ -50,5 +50,3 @@ const sessionAuth = tryCatch(async function (
   }
   throw new AppError("not authorized", 401);
 });
-
-export { sessionAuth };

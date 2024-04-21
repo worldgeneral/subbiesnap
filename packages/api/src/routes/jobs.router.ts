@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { tryCatch } from "../utils/try.catch";
-import { sessionAuth } from "../middleware/session.auth";
-import { companyAuth } from "../middleware/company.auth";
+import { sessionAuth } from "../middleware/session-auth.middleware";
+import { companyAuth } from "../middleware/company-auth.middleware";
 import {
   CreateJobPostSchema,
   updateJobPostSchema,

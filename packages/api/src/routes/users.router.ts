@@ -7,7 +7,7 @@ import {
   registerUser,
   updateUser,
 } from "../services/user.service";
-import { sessionAuth } from "../middleware/session.auth";
+import { sessionAuth } from "../middleware/session-auth.middleware";
 
 const usersRoutes = Router();
 
