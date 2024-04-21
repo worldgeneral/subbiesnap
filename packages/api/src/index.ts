@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { companiesRoutes } from "./routes/companies.router";
 import { contractorsRoutes } from "./routes/contractor.router";
 import { jobsRoutes } from "./routes/jobs.router";
+import { ratingsRoutes } from "./routes/rating.router";
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(authRoutes);
 app.use(companiesRoutes);
 app.use(contractorsRoutes);
 app.use(jobsRoutes);
+app.use(ratingsRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError("page not found", 404));
