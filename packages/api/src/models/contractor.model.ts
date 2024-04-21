@@ -1,11 +1,11 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
-import { users } from "./user.model";
+import { usersTable } from "./user.model";
 
 export const contractorsTable = pgTable("contractors", {
   id: serial("id").primaryKey().notNull(),
   userId: integer("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => usersTable.id, { onDelete: "cascade" })
     .unique(),
   name: text("solo_trader_name"),
   logo: text("logo"),

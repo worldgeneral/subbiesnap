@@ -1,8 +1,8 @@
 import "dotenv/config";
 import express, { NextFunction } from "express";
-import { AppError } from "./utils/ExpressError";
+import { AppError } from "./utils/express.error";
 import { usersRoutes } from "./routes/users.router";
-import { errorHandler } from "./middleware/errorHandler";
+import { errorHandler } from "./middleware/error-handler.middleware";
 import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
 import { companiesRoutes } from "./routes/companies.router";

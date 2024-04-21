@@ -6,13 +6,13 @@ import {
   integer,
   date,
 } from "drizzle-orm/pg-core";
-import { companies } from "./company.model";
+import { companiesTable } from "./company.model";
 
 export const jobsTable = pgTable("jobs", {
   id: serial("id").primaryKey().notNull(),
   companyId: integer("company_id")
     .notNull()
-    .references(() => companies.id, { onDelete: "cascade" }),
+    .references(() => companiesTable.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   startsAt: date("starts_at", { mode: "date" }).notNull(),
   endsAt: date("ends_at", { mode: "date" }),

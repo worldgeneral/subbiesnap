@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { db } from "../db";
-import { sessions, users } from "../schemas";
+import { sessionsTable, usersTable } from "../schemas";
 import { eq } from "drizzle-orm";
-import { AppError } from "../utils/ExpressError";
+import { AppError } from "../utils/express.error";
 import { createHash } from "crypto";
-import { tryCatch } from "../utils/tryCatch";
+import { tryCatch } from "../utils/try.catch";
 import moment from "moment";
 import { normalizeUser } from "../services/user.service";
+import { SESSION_TOKEN_EXPIRE_DAYS } from "../utils/magic.numbers";
 
-const sessionAuth = tryCatch(async function (
+export const sessionAuth = tryCatch(async function (
   req: Request,
   Res: Response,
   next: NextFunction
@@ -21,9 +22,9 @@ const sessionAuth = tryCatch(async function (
 
     const [session] = await db
       .select()
-      .from(sessions)
-      .innerJoin(users, eq(users.id, sessions.userId))
-      .where(eq(sessions.sessionToken, hashedSessionToken));
+      .from(sessionsTable)
+      .innerJoin(usersTable, eq(usersTable.id, sessionsTable.userId))
+      .where(eq(sessionsTable.sessionToken, hashedSessionToken));
 
     if (!session || moment().isAfter(session.sessions.expiresAt)) {
       throw new AppError("not authorized", 401);
@@ -31,13 +32,17 @@ const sessionAuth = tryCatch(async function (
 
     if (
       moment(session.sessions.expiresAt).isBefore(
-        moment().add(6, "days").toDate()
+        moment()
+          .add(SESSION_TOKEN_EXPIRE_DAYS - 1, "days")
+          .toDate()
       )
     ) {
       await db
-        .update(sessions)
-        .set({ expiresAt: moment().add(7, "days").toDate() })
-        .where(eq(sessions.id, session.sessions.id));
+        .update(sessionsTable)
+        .set({
+          expiresAt: moment().add(SESSION_TOKEN_EXPIRE_DAYS, "days").toDate(),
+        })
+        .where(eq(sessionsTable.id, session.sessions.id));
     }
     req.user = normalizeUser(session.users);
 
@@ -45,5 +50,3 @@ const sessionAuth = tryCatch(async function (
   }
   throw new AppError("not authorized", 401);
 });
-
-export { sessionAuth };

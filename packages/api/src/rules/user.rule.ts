@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+export const userSchema = z.object({
+  id: z.number(),
+  email: z.string().email(),
+  password: z.string(),
+  firstName: z.string(),
+  secondName: z.string(),
+});
+
+export const updateUserSchema = userSchema.omit({
+  id: true,
+  password: true,
+  email: true,
+});
+
 export const registerSchema = z
   .object({
     password: z.string().min(8),
@@ -33,10 +47,3 @@ export const registerSchema = z
       });
     }
   });
-
-export const userSchema = z.object({
-  userId: z.number(),
-  email: z.string().email().optional(),
-  firstName: z.string().optional(),
-  secondName: z.string().optional(),
-});

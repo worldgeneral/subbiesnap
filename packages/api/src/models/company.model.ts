@@ -1,9 +1,12 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
-import { users } from "./user.model";
-import { CompanyStatus } from "../services/company.service";
+import { usersTable } from "./user.model";
+import { CompanyStatus } from "../utils/magic.numbers";
 
-export const companies = pgTable("companies", {
+export const companiesTable = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
+  ownerId: integer("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),
@@ -13,18 +16,26 @@ export const companies = pgTable("companies", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export type CompaniesSchema = typeof companies.$inferSelect;
+export type CompaniesSchema = typeof companiesTable.$inferSelect;
+export type CompaniesSchemaInsert = Omit<
+  typeof companiesTable.$inferInsert,
+  "id"
+>;
 
-export const companiesUsers = pgTable("companies_users", {
+export const companiesUsersTable = pgTable("companies_users", {
   id: serial("id").primaryKey().notNull(),
   userId: integer("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   companyId: integer("company_id")
     .notNull()
-    .references(() => companies.id, { onDelete: "cascade" }),
+    .references(() => companiesTable.id, { onDelete: "cascade" }),
   role: integer("role").notNull(),
   deletedAt: timestamp("deleted_at"),
 });
 
-export type Companies_usersSchema = typeof companiesUsers.$inferSelect;
+export type CompaniesUsersSchema = typeof companiesUsersTable.$inferSelect;
+export type CompaniesUsersSchemaInsert = Omit<
+  typeof companiesUsersTable.$inferInsert,
+  "id"
+>;

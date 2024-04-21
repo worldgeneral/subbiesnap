@@ -1,35 +1,23 @@
 import { Router, Request, Response } from "express";
-import { registerSchema } from "../zodSchema/userSchema";
-import { users } from "../models/user.model";
-import { db } from "../db";
-import { tryCatch } from "../utils/tryCatch";
-import { AppError } from "../utils/ExpressError";
-import { normalizeUser, registerUser } from "../services/user.service";
-import { eq } from "drizzle-orm";
-import { sessionAuth } from "../middleware/sessionAuth";
+import { registerSchema, updateUserSchema } from "../rules/user.rule";
+import { tryCatch } from "../utils/try.catch";
+import {
+  deleteUser,
+  getUser,
+  registerUser,
+  updateUser,
+} from "../services/user.service";
+import { sessionAuth } from "../middleware/session-auth.middleware";
 
 const usersRoutes = Router();
 
 usersRoutes.get(
-  "/users",
-  sessionAuth,
-  tryCatch(async (req, res) => {
-    const result = await db.select().from(users);
-    res.json(result.map(normalizeUser));
-  })
-);
+  "/users/:userId",
+  tryCatch(async (req: Request, res) => {
+    const userId = Number(req.params.userId);
+    const user = await getUser(userId);
 
-usersRoutes.get(
-  "/users/:id",
-  tryCatch(async (req: Request<{ id: string }>, res) => {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, parseInt(req.params.id)));
-    if (!user) {
-      throw new AppError("user does not exist", 404);
-    }
-    res.json(normalizeUser(user));
+    res.json(user);
   })
 );
 
@@ -43,6 +31,26 @@ usersRoutes.post(
       data.firstName,
       data.secondName
     );
+    res.json(user).status(201);
+  })
+);
+
+usersRoutes.patch(
+  "/users/:userId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const data = updateUserSchema.parse(req.body);
+    const user = await updateUser(data, req.user!.id);
+
+    res.json(user);
+  })
+);
+
+usersRoutes.delete(
+  "/users/:userId",
+  sessionAuth,
+  tryCatch(async (req: Request, res) => {
+    const user = await deleteUser(req.user!.id);
     res.json(user);
   })
 );

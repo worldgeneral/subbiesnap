@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { z } from "zod";
 
 export const contractorSchema = z.object({
   id: z.number(),
@@ -32,6 +32,7 @@ export const ContractorsAccreditationSchema = z.object({
 export const ContractorsAccreditationsSchema = z.array(
   ContractorsAccreditationSchema.omit({
     id: true,
+    contractorId: true,
   })
 );
 

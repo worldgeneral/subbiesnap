@@ -1,12 +1,6 @@
-import {
-  serial,
-  pgTable,
-  pgSchema,
-  timestamp,
-  text,
-} from "drizzle-orm/pg-core";
+import { serial, pgTable, timestamp, text } from "drizzle-orm/pg-core";
 
-export const users = pgTable("users", {
+export const usersTable = pgTable("users", {
   id: serial("id").primaryKey().notNull(),
   email: text("email").unique().notNull(),
   password: text("password").notNull(),
@@ -17,4 +11,8 @@ export const users = pgTable("users", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export type UserSchema = typeof users.$inferSelect;
+export type UserSchema = typeof usersTable.$inferSelect;
+export type UserSchemaInsert = Omit<
+  typeof usersTable.$inferInsert,
+  "id" | "password"
+>;

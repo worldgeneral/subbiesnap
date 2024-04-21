@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, RequestHandler } from "express";
 
-function tryCatch<P, ResB, ReqB, Q>(
+export function tryCatch<P, ResB, ReqB, Q>(
   fn: (
     req: Request<P, ResB, ReqB, Q>,
     res: Response,
@@ -15,5 +15,3 @@ function tryCatch<P, ResB, ReqB, Q>(
     fn(req, res, next).catch((err: unknown) => next(err));
   };
 }
-
-export { tryCatch };

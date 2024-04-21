@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { tryCatch } from "../utils/tryCatch";
-import { sessionAuth } from "../middleware/sessionAuth";
+import { tryCatch } from "../utils/try.catch";
+import { sessionAuth } from "../middleware/session-auth.middleware";
 import {
   addAccreditations,
   deleteAccreditation,
@@ -14,14 +14,13 @@ import {
   updateContractor,
 } from "../services/contractor.service";
 import {
-  ContractorsAccreditationSchema,
   ContractorsAccreditationsSchema,
   CreateContractorSchema,
-  CreateContractorsAccreditationSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
-} from "../zodSchema/contractorSchema";
-import { paginationSchema } from "../zodSchema/paginationSchema";
+} from "../rules/contractor.rule";
+import { paginationSchema } from "../rules/pagination.rule";
+import { number } from "zod";
 
 const contractorsRoutes = Router();
 
@@ -53,7 +52,10 @@ contractorsRoutes.post(
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = CreateContractorSchema.parse(req.body);
-    const newContractor = await registerContractor(contractorData);
+    const newContractor = await registerContractor(
+      contractorData,
+      req.user!.id
+    );
     res.json(newContractor).status(201);
   })
 );
@@ -115,7 +117,8 @@ contractorsRoutes.post(
     const contractorId = Number(req.params.contractorId);
     const accreditations = await addAccreditations(
       contractorData,
-      contractorId
+      contractorId,
+      req.user!.id
     );
     res.json(accreditations).status(201);
   })
@@ -129,9 +132,12 @@ contractorsRoutes.patch(
       req.body
     );
     const accreditationId = Number(req.params.accreditationId);
+    const contractorId = Number(req.params.contractorId);
     const updatedContractor = await updateAccreditation(
       accreditationData,
-      accreditationId
+      accreditationId,
+      contractorId,
+      req.user!.id
     );
     res.json(updatedContractor);
   })
@@ -145,7 +151,8 @@ contractorsRoutes.delete(
     const accreditationId = Number(req.params.accreditationId);
     const deletedContractor = await deleteAccreditation(
       accreditationId,
-      contractorId
+      contractorId,
+      req.user!.id
     );
     res.json(deletedContractor);
   })

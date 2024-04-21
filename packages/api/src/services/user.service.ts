@@ -1,30 +1,37 @@
 import { NeonDbError } from "@neondatabase/serverless";
 import { db } from "../db";
-import { UserSchema, users } from "../models/user.model";
-import { AppError } from "../utils/ExpressError";
+import { UserSchema, UserSchemaInsert, usersTable } from "../models/user.model";
+import { AppError } from "../utils/express.error";
 import * as argon2 from "argon2";
+import { userSchema } from "../rules/user.rule";
+import z from "zod";
+import { and, eq, is, isNull } from "drizzle-orm";
+import moment from "moment";
 
-export type User = {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-  email: string;
-  firstName: string;
-  secondName: string;
-};
+export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
-function normalizeUser(user: UserSchema): User {
+export function normalizeUser(user: UserSchema): User {
   return {
     id: user.id,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
     email: user.email,
     firstName: user.firstName,
     secondName: user.secondName,
   };
 }
 
-async function registerUser(
+export async function getUser(userId: number): Promise<User> {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+  if (!user) {
+    throw new AppError("user does not exist", 404);
+  }
+
+  return normalizeUser(user);
+}
+
+export async function registerUser(
   email: string,
   password: string,
   firstName: string,
@@ -33,7 +40,7 @@ async function registerUser(
   try {
     const hashPassword = await argon2.hash(password);
     const [user] = await db
-      .insert(users)
+      .insert(usersTable)
       .values({
         email: email,
         password: hashPassword,
@@ -50,4 +57,33 @@ async function registerUser(
     throw err;
   }
 }
-export { registerUser, normalizeUser };
+
+export async function updateUser(
+  userData: Partial<UserSchemaInsert>,
+  userId: number
+): Promise<User> {
+  const [user] = await db
+    .update(usersTable)
+    .set({ updatedAt: moment().toDate(), ...userData })
+    .where(and(eq(usersTable.id, userId), isNull(usersTable.deletedAt)))
+    .returning();
+
+  if (!user) {
+    throw new AppError("Error unable to update user", 400);
+  }
+  return normalizeUser(user);
+}
+
+export async function deleteUser(userId: number): Promise<User> {
+  const [user] = await db
+    .update(usersTable)
+    .set({ deletedAt: moment().toDate() })
+    .where(eq(usersTable.id, userId))
+    .returning();
+
+  if (!user) {
+    throw new AppError("Error unable to delete user", 400);
+  }
+
+  return normalizeUser(user);
+}

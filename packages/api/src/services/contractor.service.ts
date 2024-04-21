@@ -7,14 +7,14 @@ import {
   contractorsTable,
 } from "../schemas";
 import { db } from "../db";
-import { AppError } from "../utils/ExpressError";
+import { AppError } from "../utils/express.error";
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
 import {
   ContractorsAccreditationSchema,
   contractorSchema,
-} from "../zodSchema/contractorSchema";
+} from "../rules/contractor.rule";
 
 type Contractor = Required<z.infer<typeof contractorSchema>>;
 
@@ -51,7 +51,12 @@ export async function getContractor(contractorId: number) {
   const [contractor] = await db
     .select()
     .from(contractorsTable)
-    .where(eq(contractorsTable.id, contractorId));
+    .where(
+      and(
+        eq(contractorsTable.id, contractorId),
+        isNull(contractorsTable.deletedAt)
+      )
+    );
 
   if (!contractor) {
     throw new AppError("unable to find contractor", 404);
@@ -60,7 +65,10 @@ export async function getContractor(contractorId: number) {
   return normalizeContractor(contractor);
 }
 
-export async function getContractors(limit: number, offset: number) {
+export async function getContractors(
+  limit: number,
+  offset: number
+): Promise<Array<Contractor>> {
   const contractors = await db
     .select()
     .from(contractorsTable)
@@ -76,11 +84,12 @@ export async function getContractors(limit: number, offset: number) {
 }
 
 export async function registerContractor(
-  contractorsData: ContractorsSchemaInsert
-) {
+  contractorsData: ContractorsSchemaInsert,
+  userId: number
+): Promise<Contractor> {
   const [contractor] = await db
     .insert(contractorsTable)
-    .values(contractorsData)
+    .values({ ...contractorsData, userId: userId })
     .returning();
 
   return normalizeContractor(contractor);
@@ -89,7 +98,7 @@ export async function registerContractor(
 export async function updateContractor(
   contractorsData: Partial<Omit<ContractorsSchemaInsert, "userId">>,
   contractorId: number
-) {
+): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
     .set({ updatedAt: moment().toDate(), ...contractorsData })
@@ -103,7 +112,9 @@ export async function updateContractor(
   return normalizeContractor(contractor);
 }
 
-export async function deleteContractor(contractorId: number) {
+export async function deleteContractor(
+  contractorId: number
+): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
     .set({ deletedAt: moment().toDate() })
@@ -117,7 +128,9 @@ export async function deleteContractor(contractorId: number) {
   return normalizeContractor(contractor);
 }
 
-export async function getAccreditation(accreditationsId: number) {
+export async function getAccreditation(
+  accreditationsId: number
+): Promise<ContractorsAccreditation> {
   const [contractorsAccreditation] = await db
     .select()
     .from(contractorsAccreditations)
@@ -139,7 +152,7 @@ export async function getAccreditations(
   contractorId: number,
   limit: number,
   offset: number
-) {
+): Promise<Array<ContractorsAccreditation>> {
   const contractorsAccreditation = await db
     .select()
     .from(contractorsAccreditations)
@@ -162,14 +175,26 @@ export async function getAccreditations(
 }
 
 export async function addAccreditations(
-  accreditationData: Array<ContractorsAccreditationsSchemaInsert>,
-  contractorId: number
-) {
+  accreditationData: Array<
+    Omit<ContractorsAccreditationsSchemaInsert, "contractorId">
+  >,
+  contractorId: number,
+  userId: number
+): Promise<Array<ContractorsAccreditation>> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError("Error unable to add accreditation", 400);
+  }
+
   const accreditationWithID = accreditationData.map((accreditation) => ({
     ...accreditation,
-    contractorId,
+    contractorId: contractorId,
   }));
-  console.log(accreditationData, accreditationWithID);
+
   const contractorsAccreditation = await db
     .insert(contractorsAccreditations)
     .values(accreditationWithID)
@@ -178,20 +203,31 @@ export async function addAccreditations(
   const accreditations = contractorsAccreditation.map((accreditation) =>
     normalizeAccreditation(accreditation)
   );
-  console.log(accreditationData);
+
   return accreditations;
 }
 
 export async function updateAccreditation(
   accreditationData: Partial<ContractorsAccreditationsSchemaInsert>,
-  accreditationId: number
-) {
+  accreditationId: number,
+  contractorId: number,
+  userId: number
+): Promise<ContractorsAccreditation> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError("Error unable to update accreditation", 400);
+  }
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ updatedAt: moment().toDate(), ...accreditationData })
     .where(
       and(
         eq(contractorsAccreditations.id, accreditationId),
+        eq(contractorsAccreditations.contractorId, contractorId),
         isNull(contractorsAccreditations.deletedAt)
       )
     )
@@ -206,8 +242,21 @@ export async function updateAccreditation(
 
 export async function deleteAccreditation(
   accreditationId: number,
-  contractorId: number
-) {
+  contractorId: number,
+  userId: number
+): Promise<ContractorsAccreditation> {
+  const [contractor] = await db
+    .select()
+    .from(contractorsTable)
+    .where(eq(contractorsTable.userId, userId));
+
+  if (contractor.id !== contractorId) {
+    throw new AppError(
+      "Error user does not have permission to update accreditation",
+      403
+    );
+  }
+
   const [accreditation] = await db
     .update(contractorsAccreditations)
     .set({ deletedAt: moment().toDate() })
@@ -220,7 +269,7 @@ export async function deleteAccreditation(
     .returning();
 
   if (!accreditation) {
-    throw new AppError("unable to delete accreditation", 400);
+    throw new AppError("Error unable to delete accreditation", 400);
   }
 
   return normalizeAccreditation(accreditation);
