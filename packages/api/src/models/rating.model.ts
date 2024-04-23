@@ -9,17 +9,19 @@ import {
 
 export const ratingsTable = pgTable("ratings", {
   id: serial("id").primaryKey().notNull(),
+  rateableType: text("rateable_type").$type<RateableType>().notNull(),
+  rateableModelId: integer("rateable_model_id").notNull(),
+  rating: integer("rating").notNull(),
+  userId: integer("user_id").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  tableRef: text("table_ref").$type<TableRef>().notNull(),
-  refId: integer("ref_id").notNull(),
-  rating: integer("rating").$type<rating>().notNull(),
+  deleteAt: timestamp("deleted_at"),
 });
 
-export type TableRef = "contractor" | "company";
-
-export type rating = 1 | 2 | 3 | 4 | 5;
+export enum RateableType {
+  Contractors = "contractors",
+  companies = "companies",
+}
 
 export type ratingsTableSchema = typeof ratingsTable.$inferSelect;
 export type ratingsTableSchemaInsert = Omit<
