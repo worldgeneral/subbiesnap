@@ -8,6 +8,8 @@ export const contractorSchema = z.object({
   location: z.string().nullable().optional(),
   profession: z.string(),
   yearsExperience: z.number(),
+  avgRating: z.number().nullable().optional(),
+  timesRated: z.number().nullable().optional(),
 });
 
 export const CreateContractorSchema = contractorSchema.omit({

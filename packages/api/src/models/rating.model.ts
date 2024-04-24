@@ -20,7 +20,7 @@ export const ratingsTable = pgTable("ratings", {
 
 export enum RateableType {
   Contractors = "contractors",
-  companies = "companies",
+  Companies = "companies",
 }
 
 export type ratingsTableSchema = typeof ratingsTable.$inferSelect;

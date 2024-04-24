@@ -5,6 +5,8 @@ import { AppError } from "../utils/express.error";
 import z from "zod";
 import {
   RateableType,
+  companiesTable,
+  contractorsTable,
   ratingsTable,
   ratingsTableSchema,
   ratingsTableSchemaInsert,
@@ -66,6 +68,20 @@ export async function createRating(
   rateableModelId: number,
   userId: number
 ): Promise<Rating> {
+  const [ratingCheck] = await db
+    .select()
+    .from(ratingsTable)
+    .where(
+      and(
+        eq(ratingsTable.userId, userId),
+        eq(ratingsTable.rateableModelId, rateableModelId)
+      )
+    );
+
+  if (ratingCheck) {
+    throw new AppError("Error user has already left a review", 409);
+  }
+
   const [rating] = await db
     .insert(ratingsTable)
     .values({
@@ -75,6 +91,26 @@ export async function createRating(
       userId,
     })
     .returning();
+
+  const table =
+    rateableType === RateableType.Contractors
+      ? contractorsTable
+      : companiesTable;
+
+  const [ratingValues] = await db
+    .select()
+    .from(table)
+    .where(eq(table.id, rateableModelId));
+
+  await db
+    .update(table)
+    .set({
+      avgRating:
+        (ratingValues.avgRating! * ratingValues.timesRated! + data.rating) /
+        (ratingValues.timesRated! + 1),
+      timesRated: ratingValues.timesRated! + 1,
+    })
+    .where(eq(table.id, rateableModelId));
 
   return normalizeRating(rating);
 }
@@ -89,6 +125,27 @@ export async function updateRating(
     .set({ ...data, updatedAt: moment().toDate() })
     .where(and(eq(ratingsTable.id, ratingId), eq(ratingsTable.userId, userId)))
     .returning();
+
+  const allRatings = await db
+    .select({ rating: ratingsTable.rating })
+    .from(ratingsTable)
+    .where(
+      and(
+        eq(ratingsTable.rateableType, rating.rateableType),
+        eq(ratingsTable.rateableModelId, rating.rateableModelId)
+      )
+    );
+
+  const avgRating =
+    allRatings.reduce((a, b) => a + b.rating, 0) / allRatings.length;
+
+  const table =
+    rating.rateableType === "contractors" ? contractorsTable : companiesTable;
+
+  await db
+    .update(table)
+    .set({ avgRating })
+    .where(eq(table.id, rating.rateableModelId));
 
   return normalizeRating(rating);
 }

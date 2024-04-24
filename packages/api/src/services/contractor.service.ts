@@ -33,6 +33,8 @@ export function normalizeContractor(
     location: contractors.location,
     profession: contractors.profession,
     yearsExperience: contractors.yearsExperience,
+    avgRating: contractors.avgRating,
+    timesRated: contractors.timesRated,
   };
 }
 

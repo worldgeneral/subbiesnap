@@ -1,5 +1,6 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { usersTable } from "./user.model";
+import { real } from "drizzle-orm/pg-core";
 
 export const contractorsTable = pgTable("contractors", {
   id: serial("id").primaryKey().notNull(),
@@ -12,6 +13,8 @@ export const contractorsTable = pgTable("contractors", {
   location: text("location"),
   profession: text("profession").notNull(),
   yearsExperience: integer("years_experience").notNull(),
+  avgRating: real("avg_rating").default(0),
+  timesRated: integer("times_rated").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: timestamp("deleted_at"),
