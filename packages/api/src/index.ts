@@ -6,9 +6,9 @@ import { errorHandler } from "./middleware/error-handler.middleware";
 import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
 import { companiesRoutes } from "./routes/companies.router";
-import { contractorsRoutes } from "./routes/contractor.router";
+import { contractorsRoutes } from "./routes/contractors.router";
 import { jobsRoutes } from "./routes/jobs.router";
-import { ratingsRoutes } from "./routes/rating.router";
+import { ratingsRoutes } from "./routes/ratings.router";
 
 const app = express();
 app.use(express.json());

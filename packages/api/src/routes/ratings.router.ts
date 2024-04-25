@@ -61,7 +61,7 @@ ratingsRoutes.post(
       rateableId,
       req.user!.id
     );
-    res.json(rating);
+    res.json(rating).status(201);
   })
 );
 

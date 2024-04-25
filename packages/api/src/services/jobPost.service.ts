@@ -4,7 +4,7 @@ import {
   JobPostsSchema,
   jobsTable,
   type JobPostsSchemaInsert,
-} from "../models/jobs.model";
+} from "../models/job.model";
 import { and, eq, isNull } from "drizzle-orm";
 import { AppError } from "../utils/express.error";
 import { jobPostsSchema } from "../rules/jobPost.rule";

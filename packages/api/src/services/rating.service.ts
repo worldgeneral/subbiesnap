@@ -2,7 +2,7 @@ import moment from "moment";
 import { db } from "../db";
 import { and, eq, isNull } from "drizzle-orm";
 import { AppError } from "../utils/express.error";
-import z from "zod";
+import z, { nan } from "zod";
 import {
   RateableType,
   companiesTable,
@@ -12,6 +12,7 @@ import {
   ratingsTableSchemaInsert,
 } from "../schemas";
 import { ratingsRules } from "../rules/rating.rule";
+import { NeonDbError } from "@neondatabase/serverless";
 
 export type Rating = Required<z.infer<typeof ratingsRules>>;
 
@@ -38,13 +39,13 @@ export async function getRatings(
       and(
         eq(ratingsTable.rateableType, rateableType),
         eq(ratingsTable.rateableModelId, rateableId),
-        isNull(ratingsTable.deleteAt)
+        isNull(ratingsTable.deletedAt)
       )
     )
     .limit(limit)
     .offset(offset);
 
-  const ratings = result.map((rating) => normalizeRating(rating));
+  const ratings = result.map(normalizeRating);
 
   return ratings;
 }
@@ -53,7 +54,7 @@ export async function getRating(ratingId: number): Promise<Rating> {
   const [ratings] = await db
     .select()
     .from(ratingsTable)
-    .where(and(eq(ratingsTable.id, ratingId), isNull(ratingsTable.deleteAt)));
+    .where(and(eq(ratingsTable.id, ratingId), isNull(ratingsTable.deletedAt)));
 
   if (!ratings) {
     throw new AppError("Error unable to find rating", 404);
@@ -63,56 +64,52 @@ export async function getRating(ratingId: number): Promise<Rating> {
 }
 
 export async function createRating(
-  data: Omit<ratingsTableSchemaInsert, "rateableModelId" | "userId">,
+  data: Omit<
+    ratingsTableSchemaInsert,
+    "rateableModelId" | "userId" | "rateableType"
+  >,
   rateableType: RateableType,
   rateableModelId: number,
   userId: number
 ): Promise<Rating> {
-  const [ratingCheck] = await db
-    .select()
-    .from(ratingsTable)
-    .where(
-      and(
-        eq(ratingsTable.userId, userId),
-        eq(ratingsTable.rateableModelId, rateableModelId)
-      )
-    );
+  try {
+    const [rating] = await db
+      .insert(ratingsTable)
+      .values({
+        ...data,
+        rateableType,
+        rateableModelId,
+        userId,
+      })
+      .returning();
 
-  if (ratingCheck) {
-    throw new AppError("Error user has already left a review", 409);
+    const table =
+      rateableType === RateableType.Contractors
+        ? contractorsTable
+        : companiesTable;
+
+    const [ratingValues] = await db
+      .select()
+      .from(table)
+      .where(eq(table.id, rateableModelId));
+
+    await db
+      .update(table)
+      .set({
+        avgRating:
+          (ratingValues.avgRating! * ratingValues.timesRated! + data.rating) /
+          (ratingValues.timesRated! + 1),
+        timesRated: ratingValues.timesRated! + 1,
+      })
+      .where(eq(table.id, rateableModelId));
+
+    return normalizeRating(rating);
+  } catch (err) {
+    if (err instanceof NeonDbError && err.code === "23505") {
+      throw new AppError("Error user has already left a review", 409);
+    }
+    throw err;
   }
-
-  const [rating] = await db
-    .insert(ratingsTable)
-    .values({
-      ...data,
-      rateableType,
-      rateableModelId,
-      userId,
-    })
-    .returning();
-
-  const table =
-    rateableType === RateableType.Contractors
-      ? contractorsTable
-      : companiesTable;
-
-  const [ratingValues] = await db
-    .select()
-    .from(table)
-    .where(eq(table.id, rateableModelId));
-
-  await db
-    .update(table)
-    .set({
-      avgRating:
-        (ratingValues.avgRating! * ratingValues.timesRated! + data.rating) /
-        (ratingValues.timesRated! + 1),
-      timesRated: ratingValues.timesRated! + 1,
-    })
-    .where(eq(table.id, rateableModelId));
-
-  return normalizeRating(rating);
 }
 
 export async function updateRating(
@@ -123,8 +120,12 @@ export async function updateRating(
   const [rating] = await db
     .update(ratingsTable)
     .set({ ...data, updatedAt: moment().toDate() })
-    .where(and(eq(ratingsTable.id, ratingId), eq(ratingsTable.userId, userId)))
+    .where(eq(ratingsTable.id, ratingId))
     .returning();
+
+  if (!rating) {
+    throw new AppError("Error unable to update rating", 400);
+  }
 
   const allRatings = await db
     .select({ rating: ratingsTable.rating })
@@ -144,7 +145,7 @@ export async function updateRating(
 
   await db
     .update(table)
-    .set({ avgRating })
+    .set({ avgRating, timesRated: allRatings.length + 1 })
     .where(eq(table.id, rating.rateableModelId));
 
   return normalizeRating(rating);
@@ -156,9 +157,36 @@ export async function deleteRating(
 ): Promise<Rating> {
   const [rating] = await db
     .update(ratingsTable)
-    .set({ deleteAt: moment().toDate() })
+    .set({ deletedAt: moment().toDate() })
     .where(and(eq(ratingsTable.id, ratingId), eq(ratingsTable.userId, userId)))
     .returning();
+
+  if (!rating) {
+    throw new AppError("Error unable to delete rating", 400);
+  }
+  const allRatings = await db
+    .select({ rating: ratingsTable.rating })
+    .from(ratingsTable)
+    .where(
+      and(
+        eq(ratingsTable.rateableType, rating.rateableType),
+        eq(ratingsTable.rateableModelId, rating.rateableModelId),
+        isNull(ratingsTable.deletedAt)
+      )
+    );
+
+  let avgRating =
+    allRatings.reduce((a, b) => a + b.rating, 0) / allRatings.length;
+  if (Number.isNaN(avgRating)) {
+    avgRating = 0;
+  }
+  const table =
+    rating.rateableType === "contractors" ? contractorsTable : companiesTable;
+
+  await db
+    .update(table)
+    .set({ avgRating, timesRated: allRatings.length })
+    .where(eq(table.id, rating.rateableModelId));
 
   return normalizeRating(rating);
 }

@@ -1,6 +1,5 @@
 import { nativeEnum, number, union, z } from "zod";
 import { RateableType } from "../schemas";
-import { MAX_RATING_VALUE } from "../utils/magic.numbers";
 
 export const ratingsRules = z.object({
   id: number(),
@@ -20,6 +19,7 @@ export const createRatingRules = ratingsRules.omit({
   id: true,
   rateableModelId: true,
   userId: true,
+  rateableType: true,
 });
 
 export const updateRatingRules = ratingsRules.omit({

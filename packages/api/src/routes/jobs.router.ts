@@ -13,7 +13,7 @@ import {
   getJobPost,
   getJobPosts,
   updateJobPost,
-} from "../services/jobPosts.service";
+} from "../services/jobPost.service";
 import { paginationSchema } from "../rules/pagination.rule";
 import { UserCompanyRole } from "../utils/magic.numbers";
 
