@@ -25,6 +25,8 @@ export function normalizeCompany(company: CompaniesSchema): Company {
     name: company.name,
     logo: company.logo,
     blurb: company.blurb,
+    avgRating: company.avgRating,
+    timesRated: company.timesRated,
   };
 }
 

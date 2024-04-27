@@ -7,6 +7,8 @@ export const companySchema = z.object({
   name: z.string(),
   logo: z.string().nullable().optional(),
   blurb: z.string().nullable().optional(),
+  avgRating: z.number(),
+  timesRated: z.number(),
 });
 
 export const createCompanySchema = companySchema.omit({

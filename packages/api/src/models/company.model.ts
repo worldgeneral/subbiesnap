@@ -1,6 +1,7 @@
 import { serial, pgTable, timestamp, text, integer } from "drizzle-orm/pg-core";
 import { usersTable } from "./user.model";
 import { CompanyStatus } from "../utils/magic.numbers";
+import { real } from "drizzle-orm/pg-core";
 
 export const companiesTable = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
@@ -11,6 +12,8 @@ export const companiesTable = pgTable("companies", {
   logo: text("logo"),
   blurb: text("blurb"),
   status: text("status").default(CompanyStatus.Active),
+  avgRating: real("avg_rating").default(0).notNull(),
+  timesRated: integer("times_rated").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: timestamp("deleted_at"),
