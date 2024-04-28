@@ -5,9 +5,6 @@ import { real } from "drizzle-orm/pg-core";
 
 export const companiesTable = pgTable("companies", {
   id: serial("id").primaryKey().notNull(),
-  ownerId: integer("user_id")
-    .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   logo: text("logo"),
   blurb: text("blurb"),

@@ -3,7 +3,6 @@ import { UserCompanyRole } from "../utils/magic.numbers";
 
 export const companySchema = z.object({
   id: z.number(),
-  ownerId: z.number(),
   name: z.string(),
   logo: z.string().nullable().optional(),
   blurb: z.string().nullable().optional(),
@@ -14,6 +13,8 @@ export const companySchema = z.object({
 export const createCompanySchema = companySchema.omit({
   id: true,
   ownerId: true,
+  avgRating: true,
+  timesRated: true,
 });
 
 export const updateCompanySchema = companySchema.omit({
