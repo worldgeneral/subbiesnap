@@ -48,8 +48,8 @@ export async function getJobPost(jobPostId: number): Promise<Job> {
 
 export async function getCompanyJobPosts(
   companyId: number,
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<Job>> {
   const jobPosts = await db
     .select()
@@ -70,8 +70,8 @@ export async function getCompanyJobPosts(
 }
 
 export async function getJobPosts(
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<Job>> {
   const jobPosts = await db
     .select()

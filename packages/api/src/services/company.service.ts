@@ -21,7 +21,6 @@ export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;
 export function normalizeCompany(company: CompaniesSchema): Company {
   return {
     id: company.id,
-    ownerId: company.ownerId,
     name: company.name,
     logo: company.logo,
     blurb: company.blurb,
@@ -53,8 +52,8 @@ export async function getCompany(companyId: number): Promise<Company> {
 }
 
 export async function getCompanies(
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<Company>> {
   const result = await db
     .select()
@@ -68,12 +67,15 @@ export async function getCompanies(
 }
 
 export async function registerCompany(
-  companyData: Omit<CompaniesSchemaInsert, "ownerId">,
+  companyData: Omit<
+    CompaniesSchemaInsert,
+    "userId" | "avgRating" | "timesRated"
+  >,
   userId: number
 ): Promise<Company> {
   const [company] = await db
     .insert(companiesTable)
-    .values({ ownerId: userId, ...companyData })
+    .values({ ...companyData })
     .returning();
 
   await db.insert(companiesUsersTable).values({
@@ -116,8 +118,8 @@ export async function deleteCompanyData(companyId: number): Promise<Company> {
 }
 
 export async function getCompanyUser(
-  limit: number,
-  offset: number,
+  limit: number = 25,
+  offset: number = 0,
   companyId: number
 ): Promise<Array<User>> {
   const result = await db

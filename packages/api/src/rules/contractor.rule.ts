@@ -7,13 +7,15 @@ export const contractorSchema = z.object({
   logo: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
   profession: z.string(),
-  yearsExperience: z.number(),
+  yearsExperience: z.number().nonnegative(),
   avgRating: z.number(),
   timesRated: z.number(),
 });
 
 export const CreateContractorSchema = contractorSchema.omit({
   id: true,
+  avgRating: true,
+  timesRated: true,
 });
 
 export const UpdateContractorSchema = contractorSchema

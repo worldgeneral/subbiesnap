@@ -1,11 +1,12 @@
 import moment from "moment";
 import { db } from "../db";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { AppError } from "../utils/express.error";
 import z, { nan } from "zod";
 import {
   RateableType,
   companiesTable,
+  companiesUsersTable,
   contractorsTable,
   ratingsTable,
   ratingsTableSchema,
@@ -13,6 +14,7 @@ import {
 } from "../schemas";
 import { ratingsRules } from "../rules/rating.rule";
 import { NeonDbError } from "@neondatabase/serverless";
+import { userIsContractor, usersCompanies } from "./checks.service";
 
 export type Rating = Required<z.infer<typeof ratingsRules>>;
 
@@ -29,8 +31,8 @@ export function normalizeRating(rating: ratingsTableSchema): Rating {
 export async function getRatings(
   rateableType: RateableType,
   rateableId: number,
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<Rating>> {
   const result = await db
     .select()
@@ -73,6 +75,20 @@ export async function createRating(
   userId: number
 ): Promise<Rating> {
   try {
+    const table =
+      rateableType === RateableType.Contractors
+        ? contractorsTable
+        : companiesTable;
+
+    const selfRateCheck =
+      rateableType === RateableType.Contractors
+        ? await userIsContractor(userId, rateableModelId)
+        : await usersCompanies(userId, rateableModelId);
+    console.log(selfRateCheck);
+    if (selfRateCheck === true) {
+      throw new AppError("Error you can not rate yourself", 400);
+    }
+
     const [rating] = await db
       .insert(ratingsTable)
       .values({
@@ -82,11 +98,6 @@ export async function createRating(
         userId,
       })
       .returning();
-
-    const table =
-      rateableType === RateableType.Contractors
-        ? contractorsTable
-        : companiesTable;
 
     const [ratingValues] = await db
       .select()

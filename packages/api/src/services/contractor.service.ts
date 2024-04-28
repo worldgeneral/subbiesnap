@@ -16,9 +16,9 @@ import {
   contractorSchema,
 } from "../rules/contractor.rule";
 
-type Contractor = Required<z.infer<typeof contractorSchema>>;
+export type Contractor = Required<z.infer<typeof contractorSchema>>;
 
-type ContractorsAccreditation = Required<
+export type ContractorsAccreditation = Required<
   z.infer<typeof ContractorsAccreditationSchema>
 >;
 
@@ -68,8 +68,8 @@ export async function getContractor(contractorId: number) {
 }
 
 export async function getContractors(
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<Contractor>> {
   const contractors = await db
     .select()
@@ -86,7 +86,7 @@ export async function getContractors(
 }
 
 export async function registerContractor(
-  contractorsData: ContractorsSchemaInsert,
+  contractorsData: Omit<ContractorsSchemaInsert, "avgRating" | "timesRated">,
   userId: number
 ): Promise<Contractor> {
   const [contractor] = await db
@@ -152,8 +152,8 @@ export async function getAccreditation(
 
 export async function getAccreditations(
   contractorId: number,
-  limit: number,
-  offset: number
+  limit: number = 25,
+  offset: number = 0
 ): Promise<Array<ContractorsAccreditation>> {
   const contractorsAccreditation = await db
     .select()
