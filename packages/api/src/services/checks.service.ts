@@ -7,10 +7,7 @@ import {
   contractorsTable,
 } from "../schemas";
 
-export async function usersCompanies(
-  userId: number,
-  rateableModelId: number
-): Promise<true | false> {
+export async function usersCompanies(userId: number): Promise<true | false> {
   const [result] = await db
     .select()
     .from(companiesUsersTable)
@@ -19,7 +16,7 @@ export async function usersCompanies(
       companiesTable,
       and(eq(companiesTable.id, companiesUsersTable.companyId))
     );
-  console.log(result);
+
   return !result ? false : true;
 }
 
@@ -36,6 +33,6 @@ export async function userIsContractor(
         eq(contractorsTable.id, rateableModelId)
       )
     );
-  console.log(result);
+
   return !result ? false : true;
 }

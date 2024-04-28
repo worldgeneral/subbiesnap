@@ -83,8 +83,8 @@ export async function createRating(
     const selfRateCheck =
       rateableType === RateableType.Contractors
         ? await userIsContractor(userId, rateableModelId)
-        : await usersCompanies(userId, rateableModelId);
-    console.log(selfRateCheck);
+        : await usersCompanies(userId);
+
     if (selfRateCheck === true) {
       throw new AppError("Error you can not rate yourself", 400);
     }
