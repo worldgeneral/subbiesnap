@@ -7,6 +7,14 @@ import { userSchema } from "../rules/user.rule";
 import z from "zod";
 import { and, eq, is, isNull } from "drizzle-orm";
 import moment from "moment";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
+import {
+  companyIdFromUserId,
+  contractorIdFromUserId,
+} from "./soft-deletes/get-delete-type-id.service";
 
 export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
@@ -74,16 +82,25 @@ export async function updateUser(
   return normalizeUser(user);
 }
 
-export async function deleteUser(userId: number): Promise<User> {
-  const [user] = await db
-    .update(usersTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(usersTable.id, userId))
-    .returning();
+export async function deleteUser(userId: number) {
+  const companyId = await companyIdFromUserId(userId);
+  const contractorId = await contractorIdFromUserId(userId);
+  const result = await softDeletesHandler([
+    userId ? [DeleteType.User, { userId }] : null,
+    userId ? [DeleteType.Session, { userId }] : null,
+    userId ? [DeleteType.Contractor, { userId }] : null,
+    contractorId
+      ? [DeleteType.ContractorAccreditation, { contractorId }]
+      : null,
+    userId ? [DeleteType.Company, { userId }] : null,
+    userId ? [DeleteType.CompanyUser, { userId }] : null,
+    companyId ? [DeleteType.Job, { companyId }] : null,
+    userId ? [DeleteType.Rating, { userId }] : null,
+  ]);
 
-  if (!user) {
+  if (!result) {
     throw new AppError("Error unable to delete user", 400);
   }
 
-  return normalizeUser(user);
+  return result[0].user!;
 }
