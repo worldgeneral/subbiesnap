@@ -1,6 +1,6 @@
 import { db } from "../db";
 import { AppError } from "../utils/express.error";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { usersTable } from "../models/user.model";
 import * as argon2 from "argon2";
 import { normalizeUser } from "./user.service";
@@ -23,7 +23,7 @@ export async function loginAuthUser(password: string, email: string) {
   const [user] = await db
     .select()
     .from(usersTable)
-    .where(eq(usersTable.email, email));
+    .where(and(eq(usersTable.email, email), isNull(usersTable.deletedAt)));
 
   if (!user) {
     throw new AppError("user does not exist", 401);

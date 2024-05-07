@@ -82,10 +82,10 @@ export async function updateUser(
   return normalizeUser(user);
 }
 
-export async function deleteUser(userId: number) {
+export async function deleteUser(userId: number): Promise<User> {
   const companyId = await companyIdFromUserId(userId);
   const contractorId = await contractorIdFromUserId(userId);
-  const result = await softDeletesHandler([
+  const result = await softDeletesHandler<[{ user: User }]>([
     userId ? [DeleteType.User, { userId }] : null,
     userId ? [DeleteType.Session, { userId }] : null,
     userId ? [DeleteType.Contractor, { userId }] : null,
@@ -98,9 +98,5 @@ export async function deleteUser(userId: number) {
     userId ? [DeleteType.Rating, { userId }] : null,
   ]);
 
-  if (!result) {
-    throw new AppError("Error unable to delete user", 400);
-  }
-
-  return result[0].user!;
+  return result[0].user;
 }

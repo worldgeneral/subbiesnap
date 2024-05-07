@@ -15,22 +15,30 @@ import {
 import { ratingsRules } from "../rules/rating.rule";
 import { NeonDbError } from "@neondatabase/serverless";
 import { userIsContractor, usersCompanies } from "./checks.service";
+import { UserCompanyRole } from "../utils/magic.numbers";
+import { validateCompanyUser } from "../middleware/company-auth.middleware";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 
 export type Rating = Required<z.infer<typeof ratingsRules>>;
 
 export function normalizeRating(rating: ratingsTableSchema): Rating {
   return {
     id: rating.id,
-    rateableType: rating.rateableType,
-    rateableModelId: rating.rateableModelId,
-    rating: rating.rating as Rating["rating"],
+    revieweeType: rating.revieweeType as RateableType,
+    revieweeTypeId: rating.revieweeTypeId,
+    reviewerType: rating.reviewerType as RateableType,
+    reviewerTypeId: rating.reviewerTypeId,
+    ratingValue: rating.ratingValue as Rating["ratingValue"],
     userId: rating.userId,
   };
 }
 
 export async function getRatings(
-  rateableType: RateableType,
-  rateableId: number,
+  revieweeType: RateableType,
+  revieweeTypeId: number,
   limit: number = 25,
   offset: number = 0
 ): Promise<Array<Rating>> {
@@ -39,8 +47,8 @@ export async function getRatings(
     .from(ratingsTable)
     .where(
       and(
-        eq(ratingsTable.rateableType, rateableType),
-        eq(ratingsTable.rateableModelId, rateableId),
+        eq(ratingsTable.revieweeType, revieweeType),
+        eq(ratingsTable.revieweeTypeId, revieweeTypeId),
         isNull(ratingsTable.deletedAt)
       )
     )
@@ -66,23 +74,43 @@ export async function getRating(ratingId: number): Promise<Rating> {
 }
 
 export async function createRating(
-  data: Omit<
+  data: Pick<
     ratingsTableSchemaInsert,
-    "rateableModelId" | "userId" | "rateableType"
+    "ratingValue" | "reviewerType" | "reviewerTypeId"
   >,
-  rateableType: RateableType,
-  rateableModelId: number,
+  revieweeType: RateableType,
+  revieweeTypeId: number,
   userId: number
 ): Promise<Rating> {
   try {
+    if (data.reviewerType === RateableType.Companies) {
+      await validateCompanyUser(
+        userId,
+        data.reviewerTypeId,
+        UserCompanyRole.Editor
+      );
+    } else {
+      const validateContractor = await db
+        .select()
+        .from(contractorsTable)
+        .where(
+          and(
+            eq(contractorsTable.id, revieweeTypeId),
+            eq(contractorsTable.userId, userId)
+          )
+        );
+      if (!validateContractor) {
+        throw new AppError("Error you don't have access to contractor", 403);
+      }
+    }
     const table =
-      rateableType === RateableType.Contractors
+      revieweeType === RateableType.Contractors
         ? contractorsTable
         : companiesTable;
 
     const selfRateCheck =
-      rateableType === RateableType.Contractors
-        ? await userIsContractor(userId, rateableModelId)
+      revieweeType === RateableType.Contractors
+        ? await userIsContractor(userId, revieweeTypeId)
         : await usersCompanies(userId);
 
     if (selfRateCheck === true) {
@@ -93,8 +121,8 @@ export async function createRating(
       .insert(ratingsTable)
       .values({
         ...data,
-        rateableType,
-        rateableModelId,
+        revieweeType,
+        revieweeTypeId,
         userId,
       })
       .returning();
@@ -102,17 +130,18 @@ export async function createRating(
     const [ratingValues] = await db
       .select()
       .from(table)
-      .where(eq(table.id, rateableModelId));
+      .where(eq(table.id, revieweeTypeId));
 
     await db
       .update(table)
       .set({
         avgRating:
-          (ratingValues.avgRating! * ratingValues.timesRated! + data.rating) /
+          (ratingValues.avgRating! * ratingValues.timesRated! +
+            data.ratingValue) /
           (ratingValues.timesRated! + 1),
         timesRated: ratingValues.timesRated! + 1,
       })
-      .where(eq(table.id, rateableModelId));
+      .where(eq(table.id, revieweeTypeId));
 
     return normalizeRating(rating);
   } catch (err) {
@@ -124,7 +153,7 @@ export async function createRating(
 }
 
 export async function updateRating(
-  data: Pick<ratingsTableSchemaInsert, "rating">,
+  data: Pick<ratingsTableSchemaInsert, "ratingValue">,
   ratingId: number,
   userId: number
 ): Promise<Rating> {
@@ -139,12 +168,12 @@ export async function updateRating(
   }
 
   const allRatings = await db
-    .select({ rating: ratingsTable.rating })
+    .select({ rating: ratingsTable.ratingValue })
     .from(ratingsTable)
     .where(
       and(
-        eq(ratingsTable.rateableType, rating.rateableType),
-        eq(ratingsTable.rateableModelId, rating.rateableModelId)
+        eq(ratingsTable.revieweeType, rating.revieweeType),
+        eq(ratingsTable.revieweeTypeId, rating.revieweeTypeId)
       )
     );
 
@@ -152,36 +181,29 @@ export async function updateRating(
     allRatings.reduce((a, b) => a + b.rating, 0) / allRatings.length;
 
   const table =
-    rating.rateableType === "contractors" ? contractorsTable : companiesTable;
+    rating.revieweeType === "contractors" ? contractorsTable : companiesTable;
 
   await db
     .update(table)
     .set({ avgRating, timesRated: allRatings.length + 1 })
-    .where(eq(table.id, rating.rateableModelId));
+    .where(eq(table.id, rating.revieweeTypeId));
 
   return normalizeRating(rating);
 }
 
-export async function deleteRating(
-  ratingId: number,
-  userId: number
-): Promise<Rating> {
-  const [rating] = await db
-    .update(ratingsTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(and(eq(ratingsTable.id, ratingId), eq(ratingsTable.userId, userId)))
-    .returning();
+export async function deleteRating(ratingId: number): Promise<Rating> {
+  const result = await softDeletesHandler<[{ ratings: Rating }]>([
+    ratingId ? [DeleteType.Rating, { ratingId }] : null,
+  ]);
+  const rating = result[0].ratings;
 
-  if (!rating) {
-    throw new AppError("Error unable to delete rating", 400);
-  }
   const allRatings = await db
-    .select({ rating: ratingsTable.rating })
+    .select({ rating: ratingsTable.ratingValue })
     .from(ratingsTable)
     .where(
       and(
-        eq(ratingsTable.rateableType, rating.rateableType),
-        eq(ratingsTable.rateableModelId, rating.rateableModelId),
+        eq(ratingsTable.revieweeType, rating.revieweeType),
+        eq(ratingsTable.revieweeTypeId, rating.revieweeTypeId),
         isNull(ratingsTable.deletedAt)
       )
     );
@@ -192,12 +214,12 @@ export async function deleteRating(
     avgRating = 0;
   }
   const table =
-    rating.rateableType === "contractors" ? contractorsTable : companiesTable;
+    rating.revieweeType === "contractors" ? contractorsTable : companiesTable;
 
   await db
     .update(table)
     .set({ avgRating, timesRated: allRatings.length })
-    .where(eq(table.id, rating.rateableModelId));
+    .where(eq(table.id, rating.revieweeTypeId));
 
-  return normalizeRating(rating);
+  return rating;
 }

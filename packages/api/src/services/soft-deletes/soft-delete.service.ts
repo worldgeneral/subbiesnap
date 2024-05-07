@@ -19,7 +19,7 @@ import {
   usersTable,
 } from "../../schemas";
 import { AppError } from "../../utils/express.error";
-import { and, arrayOverlaps, eq, inArray, isNull, or } from "drizzle-orm";
+import { and, arrayOverlaps, eq, inArray, isNull, ne, or } from "drizzle-orm";
 import moment from "moment";
 import { User, normalizeUser } from "../user.service";
 import * as argon2 from "argon2";
@@ -29,7 +29,12 @@ import {
   normalizeAccreditation,
   normalizeContractor,
 } from "../contractor.service";
-import { normalizeCompany, normalizeCompanyUser } from "../company.service";
+import {
+  Company,
+  CompanyUser,
+  normalizeCompany,
+  normalizeCompanyUser,
+} from "../company.service";
 import { normalizeJobPost } from "../jobPost.service";
 import { normalizeRating } from "../rating.service";
 import { CompanyStatus, UserCompanyRole } from "../../utils/magic.numbers";
@@ -44,16 +49,16 @@ type InputData = Array<
         | { sessionToken?: never; userId: number }
       ),
     ]
-  | [DeleteType.Contractor, { userId: number }]
+  | [DeleteType.Contractor, { userId: number } | { contractorId: number }]
   | [
       DeleteType.ContractorAccreditation,
       (
         | {
-            contractorAccreditationId: number;
+            accreditationId: number;
             contractorId?: never;
           }
         | {
-            contractorAccreditationId?: never;
+            accreditationId?: never;
             contractorId: number;
           }
       ),
@@ -85,14 +90,28 @@ type InputData = Array<
       DeleteType.Rating,
       (
         | {
-            ratableType: RateableType.Companies;
-            RatableId: number;
+            companyId: number;
+            contractorId?: never;
             userId?: never;
+            ratingId?: never;
           }
         | {
-            ratableType?: never;
-            RatableId?: never;
+            companyId?: never;
+            contractorId: number;
+            userId?: never;
+            ratingId?: never;
+          }
+        | {
+            companyId?: never;
+            contractorId?: never;
             userId: number;
+            ratingId?: never;
+          }
+        | {
+            companyId?: never;
+            contractorId?: never;
+            userId?: never;
+            ratingId: number;
           }
       ),
     ]
@@ -109,7 +128,9 @@ export enum DeleteType {
   Rating = "rating",
 }
 
-export async function softDeletesHandler(inputData: InputData) {
+export async function softDeletesHandler<T extends unknown[] = unknown[]>(
+  inputData: InputData
+): Promise<T> {
   let promises = [];
   for (let i = 0; i < inputData.length; i++) {
     let row = inputData[i];
@@ -119,46 +140,56 @@ export async function softDeletesHandler(inputData: InputData) {
     }
     switch (row[0]) {
       case DeleteType.User:
-        promises.push({ user: deleteUser(row[1]) });
+        promises.push((async () => ({ user: await deleteUser(row[1]) }))());
         break;
-
       case DeleteType.Session:
-        promises.push({ sessions: deleteSession(row[1]) });
+        promises.push(
+          (async () => ({ sessions: await deleteSession(row[1]) }))()
+        );
         break;
       case DeleteType.Contractor:
-        promises.push({ contractor: deleteContractor(row[1]) });
+        promises.push(
+          (async () => ({
+            contractor: await deleteContractor(row[1]),
+          }))()
+        );
         break;
       case DeleteType.ContractorAccreditation:
-        promises.push({
-          contractorsAccreditations: deleteContractorAccreditations(row[1]),
-        });
+        promises.push(
+          (async () => ({
+            contractorsAccreditations: await deleteContractorAccreditations(
+              row[1]
+            ),
+          }))()
+        );
         break;
       case DeleteType.Company:
-        promises.push({ companies: deleteCompany(row[1]) });
+        promises.push(
+          (async () => ({ companies: await deleteCompany(row[1]) }))()
+        );
         break;
       case DeleteType.CompanyUser:
-        promises.push({ companyRoles: deleteCompanyUsers(row[1]) });
+        promises.push(
+          (async () => ({
+            companyUsers: await deleteCompanyUsers(row[1]),
+          }))()
+        );
         break;
       case DeleteType.Job:
-        promises.push({ jobs: deleteJob(row[1]) });
-
+        promises.push((async () => ({ jobs: await deleteJob(row[1]) }))());
         break;
       case DeleteType.Rating:
-        promises.push({ ratings: deleteRating(row[1]) });
+        promises.push(
+          (async () => ({ ratings: await deleteRating(row[1]) }))()
+        );
         break;
     }
   }
 
-  return await Promise.all(promises);
+  return (await Promise.all(promises)) as T;
 }
 
-export async function deleteUser(data: {
-  userId?: number;
-  null?: null;
-}): Promise<User | undefined> {
-  if (data.null) {
-    return;
-  }
+export async function deleteUser(data: { userId?: number }): Promise<User> {
   const [deletedUser] = await db
     .update(usersTable)
     .set({ deletedAt: moment().toDate() })
@@ -175,11 +206,7 @@ export async function deleteUser(data: {
 export async function deleteSession(data: {
   userId?: number;
   sessionToken?: string;
-  null?: null;
-}): Promise<Array<SessionsSchema> | SessionsSchema | undefined> {
-  if (data.null) {
-    return;
-  }
+}): Promise<Array<SessionsSchema> | SessionsSchema> {
   if (data.sessionToken) {
     const hashedToken = await argon2.hash(data.sessionToken);
 
@@ -207,15 +234,16 @@ export async function deleteSession(data: {
 }
 export async function deleteContractor(data: {
   userId?: number;
-  null?: null;
-}): Promise<Contractor | undefined> {
-  if (data.null) {
-    return;
-  }
+  contractorId?: number;
+}): Promise<Contractor> {
   const [deletedContractor] = await db
     .update(contractorsTable)
     .set({ deletedAt: moment().toDate() })
-    .where(eq(contractorsTable.userId, data.userId!))
+    .where(
+      data.userId
+        ? eq(contractorsTable.userId, data.userId!)
+        : eq(contractorsTable.id, data.contractorId!)
+    )
     .returning();
 
   if (!deletedContractor) {
@@ -228,13 +256,7 @@ export async function deleteContractor(data: {
 export async function deleteContractorAccreditations(data: {
   contractorId?: number;
   accreditationId?: number;
-  null?: null;
-}): Promise<
-  Array<ContractorsAccreditation> | ContractorsAccreditation | undefined
-> {
-  if (data.null) {
-    return;
-  }
+}): Promise<Array<ContractorsAccreditation> | ContractorsAccreditation> {
   if (data.accreditationId) {
     const [deletedAccreditation] = await db
       .update(contractorsAccreditations)
@@ -266,11 +288,7 @@ export async function deleteContractorAccreditations(data: {
 export async function deleteCompany(data: {
   companyId?: number;
   userId?: number;
-  null?: null;
-}): Promise<Array<CompaniesSchemaInsert> | CompaniesSchemaInsert | undefined> {
-  if (data.null) {
-    return;
-  }
+}): Promise<Array<Company> | Company> {
   if (data.companyId) {
     const [deletedCompany] = await db
       .update(companiesTable)
@@ -305,15 +323,7 @@ export async function deleteCompany(data: {
 export async function deleteCompanyUsers(data: {
   companyId?: number;
   userId?: number;
-  null?: null;
-}): Promise<
-  | Array<Omit<CompaniesUsersSchema, "deletedAt" | "companyId">>
-  | Omit<CompaniesUsersSchema, "deletedAt" | "companyId">
-  | undefined
-> {
-  if (data.null) {
-    return;
-  }
+}): Promise<Array<CompanyUser> | CompanyUser> {
   if (data.userId && data.companyId) {
     const [deletedCompanyUser] = await db
       .update(companiesUsersTable)
@@ -321,7 +331,8 @@ export async function deleteCompanyUsers(data: {
       .where(
         and(
           eq(companiesUsersTable.companyId, data.companyId),
-          eq(companiesUsersTable.userId, data.userId)
+          eq(companiesUsersTable.userId, data.userId),
+          ne(companiesUsersTable.role, UserCompanyRole.Owner)
         )
       )
       .returning();
@@ -363,10 +374,7 @@ export async function deleteCompanyUsers(data: {
 export async function deleteJob(data: {
   companyId?: number | Array<number>;
   jobId?: number;
-}): Promise<Array<JobPostsSchemaInsert> | JobPostsSchemaInsert | undefined> {
-  if (data.companyId === null) {
-    return;
-  }
+}): Promise<Array<JobPostsSchemaInsert> | JobPostsSchemaInsert> {
   if (data.jobId) {
     const [deletedJob] = await db
       .update(jobsTable)
@@ -401,14 +409,10 @@ export async function deleteJob(data: {
 
 export async function deleteRating(data: {
   userId?: number;
+  contractorId?: number;
+  companyId?: number;
   ratingId?: number;
-  null?: null;
-}): Promise<
-  Array<ratingsTableSchemaInsert> | ratingsTableSchemaInsert | undefined
-> {
-  if (data.null) {
-    return;
-  }
+}): Promise<Array<ratingsTableSchemaInsert> | ratingsTableSchemaInsert> {
   if (data.ratingId) {
     const [deletedRating] = await db
       .update(ratingsTable)
@@ -422,16 +426,53 @@ export async function deleteRating(data: {
 
     return normalizeRating(deletedRating);
   }
+  if (data.ratingId) {
+    const deletedRatings = await db
+      .update(ratingsTable)
+      .set({ deletedAt: moment().toDate() })
+      .where(eq(ratingsTable.userId, data.userId!))
+      .returning();
 
+    if (!deletedRatings) {
+      throw new AppError("Error unable to delete ratings", 500);
+    }
+
+    return deletedRatings.map(normalizeRating);
+  }
+  if (data.contractorId) {
+    const deletedRatings = await db
+      .update(ratingsTable)
+      .set({ deletedAt: moment().toDate() })
+      .where(
+        or(
+          and(
+            eq(ratingsTable.revieweeType, RateableType.Contractors),
+            eq(ratingsTable.revieweeTypeId, data.contractorId)
+          ),
+          and(
+            eq(ratingsTable.reviewerType, RateableType.Contractors),
+            eq(ratingsTable.reviewerTypeId, data.contractorId)
+          )
+        )
+      )
+      .returning();
+    return deletedRatings.map(normalizeRating);
+  }
   const deletedRatings = await db
     .update(ratingsTable)
     .set({ deletedAt: moment().toDate() })
-    .where(eq(ratingsTable.userId, data.userId!))
+    .where(
+      or(
+        and(
+          eq(ratingsTable.revieweeType, RateableType.Companies),
+          eq(ratingsTable.revieweeTypeId, data.companyId!)
+        ),
+        and(
+          eq(ratingsTable.reviewerType, RateableType.Companies),
+          eq(ratingsTable.reviewerTypeId, data.companyId!)
+        )
+      )
+    )
     .returning();
-
-  if (!deletedRatings) {
-    throw new AppError("Error unable to delete ratings", 500);
-  }
-
   return deletedRatings.map(normalizeRating);
 }
