@@ -13,7 +13,7 @@ import {
   ratingsTableSchemaInsert,
 } from "../schemas";
 import { ratingsRules } from "../rules/rating.rule";
-import { NeonDbError } from "@neondatabase/serverless";
+import { DatabaseError } from "pg";
 import { userIsContractor, usersCompanies } from "./checks.service";
 import { UserCompanyRole } from "../utils/magic.numbers";
 import { validateCompanyUser } from "../middleware/company-auth.middleware";
@@ -145,7 +145,7 @@ export async function createRating(
 
     return normalizeRating(rating);
   } catch (err) {
-    if (err instanceof NeonDbError && err.code === "23505") {
+    if (err instanceof DatabaseError && err.code === "23505") {
       throw new AppError("Error user has already left a review", 409);
     }
     throw err;

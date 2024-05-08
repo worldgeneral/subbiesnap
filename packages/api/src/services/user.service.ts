@@ -1,4 +1,4 @@
-import { NeonDbError } from "@neondatabase/serverless";
+import { DatabaseError } from "pg";
 import { db } from "../db";
 import { UserSchema, UserSchemaInsert, usersTable } from "../models/user.model";
 import { AppError } from "../utils/express.error";
@@ -59,7 +59,7 @@ export async function registerUser(
 
     return normalizeUser(user);
   } catch (err) {
-    if (err instanceof NeonDbError && err.code === "23505") {
+    if (err instanceof DatabaseError && err.code === "23505") {
       throw new AppError("User is already registered", 400);
     }
     throw err;

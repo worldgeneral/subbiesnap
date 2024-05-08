@@ -34,8 +34,8 @@ import { normalizeJobPost } from "../jobPost.service";
 import { normalizeRating } from "../rating.service";
 import { CompanyStatus, UserCompanyRole } from "../../utils/magic.numbers";
 import { PgTransaction } from "drizzle-orm/pg-core";
-import { NeonHttpQueryResultHKT } from "drizzle-orm/neon-http";
 import { ExtractTablesWithRelations } from "drizzle-orm";
+import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 
 type InputData = Array<
   | null
@@ -127,7 +127,7 @@ export enum DeleteType {
 }
 
 type TransactionType = PgTransaction<
-  NeonHttpQueryResultHKT,
+  NodePgQueryResultHKT,
   Record<string, never>,
   ExtractTablesWithRelations<Record<string, never>>
 >;
