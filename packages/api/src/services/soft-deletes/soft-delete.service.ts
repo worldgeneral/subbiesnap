@@ -182,10 +182,11 @@ export async function softDeletesHandler<T extends unknown[] = unknown[]>(
           break;
       }
     }
+
     return data;
   });
 
-  return [transactionData] as T; //(await Promise.all(promises)) as T;
+  return transactionData as T; //(await Promise.all(promises)) as T;
 }
 
 export async function deleteUser(
