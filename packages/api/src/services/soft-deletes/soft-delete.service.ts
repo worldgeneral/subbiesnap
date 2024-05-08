@@ -1,13 +1,8 @@
 import { db } from "../../db";
 import {
-  CompaniesSchemaInsert,
-  CompaniesUsersSchema,
-  CompaniesUsersSchemaInsert,
   JobPostsSchemaInsert,
   RateableType,
   SessionsSchema,
-  UserSchema,
-  UserSchemaInsert,
   companiesTable,
   companiesUsersTable,
   contractorsAccreditations,
@@ -19,7 +14,7 @@ import {
   usersTable,
 } from "../../schemas";
 import { AppError } from "../../utils/express.error";
-import { and, arrayOverlaps, eq, inArray, isNull, ne, or } from "drizzle-orm";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 import moment from "moment";
 import { User, normalizeUser } from "../user.service";
 import * as argon2 from "argon2";
@@ -38,6 +33,9 @@ import {
 import { normalizeJobPost } from "../jobPost.service";
 import { normalizeRating } from "../rating.service";
 import { CompanyStatus, UserCompanyRole } from "../../utils/magic.numbers";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { NeonHttpQueryResultHKT } from "drizzle-orm/neon-http";
+import { ExtractTablesWithRelations } from "drizzle-orm";
 
 type InputData = Array<
   | null
@@ -128,69 +126,75 @@ export enum DeleteType {
   Rating = "rating",
 }
 
+type TransactionType = PgTransaction<
+  NeonHttpQueryResultHKT,
+  Record<string, never>,
+  ExtractTablesWithRelations<Record<string, never>>
+>;
+
 export async function softDeletesHandler<T extends unknown[] = unknown[]>(
   inputData: InputData
 ): Promise<T> {
-  let promises = [];
-  for (let i = 0; i < inputData.length; i++) {
-    let row = inputData[i];
+  const transactionData = await db.transaction(async (tx) => {
+    const options = { tx };
+    let data = [];
+    for (let i = 0; i < inputData.length; i++) {
+      let row = inputData[i];
 
-    if (row === null) {
-      continue;
-    }
-    switch (row[0]) {
-      case DeleteType.User:
-        promises.push((async () => ({ user: await deleteUser(row[1]) }))());
-        break;
-      case DeleteType.Session:
-        promises.push(
-          (async () => ({ sessions: await deleteSession(row[1]) }))()
-        );
-        break;
-      case DeleteType.Contractor:
-        promises.push(
-          (async () => ({
-            contractor: await deleteContractor(row[1]),
-          }))()
-        );
-        break;
-      case DeleteType.ContractorAccreditation:
-        promises.push(
-          (async () => ({
+      if (row === null) {
+        continue;
+      }
+      switch (row[0]) {
+        case DeleteType.User:
+          data.push({ user: await deleteUser(row[1], options) });
+          break;
+        case DeleteType.Session:
+          data.push({ sessions: await deleteSession(row[1], options) });
+          break;
+        case DeleteType.Contractor:
+          data.push({
+            contractor: await deleteContractor(row[1], options),
+          });
+          break;
+        case DeleteType.ContractorAccreditation:
+          data.push({
             contractorsAccreditations: await deleteContractorAccreditations(
-              row[1]
+              row[1],
+              options
             ),
-          }))()
-        );
-        break;
-      case DeleteType.Company:
-        promises.push(
-          (async () => ({ companies: await deleteCompany(row[1]) }))()
-        );
-        break;
-      case DeleteType.CompanyUser:
-        promises.push(
-          (async () => ({
-            companyUsers: await deleteCompanyUsers(row[1]),
-          }))()
-        );
-        break;
-      case DeleteType.Job:
-        promises.push((async () => ({ jobs: await deleteJob(row[1]) }))());
-        break;
-      case DeleteType.Rating:
-        promises.push(
-          (async () => ({ ratings: await deleteRating(row[1]) }))()
-        );
-        break;
+          });
+          break;
+        case DeleteType.Company:
+          data.push({
+            companies: await deleteCompany(row[1], options),
+          });
+          break;
+        case DeleteType.CompanyUser:
+          data.push({
+            companyUsers: await deleteCompanyUsers(row[1], options),
+          });
+          break;
+        case DeleteType.Job:
+          data.push({ jobs: await deleteJob(row[1], options) });
+          break;
+        case DeleteType.Rating:
+          data.push({ ratings: await deleteRating(row[1], options) });
+          break;
+      }
     }
-  }
+    return data;
+  });
 
-  return (await Promise.all(promises)) as T;
+  return [transactionData] as T; //(await Promise.all(promises)) as T;
 }
 
-export async function deleteUser(data: { userId?: number }): Promise<User> {
-  const [deletedUser] = await db
+export async function deleteUser(
+  data: { userId?: number },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<User> {
+  const [deletedUser] = await options.tx
     .update(usersTable)
     .set({ deletedAt: moment().toDate() })
     .where(eq(usersTable.id, data.userId!))
@@ -203,14 +207,19 @@ export async function deleteUser(data: { userId?: number }): Promise<User> {
   return { ...normalizeUser(deletedUser) };
 }
 
-export async function deleteSession(data: {
-  userId?: number;
-  sessionToken?: string;
-}): Promise<Array<SessionsSchema> | SessionsSchema> {
+export async function deleteSession(
+  data: {
+    userId?: number;
+    sessionToken?: string;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<SessionsSchema> | SessionsSchema> {
   if (data.sessionToken) {
     const hashedToken = await argon2.hash(data.sessionToken);
 
-    const [token] = await db
+    const [token] = await options.tx
       .delete(sessionsTable)
       .where(eq(sessionsTable.sessionToken, hashedToken))
       .returning();
@@ -220,7 +229,7 @@ export async function deleteSession(data: {
     }
     return token;
   }
-  const tokens = await db
+  const tokens = await options.tx
     .delete(sessionsTable)
     .where(eq(sessionsTable.userId, data.userId!))
     .returning();
@@ -232,11 +241,16 @@ export async function deleteSession(data: {
     return token;
   });
 }
-export async function deleteContractor(data: {
-  userId?: number;
-  contractorId?: number;
-}): Promise<Contractor> {
-  const [deletedContractor] = await db
+export async function deleteContractor(
+  data: {
+    userId?: number;
+    contractorId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Contractor> {
+  const [deletedContractor] = await options.tx
     .update(contractorsTable)
     .set({ deletedAt: moment().toDate() })
     .where(
@@ -253,12 +267,17 @@ export async function deleteContractor(data: {
   return normalizeContractor(deletedContractor);
 }
 
-export async function deleteContractorAccreditations(data: {
-  contractorId?: number;
-  accreditationId?: number;
-}): Promise<Array<ContractorsAccreditation> | ContractorsAccreditation> {
+export async function deleteContractorAccreditations(
+  data: {
+    contractorId?: number;
+    accreditationId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<ContractorsAccreditation> | ContractorsAccreditation> {
   if (data.accreditationId) {
-    const [deletedAccreditation] = await db
+    const [deletedAccreditation] = await options.tx
       .update(contractorsAccreditations)
       .set({ deletedAt: moment().toDate() })
       .where(eq(contractorsAccreditations.id, data.accreditationId))
@@ -269,7 +288,7 @@ export async function deleteContractorAccreditations(data: {
     }
     return normalizeAccreditation(deletedAccreditation);
   }
-  const deletedAccreditations = await db
+  const deletedAccreditations = await options.tx
     .update(contractorsAccreditations)
     .set({ deletedAt: moment().toDate() })
     .where(eq(contractorsAccreditations.contractorId, data.contractorId!))
@@ -285,12 +304,17 @@ export async function deleteContractorAccreditations(data: {
   return deletedAccreditations.map(normalizeAccreditation);
 }
 
-export async function deleteCompany(data: {
-  companyId?: number;
-  userId?: number;
-}): Promise<Array<Company> | Company> {
+export async function deleteCompany(
+  data: {
+    companyId?: number;
+    userId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<Company> | Company> {
   if (data.companyId) {
-    const [deletedCompany] = await db
+    const [deletedCompany] = await options.tx
       .update(companiesTable)
       .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
       .where(eq(companiesTable.id, data.companyId!))
@@ -303,12 +327,12 @@ export async function deleteCompany(data: {
     return normalizeCompany(deletedCompany);
   }
 
-  const [usersCompanies] = await db
+  const [usersCompanies] = await options.tx
     .select({ companyId: companiesUsersTable.companyId })
     .from(companiesUsersTable)
     .where(eq(companiesUsersTable.userId, data.userId!));
 
-  const deletedCompanies = await db
+  const deletedCompanies = await options.tx
     .update(companiesTable)
     .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
     .where(eq(companiesTable.id, usersCompanies.companyId))
@@ -320,12 +344,17 @@ export async function deleteCompany(data: {
   return deletedCompanies.map(normalizeCompany);
 }
 
-export async function deleteCompanyUsers(data: {
-  companyId?: number;
-  userId?: number;
-}): Promise<Array<CompanyUser> | CompanyUser> {
+export async function deleteCompanyUsers(
+  data: {
+    companyId?: number;
+    userId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<CompanyUser> | CompanyUser> {
   if (data.userId && data.companyId) {
-    const [deletedCompanyUser] = await db
+    const [deletedCompanyUser] = await options.tx
       .update(companiesUsersTable)
       .set({ deletedAt: moment().toDate() })
       .where(
@@ -345,7 +374,7 @@ export async function deleteCompanyUsers(data: {
   }
 
   if (data.companyId) {
-    const deletedCompanyUsers = await db
+    const deletedCompanyUsers = await options.tx
       .update(companiesUsersTable)
       .set({ deletedAt: moment().toDate() })
       .where(eq(companiesUsersTable.companyId, data.companyId))
@@ -358,7 +387,7 @@ export async function deleteCompanyUsers(data: {
     return deletedCompanyUsers.map(normalizeCompanyUser);
   }
 
-  const deletedCompanyUsers = await db
+  const deletedCompanyUsers = await options.tx
     .update(companiesUsersTable)
     .set({ deletedAt: moment().toDate() })
     .where(eq(companiesUsersTable.userId, data.userId!))
@@ -371,12 +400,17 @@ export async function deleteCompanyUsers(data: {
   return deletedCompanyUsers.map(normalizeCompanyUser);
 }
 
-export async function deleteJob(data: {
-  companyId?: number | Array<number>;
-  jobId?: number;
-}): Promise<Array<JobPostsSchemaInsert> | JobPostsSchemaInsert> {
+export async function deleteJob(
+  data: {
+    companyId?: number | Array<number>;
+    jobId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<JobPostsSchemaInsert> | JobPostsSchemaInsert> {
   if (data.jobId) {
-    const [deletedJob] = await db
+    const [deletedJob] = await options.tx
       .update(jobsTable)
       .set({ deletedAt: moment().toDate() })
       .where(eq(jobsTable.id, data.jobId))
@@ -389,7 +423,7 @@ export async function deleteJob(data: {
     return normalizeJobPost(deletedJob);
   }
 
-  const deletedJobs = await db
+  const deletedJobs = await options.tx
     .update(jobsTable)
     .set({ deletedAt: moment().toDate() })
     .where(
@@ -407,14 +441,19 @@ export async function deleteJob(data: {
   return deletedJobs.map(normalizeJobPost);
 }
 
-export async function deleteRating(data: {
-  userId?: number;
-  contractorId?: number;
-  companyId?: number;
-  ratingId?: number;
-}): Promise<Array<ratingsTableSchemaInsert> | ratingsTableSchemaInsert> {
+export async function deleteRating(
+  data: {
+    userId?: number;
+    contractorId?: number;
+    companyId?: number;
+    ratingId?: number;
+  },
+  options: {
+    tx: TransactionType;
+  }
+): Promise<Array<ratingsTableSchemaInsert> | ratingsTableSchemaInsert> {
   if (data.ratingId) {
-    const [deletedRating] = await db
+    const [deletedRating] = await options.tx
       .update(ratingsTable)
       .set({ deletedAt: moment().toDate() })
       .where(eq(ratingsTable.id, data.ratingId))
@@ -427,7 +466,7 @@ export async function deleteRating(data: {
     return normalizeRating(deletedRating);
   }
   if (data.ratingId) {
-    const deletedRatings = await db
+    const deletedRatings = await options.tx
       .update(ratingsTable)
       .set({ deletedAt: moment().toDate() })
       .where(eq(ratingsTable.userId, data.userId!))
@@ -440,7 +479,7 @@ export async function deleteRating(data: {
     return deletedRatings.map(normalizeRating);
   }
   if (data.contractorId) {
-    const deletedRatings = await db
+    const deletedRatings = await options.tx
       .update(ratingsTable)
       .set({ deletedAt: moment().toDate() })
       .where(
@@ -458,7 +497,7 @@ export async function deleteRating(data: {
       .returning();
     return deletedRatings.map(normalizeRating);
   }
-  const deletedRatings = await db
+  const deletedRatings = await options.tx
     .update(ratingsTable)
     .set({ deletedAt: moment().toDate() })
     .where(
