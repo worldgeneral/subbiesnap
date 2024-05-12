@@ -1,19 +1,24 @@
+import { and, eq, isNull } from "drizzle-orm";
+import moment from "moment";
+import { z } from "zod";
+import { db } from "../db";
+import { companySchema, companyUserSchema } from "../rules/company.rule";
 import {
-  companiesTable,
   CompaniesSchema,
-  companiesUsersTable,
-  usersTable,
   CompaniesSchemaInsert,
   CompaniesUsersSchema,
+  companiesTable,
+  companiesUsersTable,
+  usersTable,
 } from "../schemas";
-import { db } from "../db";
 import { AppError } from "../utils/express.error";
+import { UserCompanyRole } from "../utils/magic.numbers";
+import { Rating } from "./rating.service";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 import { User, normalizeUser } from "./user.service";
-import { and, eq, is, isNull } from "drizzle-orm";
-import { z } from "zod";
-import moment from "moment";
-import { companySchema, companyUserSchema } from "../rules/company.rule";
-import { CompanyStatus, UserCompanyRole } from "../utils/magic.numbers";
 
 export type Company = Required<z.infer<typeof companySchema>>;
 export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;
@@ -105,16 +110,15 @@ export async function updateCompanyData(
   return normalizeCompany(company);
 }
 
-export async function deleteCompanyData(companyId: number): Promise<Company> {
-  const [company] = await db
-    .update(companiesTable)
-    .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
-    .where(eq(companiesTable.id, companyId))
-    .returning();
-  if (!company) {
-    throw new AppError("unable to delete company data", 400);
-  }
-  return normalizeCompany(company);
+export async function deleteCompanyData(companyId: number): Promise<Rating> {
+  const result = await softDeletesHandler<[{ ratings: Rating }]>([
+    companyId ? [DeleteType.Company, { companyId }] : null,
+    companyId ? [DeleteType.CompanyUser, { companyId }] : null,
+    companyId ? [DeleteType.Job, { companyId }] : null,
+    companyId ? [DeleteType.Rating, { companyId }] : null,
+  ]);
+
+  return result[0].ratings;
 }
 
 export async function getCompanyUser(
@@ -222,19 +226,11 @@ export async function deleteCompanyUser(
   userId: number,
   companyId: number
 ): Promise<CompanyUser> {
-  const [deletedCompanyUser] = await db
-    .update(companiesUsersTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(
-      and(
-        eq(companiesUsersTable.userId, userId),
-        eq(companiesUsersTable.companyId, companyId)
-      )
-    )
-    .returning();
+  const result = await softDeletesHandler<[{ companyUsers: CompanyUser }]>([
+    userId && companyId
+      ? [DeleteType.CompanyUser, { userId, companyId }]
+      : null,
+  ]);
 
-  if (!deletedCompanyUser) {
-    throw new AppError("Error can not delete role", 400);
-  }
-  return normalizeCompanyUser(deletedCompanyUser);
+  return result[0].companyUsers;
 }

@@ -15,6 +15,10 @@ import {
   ContractorsAccreditationSchema,
   contractorSchema,
 } from "../rules/contractor.rule";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 
 export type Contractor = Required<z.infer<typeof contractorSchema>>;
 
@@ -99,7 +103,8 @@ export async function registerContractor(
 
 export async function updateContractor(
   contractorsData: Partial<Omit<ContractorsSchemaInsert, "userId">>,
-  contractorId: number
+  contractorId: number,
+  userId: number
 ): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
@@ -117,17 +122,16 @@ export async function updateContractor(
 export async function deleteContractor(
   contractorId: number
 ): Promise<Contractor> {
-  const [contractor] = await db
-    .update(contractorsTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(contractorsTable.id, contractorId))
-    .returning();
+  const result = await softDeletesHandler<[{ contractor: Contractor }]>([
+    contractorId ? [DeleteType.Contractor, { contractorId }] : null,
+    contractorId
+      ? [DeleteType.ContractorAccreditation, { contractorId }]
+      : null,
 
-  if (!contractor) {
-    throw new AppError("unable to delete contractor", 400);
-  }
+    contractorId ? [DeleteType.Rating, { contractorId }] : null,
+  ]);
 
-  return normalizeContractor(contractor);
+  return result[0].contractor;
 }
 
 export async function getAccreditation(
@@ -243,36 +247,15 @@ export async function updateAccreditation(
 }
 
 export async function deleteAccreditation(
-  accreditationId: number,
-  contractorId: number,
-  userId: number
+  accreditationId: number
 ): Promise<ContractorsAccreditation> {
-  const [contractor] = await db
-    .select()
-    .from(contractorsTable)
-    .where(eq(contractorsTable.userId, userId));
+  const result = await softDeletesHandler<
+    [{ contractorsAccreditations: ContractorsAccreditation }]
+  >([
+    accreditationId
+      ? [DeleteType.ContractorAccreditation, { accreditationId }]
+      : null,
+  ]);
 
-  if (contractor.id !== contractorId) {
-    throw new AppError(
-      "Error user does not have permission to update accreditation",
-      403
-    );
-  }
-
-  const [accreditation] = await db
-    .update(contractorsAccreditations)
-    .set({ deletedAt: moment().toDate() })
-    .where(
-      and(
-        eq(contractorsAccreditations.id, accreditationId),
-        eq(contractorsAccreditations.contractorId, contractorId)
-      )
-    )
-    .returning();
-
-  if (!accreditation) {
-    throw new AppError("Error unable to delete accreditation", 400);
-  }
-
-  return normalizeAccreditation(accreditation);
+  return result[0].contractorsAccreditations;
 }

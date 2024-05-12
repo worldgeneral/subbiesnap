@@ -9,6 +9,10 @@ import { and, eq, isNull } from "drizzle-orm";
 import { AppError } from "../utils/express.error";
 import { jobPostsSchema } from "../rules/jobPost.rule";
 import z from "zod";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 
 export type Job = Required<z.infer<typeof jobPostsSchema>>;
 
@@ -117,16 +121,10 @@ export async function updateJobPost(
   return normalizeJobPost(jobPost);
 }
 
-export async function deleteJobPost(jobPostId: number): Promise<Job> {
-  const [jobPost] = await db
-    .update(jobsTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(jobsTable.id, jobPostId))
-    .returning();
+export async function deleteJobPost(jobId: number): Promise<Job> {
+  const result = await softDeletesHandler<[{ jobs: Job }]>([
+    jobId ? [DeleteType.Job, { jobId }] : null,
+  ]);
 
-  if (!jobPost) {
-    throw new AppError("unable to delete job post data", 400);
-  }
-
-  return normalizeJobPost(jobPost);
+  return result[0].jobs;
 }

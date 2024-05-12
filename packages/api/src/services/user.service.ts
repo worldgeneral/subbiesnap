@@ -1,12 +1,20 @@
-import { NeonDbError } from "@neondatabase/serverless";
+import * as argon2 from "argon2";
+import { and, eq, isNull } from "drizzle-orm";
+import moment from "moment";
+import { DatabaseError } from "pg";
+import z from "zod";
 import { db } from "../db";
 import { UserSchema, UserSchemaInsert, usersTable } from "../models/user.model";
-import { AppError } from "../utils/express.error";
-import * as argon2 from "argon2";
 import { userSchema } from "../rules/user.rule";
-import z from "zod";
-import { and, eq, is, isNull } from "drizzle-orm";
-import moment from "moment";
+import { AppError } from "../utils/express.error";
+import {
+  companyIdFromUserId,
+  contractorIdFromUserId,
+} from "./soft-deletes/get-delete-type-id.service";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 
 export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
@@ -51,7 +59,7 @@ export async function registerUser(
 
     return normalizeUser(user);
   } catch (err) {
-    if (err instanceof NeonDbError && err.code === "23505") {
+    if (err instanceof DatabaseError && err.code === "23505") {
       throw new AppError("User is already registered", 400);
     }
     throw err;
@@ -75,15 +83,20 @@ export async function updateUser(
 }
 
 export async function deleteUser(userId: number): Promise<User> {
-  const [user] = await db
-    .update(usersTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(usersTable.id, userId))
-    .returning();
+  const companyId = await companyIdFromUserId(userId);
+  const contractorId = await contractorIdFromUserId(userId);
+  const result = await softDeletesHandler<[{ user: User }]>([
+    userId ? [DeleteType.User, { userId }] : null,
+    userId ? [DeleteType.Session, { userId }] : null,
+    userId ? [DeleteType.Contractor, { userId }] : null,
+    contractorId
+      ? [DeleteType.ContractorAccreditation, { contractorId }]
+      : null,
+    userId ? [DeleteType.Company, { userId }] : null,
+    userId ? [DeleteType.CompanyUser, { userId }] : null,
+    companyId ? [DeleteType.Job, { companyId }] : null,
+    userId ? [DeleteType.Rating, { userId }] : null,
+  ]);
 
-  if (!user) {
-    throw new AppError("Error unable to delete user", 400);
-  }
-
-  return normalizeUser(user);
+  return result[0].user;
 }

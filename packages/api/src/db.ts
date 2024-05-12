@@ -1,7 +1,9 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
 
-const sql = neon<boolean, boolean>(process.env.DB_URL!);
-const db = drizzle(sql);
+export const client = new Client({
+  connectionString: process.env.DB_URL!,
+});
 
-export { db };
+export const db = drizzle(client);

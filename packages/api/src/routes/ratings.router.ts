@@ -14,21 +14,22 @@ import {
   getRatings,
   updateRating,
 } from "../services/rating.service";
+import { ratingAuth } from "../middleware/rating-auth.middleware";
 
 const ratingsRoutes = Router();
 
 ratingsRoutes.get(
-  "/:rateableType/:rateableId/ratings",
+  "/:revieweeType/:revieweeTypeId/ratings",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
-    const { rateableType } = ratingsRules
-      .pick({ rateableType: true })
+    const { revieweeType } = ratingsRules
+      .pick({ revieweeType: true })
       .parse(req.params);
-    const rateableId = Number(req.params.rateableId);
+    const revieweeTypeId = Number(req.params.revieweeTypeId);
     const pagination = paginationSchema.parse(req.query);
     const ratings = await getRatings(
-      rateableType,
-      rateableId,
+      revieweeType,
+      revieweeTypeId,
       pagination.limit,
       pagination.offset
     );
@@ -47,18 +48,18 @@ ratingsRoutes.get(
 );
 
 ratingsRoutes.post(
-  "/:rateableType/:rateableId/ratings",
+  "/:revieweeType/:revieweeTypeId/ratings",
   sessionAuth,
   tryCatch(async (req: Request, res) => {
     const data = createRatingRules.parse(req.body);
-    const { rateableType } = ratingsRules
-      .pick({ rateableType: true })
+    const { revieweeType } = ratingsRules
+      .pick({ revieweeType: true })
       .parse(req.params);
-    const rateableId = Number(req.params.rateableId);
+    const revieweeTypeId = Number(req.params.revieweeTypeId);
     const rating = await createRating(
       data,
-      rateableType,
-      rateableId,
+      revieweeType,
+      revieweeTypeId,
       req.user!.id
     );
     res.json(rating).status(201);
@@ -68,6 +69,7 @@ ratingsRoutes.post(
 ratingsRoutes.patch(
   "/ratings/:ratingId",
   sessionAuth,
+  ratingAuth,
   tryCatch(async (req: Request, res) => {
     const data = updateRatingRules.parse(req.body);
     const ratingId = Number(req.params.ratingId);
@@ -79,9 +81,10 @@ ratingsRoutes.patch(
 ratingsRoutes.delete(
   "/ratings/:ratingId",
   sessionAuth,
+  ratingAuth,
   tryCatch(async (req: Request, res) => {
     const ratingId = Number(req.params.ratingId);
-    const rating = await deleteRating(ratingId, req.user!.id);
+    const rating = await deleteRating(ratingId);
     res.json(rating);
   })
 );

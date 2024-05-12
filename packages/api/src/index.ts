@@ -9,24 +9,32 @@ import { companiesRoutes } from "./routes/companies.router";
 import { contractorsRoutes } from "./routes/contractors.router";
 import { jobsRoutes } from "./routes/jobs.router";
 import { ratingsRoutes } from "./routes/ratings.router";
+import { client } from "./db";
 
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
 
-app.use(usersRoutes);
-app.use(authRoutes);
-app.use(companiesRoutes);
-app.use(contractorsRoutes);
-app.use(jobsRoutes);
-app.use(ratingsRoutes);
+async function main() {
+  await client.connect();
 
-app.all("*", (req, res, next) => {
-  next(new AppError("page not found", 404));
-});
+  app.use(express.json());
+  app.use(cookieParser());
 
-app.use(errorHandler);
+  app.use(usersRoutes);
+  app.use(authRoutes);
+  app.use(companiesRoutes);
+  app.use(contractorsRoutes);
+  app.use(jobsRoutes);
+  app.use(ratingsRoutes);
 
-app.listen(3001, () => {
-  console.log("http://localhost:3001");
-});
+  app.all("*", (req, res, next) => {
+    next(new AppError("page not found", 404));
+  });
+
+  app.use(errorHandler);
+
+  app.listen(3001, () => {
+    console.log("http://localhost:3001");
+  });
+}
+
+main();

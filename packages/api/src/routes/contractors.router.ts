@@ -20,7 +20,7 @@ import {
   UpdateContractorsAccreditationSchema,
 } from "../rules/contractor.rule";
 import { paginationSchema } from "../rules/pagination.rule";
-import { number } from "zod";
+import { contractorAuth } from "../middleware/contractor-auth.middleware";
 
 const contractorsRoutes = Router();
 
@@ -50,6 +50,7 @@ contractorsRoutes.get(
 contractorsRoutes.post(
   "/contractors",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = CreateContractorSchema.parse(req.body);
     const newContractor = await registerContractor(
@@ -63,12 +64,14 @@ contractorsRoutes.post(
 contractorsRoutes.patch(
   "/contractors/:contractorId",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = UpdateContractorSchema.parse(req.body);
     const contractorId = Number(req.params.contractorId);
     const updatedContractor = await updateContractor(
       contractorData,
-      contractorId
+      contractorId,
+      req.user!.id
     );
     res.json(updatedContractor);
   })
@@ -77,6 +80,7 @@ contractorsRoutes.patch(
 contractorsRoutes.delete(
   "/contractors/:contractorId",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const contractorId = Number(req.params.contractorId);
     const deletedContractor = await deleteContractor(contractorId);
@@ -112,6 +116,7 @@ contractorsRoutes.get(
 contractorsRoutes.post(
   "/contractors/:contractorId/accreditations",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const contractorData = ContractorsAccreditationsSchema.parse(req.body);
     const contractorId = Number(req.params.contractorId);
@@ -127,6 +132,7 @@ contractorsRoutes.post(
 contractorsRoutes.patch(
   "/contractors/:contractorId/accreditations/:accreditationId",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const accreditationData = UpdateContractorsAccreditationSchema.parse(
       req.body
@@ -146,14 +152,11 @@ contractorsRoutes.patch(
 contractorsRoutes.delete(
   "/contractors/:contractorId/accreditations/:accreditationId",
   sessionAuth,
+  contractorAuth,
   tryCatch(async (req: Request, res) => {
     const contractorId = Number(req.params.contractorId);
     const accreditationId = Number(req.params.accreditationId);
-    const deletedContractor = await deleteAccreditation(
-      accreditationId,
-      contractorId,
-      req.user!.id
-    );
+    const deletedContractor = await deleteAccreditation(accreditationId);
     res.json(deletedContractor);
   })
 );

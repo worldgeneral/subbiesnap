@@ -3,9 +3,11 @@ import { RateableType } from "../schemas";
 
 export const ratingsRules = z.object({
   id: number(),
-  rateableType: nativeEnum(RateableType),
-  rateableModelId: number(),
-  rating: union([
+  reviewerType: nativeEnum(RateableType),
+  reviewerTypeId: number(),
+  revieweeType: nativeEnum(RateableType),
+  revieweeTypeId: number(),
+  ratingValue: union([
     z.literal(1),
     z.literal(2),
     z.literal(3),
@@ -15,12 +17,17 @@ export const ratingsRules = z.object({
   userId: number(),
 });
 
-export const createRatingRules = ratingsRules.omit({
-  id: true,
-  rateableModelId: true,
-  userId: true,
-  rateableType: true,
-});
+export const createRatingRules = ratingsRules
+  .omit({
+    id: true,
+    revieweeType: true,
+    revieweeTypeId: true,
+    userId: true,
+  })
+  .required({
+    reviewerType: true,
+    reviewerTypeId: true,
+  });
 
 export const updateRatingRules = ratingsRules.omit({
   id: true,
