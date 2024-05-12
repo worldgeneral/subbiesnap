@@ -1,20 +1,20 @@
+import * as argon2 from "argon2";
+import { and, eq, isNull } from "drizzle-orm";
+import moment from "moment";
 import { DatabaseError } from "pg";
+import z from "zod";
 import { db } from "../db";
 import { UserSchema, UserSchemaInsert, usersTable } from "../models/user.model";
-import { AppError } from "../utils/express.error";
-import * as argon2 from "argon2";
 import { userSchema } from "../rules/user.rule";
-import z from "zod";
-import { and, eq, is, isNull } from "drizzle-orm";
-import moment from "moment";
-import {
-  DeleteType,
-  softDeletesHandler,
-} from "./soft-deletes/soft-delete.service";
+import { AppError } from "../utils/express.error";
 import {
   companyIdFromUserId,
   contractorIdFromUserId,
 } from "./soft-deletes/get-delete-type-id.service";
+import {
+  DeleteType,
+  softDeletesHandler,
+} from "./soft-deletes/soft-delete.service";
 
 export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 

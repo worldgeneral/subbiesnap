@@ -1,3 +1,17 @@
+import * as argon2 from "argon2";
+import {
+  ExtractTablesWithRelations,
+  SQL,
+  and,
+  eq,
+  inArray,
+  ne,
+  or,
+} from "drizzle-orm";
+import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { PgTable, PgTransaction } from "drizzle-orm/pg-core";
+import moment from "moment";
+import { RequireExactlyOne } from "type-fest";
 import { db } from "../../db";
 import {
   JobPostsSchemaInsert,
@@ -14,104 +28,61 @@ import {
   usersTable,
 } from "../../schemas";
 import { AppError } from "../../utils/express.error";
-import { and, eq, inArray, ne, or } from "drizzle-orm";
-import moment from "moment";
-import { User, normalizeUser } from "../user.service";
-import * as argon2 from "argon2";
-import {
-  Contractor,
-  ContractorsAccreditation,
-  normalizeAccreditation,
-  normalizeContractor,
-} from "../contractor.service";
+import { CompanyStatus, UserCompanyRole } from "../../utils/magic.numbers";
 import {
   Company,
   CompanyUser,
   normalizeCompany,
   normalizeCompanyUser,
 } from "../company.service";
+import {
+  Contractor,
+  ContractorsAccreditation,
+  normalizeAccreditation,
+  normalizeContractor,
+} from "../contractor.service";
 import { normalizeJobPost } from "../jobPost.service";
 import { normalizeRating } from "../rating.service";
-import { CompanyStatus, UserCompanyRole } from "../../utils/magic.numbers";
-import { PgTransaction } from "drizzle-orm/pg-core";
-import { ExtractTablesWithRelations } from "drizzle-orm";
-import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { User, normalizeUser } from "../user.service";
 
 type InputData = Array<
   | null
   | [DeleteType.User, { userId: number }]
   | [
       DeleteType.Session,
-      (
-        | { sessionToken: string; userId?: never }
-        | { sessionToken?: never; userId: number }
-      ),
+      RequireExactlyOne<{ sessionToken: string; userId: number }>,
     ]
-  | [DeleteType.Contractor, { userId: number } | { contractorId: number }]
+  | [
+      DeleteType.Contractor,
+      RequireExactlyOne<{ userId: number; contractorId: number }>,
+    ]
   | [
       DeleteType.ContractorAccreditation,
-      (
-        | {
-            accreditationId: number;
-            contractorId?: never;
-          }
-        | {
-            accreditationId?: never;
-            contractorId: number;
-          }
-      ),
+      RequireExactlyOne<{ accreditationId: number; contractorId: number }>,
     ]
   | [
       DeleteType.Company,
-      (
-        | { companyId: number; userId?: never }
-        | { companyId?: never; userId: number }
-      ),
+      RequireExactlyOne<{ companyId: number; userId: number }>,
     ]
   | [
       DeleteType.CompanyUser,
       (
         | { companyId: number; userId: number }
-        | { companyId: number; userId?: never }
-        | { companyId?: never; userId: number }
+        | RequireExactlyOne<{ companyId: number; userId: number }>
       ),
     ]
   | [
       DeleteType.Job,
-      (
-        | { jobId: number; companyId?: never }
-        | { jobId?: never; companyId: Array<number> }
-        | { jobId?: never; companyId: number }
-      ),
+      RequireExactlyOne<{ jobId: number; companyId: number | number[] }>,
     ]
   | [
       DeleteType.Rating,
-      (
-        | {
-            companyId: number;
-            contractorId?: never;
-            userId?: never;
-            ratingId?: never;
-          }
-        | {
-            companyId?: never;
-            contractorId: number;
-            userId?: never;
-            ratingId?: never;
-          }
-        | {
-            companyId?: never;
-            contractorId?: never;
-            userId: number;
-            ratingId?: never;
-          }
-        | {
-            companyId?: never;
-            contractorId?: never;
-            userId?: never;
-            ratingId: number;
-          }
-      ),
+      RequireExactlyOne<{
+        companyId: number;
+        contractorId: number;
+        userId: number;
+        ratingId: number;
+      }>,
     ]
 >;
 
@@ -136,186 +107,146 @@ export async function softDeletesHandler<T extends unknown[] = unknown[]>(
   inputData: InputData
 ): Promise<T> {
   const transactionData = await db.transaction(async (tx) => {
-    const options = { tx };
     let data = [];
     for (let i = 0; i < inputData.length; i++) {
       let row = inputData[i];
-
       if (row === null) {
         continue;
       }
       switch (row[0]) {
         case DeleteType.User:
-          data.push({ user: await deleteUser(row[1], options) });
+          data.push({ user: await deleteUser(row[1], tx) });
           break;
         case DeleteType.Session:
-          data.push({ sessions: await deleteSession(row[1], options) });
+          data.push({ sessions: await deleteSession(row[1], tx) });
           break;
         case DeleteType.Contractor:
           data.push({
-            contractor: await deleteContractor(row[1], options),
+            contractor: await deleteContractor(row[1], tx),
           });
           break;
         case DeleteType.ContractorAccreditation:
           data.push({
             contractorsAccreditations: await deleteContractorAccreditations(
               row[1],
-              options
+              tx
             ),
           });
           break;
         case DeleteType.Company:
           data.push({
-            companies: await deleteCompany(row[1], options),
+            companies: await deleteCompany(row[1], tx),
           });
           break;
         case DeleteType.CompanyUser:
           data.push({
-            companyUsers: await deleteCompanyUsers(row[1], options),
+            companyUsers: await deleteCompanyUsers(row[1], tx),
           });
           break;
         case DeleteType.Job:
-          data.push({ jobs: await deleteJob(row[1], options) });
+          data.push({ jobs: await deleteJob(row[1], tx) });
           break;
         case DeleteType.Rating:
-          data.push({ ratings: await deleteRating(row[1], options) });
+          data.push({ ratings: await deleteRating(row[1], tx) });
           break;
       }
     }
-
     return data;
   });
-
-  return transactionData as T; //(await Promise.all(promises)) as T;
+  return transactionData as T;
 }
 
-export async function deleteUser(
+async function markAsDeleted<
+  I extends T["$inferSelect"],
+  T extends PgTable = PgTable,
+  R = I[],
+>(
+  tx: TransactionType,
+  table: T,
+  where: SQL | undefined,
+  msg: string,
+  statusCode = 500
+): Promise<R> {
+  const data = await tx
+    .update(table)
+    .set({ deletedAt: moment().toDate() })
+    .where(where)
+    .returning();
+
+  if (data.length === 0) {
+    throw new AppError(`Error unable to delete ${msg}`, statusCode);
+  }
+
+  return data as R;
+}
+
+async function deleteUser(
   data: { userId?: number },
-  options: {
-    tx: TransactionType;
-  }
-): Promise<User> {
-  const [deletedUser] = await options.tx
-    .update(usersTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(usersTable.id, data.userId!))
-    .returning();
-
-  if (!deletedUser) {
-    throw new AppError("Error unable to delete user", 500);
-  }
-
-  return { ...normalizeUser(deletedUser) };
+  tx: TransactionType
+): Promise<User[]> {
+  const users = await markAsDeleted(
+    tx,
+    usersTable,
+    eq(usersTable.id, data.userId!),
+    "user"
+  );
+  return users.map(normalizeUser);
 }
 
-export async function deleteSession(
-  data: {
-    userId?: number;
-    sessionToken?: string;
-  },
-  options: {
-    tx: TransactionType;
-  }
+async function deleteSession(
+  data: RequireExactlyOne<{ userId: number; sessionToken: string }>,
+  tx: TransactionType
 ): Promise<Array<SessionsSchema> | SessionsSchema> {
-  if (data.sessionToken) {
-    const hashedToken = await argon2.hash(data.sessionToken);
-
-    const [token] = await options.tx
-      .delete(sessionsTable)
-      .where(eq(sessionsTable.sessionToken, hashedToken))
-      .returning();
-
-    if (!token) {
-      throw new AppError("Error unable to delete session", 500);
-    }
-    return token;
-  }
-  const tokens = await options.tx
+  const tokens = await tx
     .delete(sessionsTable)
-    .where(eq(sessionsTable.userId, data.userId!))
-    .returning();
-
-  if (!tokens) {
-    throw new AppError("Error unable to delete session", 500);
-  }
-  return tokens.map((token) => {
-    return token;
-  });
-}
-export async function deleteContractor(
-  data: {
-    userId?: number;
-    contractorId?: number;
-  },
-  options: {
-    tx: TransactionType;
-  }
-): Promise<Contractor> {
-  const [deletedContractor] = await options.tx
-    .update(contractorsTable)
-    .set({ deletedAt: moment().toDate() })
     .where(
-      data.userId
-        ? eq(contractorsTable.userId, data.userId!)
-        : eq(contractorsTable.id, data.contractorId!)
+      data.sessionToken
+        ? eq(sessionsTable.sessionToken, await argon2.hash(data.sessionToken))
+        : eq(sessionsTable.userId, data.userId!)
     )
     .returning();
 
-  if (!deletedContractor) {
-    throw new AppError("Error unable to delete contractor", 500);
+  if ((data.sessionToken && !tokens) || (data.userId && tokens.length === 0)) {
+    throw new AppError("Error unable to delete session", 500);
   }
-
-  return normalizeContractor(deletedContractor);
+  return tokens;
+}
+async function deleteContractor(
+  data: RequireExactlyOne<{ userId: number; contractorId: number }>,
+  tx: TransactionType
+): Promise<Contractor[]> {
+  const deletedContractor = await markAsDeleted(
+    tx,
+    contractorsTable,
+    data.userId
+      ? eq(contractorsTable.userId, data.userId!)
+      : eq(contractorsTable.id, data.contractorId!),
+    "contractor"
+  );
+  return deletedContractor.map(normalizeContractor);
 }
 
-export async function deleteContractorAccreditations(
-  data: {
-    contractorId?: number;
-    accreditationId?: number;
-  },
-  options: {
-    tx: TransactionType;
-  }
-): Promise<Array<ContractorsAccreditation> | ContractorsAccreditation> {
-  if (data.accreditationId) {
-    const [deletedAccreditation] = await options.tx
-      .update(contractorsAccreditations)
-      .set({ deletedAt: moment().toDate() })
-      .where(eq(contractorsAccreditations.id, data.accreditationId))
-      .returning();
-
-    if (!deletedAccreditation) {
-      throw new AppError("Error unable to delete accreditation", 500);
-    }
-    return normalizeAccreditation(deletedAccreditation);
-  }
-  const deletedAccreditations = await options.tx
-    .update(contractorsAccreditations)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(contractorsAccreditations.contractorId, data.contractorId!))
-    .returning();
-
-  if (!deletedAccreditations) {
-    throw new AppError(
-      "Error unable to delete contractors accreditations",
-      500
-    );
-  }
-
-  return deletedAccreditations.map(normalizeAccreditation);
+async function deleteContractorAccreditations(
+  data: RequireExactlyOne<{ contractorId: number; accreditationId: number }>,
+  tx: TransactionType
+): Promise<Array<ContractorsAccreditation>> {
+  const deletedAccreditation = await markAsDeleted(
+    tx,
+    contractorsAccreditations,
+    data.contractorId
+      ? eq(contractorsAccreditations.contractorId, data.contractorId)
+      : eq(contractorsAccreditations.id, data.accreditationId!),
+    "contractor accreditation"
+  );
+  return deletedAccreditation.map(normalizeAccreditation);
 }
 
-export async function deleteCompany(
-  data: {
-    companyId?: number;
-    userId?: number;
-  },
-  options: {
-    tx: TransactionType;
-  }
+async function deleteCompany(
+  data: RequireExactlyOne<{ companyId: number; userId: number }>,
+  tx: TransactionType
 ): Promise<Array<Company> | Company> {
   if (data.companyId) {
-    const [deletedCompany] = await options.tx
+    const [deletedCompany] = await tx
       .update(companiesTable)
       .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
       .where(eq(companiesTable.id, data.companyId!))
@@ -328,12 +259,12 @@ export async function deleteCompany(
     return normalizeCompany(deletedCompany);
   }
 
-  const [usersCompanies] = await options.tx
+  const [usersCompanies] = await db
     .select({ companyId: companiesUsersTable.companyId })
     .from(companiesUsersTable)
     .where(eq(companiesUsersTable.userId, data.userId!));
 
-  const deletedCompanies = await options.tx
+  const deletedCompanies = await tx
     .update(companiesTable)
     .set({ deletedAt: moment().toDate(), status: CompanyStatus.Deleted })
     .where(eq(companiesTable.id, usersCompanies.companyId))
@@ -345,174 +276,96 @@ export async function deleteCompany(
   return deletedCompanies.map(normalizeCompany);
 }
 
-export async function deleteCompanyUsers(
+async function deleteCompanyUsers(
   data: {
     companyId?: number;
     userId?: number;
   },
-  options: {
-    tx: TransactionType;
-  }
+  tx: TransactionType
 ): Promise<Array<CompanyUser> | CompanyUser> {
-  if (data.userId && data.companyId) {
-    const [deletedCompanyUser] = await options.tx
-      .update(companiesUsersTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(
-        and(
-          eq(companiesUsersTable.companyId, data.companyId),
-          eq(companiesUsersTable.userId, data.userId),
-          ne(companiesUsersTable.role, UserCompanyRole.Owner)
-        )
-      )
-      .returning();
-
-    if (!deletedCompanyUser) {
-      throw new AppError("Error unable to delete company user", 500);
-    }
-
-    return normalizeCompanyUser(deletedCompanyUser);
-  }
-
-  if (data.companyId) {
-    const deletedCompanyUsers = await options.tx
-      .update(companiesUsersTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(eq(companiesUsersTable.companyId, data.companyId))
-      .returning();
-
-    if (!deletedCompanyUsers) {
-      throw new AppError("Error unable to delete company users", 500);
-    }
-
-    return deletedCompanyUsers.map(normalizeCompanyUser);
-  }
-
-  const deletedCompanyUsers = await options.tx
-    .update(companiesUsersTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(eq(companiesUsersTable.userId, data.userId!))
-    .returning();
-
-  if (!deletedCompanyUsers) {
-    throw new AppError("Error unable to delete company users", 500);
-  }
-
+  const deletedCompanyUsers = await markAsDeleted(
+    tx,
+    companiesUsersTable,
+    data.companyId && data.userId
+      ? (eq(companiesUsersTable.companyId, data.companyId),
+        eq(companiesUsersTable.userId, data.userId),
+        ne(companiesUsersTable.role, UserCompanyRole.Owner))
+      : data.companyId
+        ? eq(companiesUsersTable.companyId, data.companyId)
+        : eq(companiesUsersTable.userId, data.userId!),
+    "company user"
+  );
   return deletedCompanyUsers.map(normalizeCompanyUser);
 }
 
-export async function deleteJob(
-  data: {
-    companyId?: number | Array<number>;
-    jobId?: number;
-  },
-  options: {
-    tx: TransactionType;
-  }
+async function deleteJob(
+  data: RequireExactlyOne<{
+    companyId: number | Array<number>;
+    jobId: number;
+  }>,
+  tx: TransactionType
 ): Promise<Array<JobPostsSchemaInsert> | JobPostsSchemaInsert> {
-  if (data.jobId) {
-    const [deletedJob] = await options.tx
-      .update(jobsTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(eq(jobsTable.id, data.jobId))
-      .returning();
-
-    if (!deletedJob) {
-      throw new AppError("Error unable to delete job post", 500);
-    }
-
-    return normalizeJobPost(deletedJob);
-  }
-
-  const deletedJobs = await options.tx
-    .update(jobsTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(
-      inArray(
-        jobsTable.companyId,
-        Array.isArray(data.companyId) ? data.companyId! : [data.companyId!]
-      )
-    )
-    .returning();
-
-  if (!deletedJobs) {
-    throw new AppError("Error unable to delete job posts", 500);
-  }
-
+  const deletedJobs = await markAsDeleted(
+    tx,
+    jobsTable,
+    data.jobId
+      ? eq(jobsTable.id, data.jobId)
+      : inArray(
+          jobsTable.companyId,
+          Array.isArray(data.companyId) ? data.companyId! : [data.companyId!]
+        ),
+    "job"
+  );
   return deletedJobs.map(normalizeJobPost);
 }
 
-export async function deleteRating(
-  data: {
-    userId?: number;
-    contractorId?: number;
-    companyId?: number;
-    ratingId?: number;
-  },
-  options: {
-    tx: TransactionType;
-  }
+async function deleteRating(
+  data: RequireExactlyOne<{
+    userId: number;
+    contractorId: number;
+    companyId: number;
+    ratingId: number;
+  }>,
+  tx: TransactionType
 ): Promise<Array<ratingsTableSchemaInsert> | ratingsTableSchemaInsert> {
-  if (data.ratingId) {
-    const [deletedRating] = await options.tx
-      .update(ratingsTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(eq(ratingsTable.id, data.ratingId))
-      .returning();
-
-    if (!deletedRating) {
-      throw new AppError("Error unable to delete rating", 500);
-    }
-
-    return normalizeRating(deletedRating);
-  }
-  if (data.ratingId) {
-    const deletedRatings = await options.tx
-      .update(ratingsTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(eq(ratingsTable.userId, data.userId!))
-      .returning();
-
-    if (!deletedRatings) {
-      throw new AppError("Error unable to delete ratings", 500);
-    }
-
-    return deletedRatings.map(normalizeRating);
-  }
-  if (data.contractorId) {
-    const deletedRatings = await options.tx
-      .update(ratingsTable)
-      .set({ deletedAt: moment().toDate() })
-      .where(
-        or(
-          and(
-            eq(ratingsTable.revieweeType, RateableType.Contractors),
-            eq(ratingsTable.revieweeTypeId, data.contractorId)
-          ),
-          and(
-            eq(ratingsTable.reviewerType, RateableType.Contractors),
-            eq(ratingsTable.reviewerTypeId, data.contractorId)
+  if (data.contractorId || data.companyId) {
+    const deletedRatings = await markAsDeleted(
+      tx,
+      ratingsTable,
+      data.contractorId
+        ? or(
+            and(
+              eq(ratingsTable.revieweeType, RateableType.Contractors),
+              eq(ratingsTable.revieweeTypeId, data.contractorId!)
+            ),
+            and(
+              (eq(ratingsTable.reviewerType, RateableType.Contractors!),
+              eq(ratingsTable.reviewerTypeId, data.contractorId!))
+            )
           )
-        )
-      )
-      .returning();
+        : or(
+            and(
+              eq(ratingsTable.revieweeType, RateableType.Companies),
+              eq(ratingsTable.revieweeTypeId, data.companyId!)
+            ),
+            and(
+              eq(ratingsTable.reviewerType, RateableType.Companies!),
+              eq(ratingsTable.reviewerTypeId, data.companyId!)
+            )
+          ),
+      "rating"
+    );
+
     return deletedRatings.map(normalizeRating);
   }
-  const deletedRatings = await options.tx
-    .update(ratingsTable)
-    .set({ deletedAt: moment().toDate() })
-    .where(
-      or(
-        and(
-          eq(ratingsTable.revieweeType, RateableType.Companies),
-          eq(ratingsTable.revieweeTypeId, data.companyId!)
-        ),
-        and(
-          eq(ratingsTable.reviewerType, RateableType.Companies),
-          eq(ratingsTable.reviewerTypeId, data.companyId!)
-        )
-      )
-    )
-    .returning();
+  const deletedRatings = await markAsDeleted(
+    tx,
+    ratingsTable,
+    data.ratingId
+      ? eq(ratingsTable.id, data.ratingId)
+      : eq(ratingsTable.userId, data.userId!),
+    "rating"
+  );
+
   return deletedRatings.map(normalizeRating);
 }
