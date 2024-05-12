@@ -1,11 +1,10 @@
-import { db } from "../db";
-import { and, eq, isNull } from "drizzle-orm";
-import { AppError } from "../utils/express.error";
+import { and, eq } from "drizzle-orm";
+import { db } from "../db/db";
 import {
   companiesTable,
   companiesUsersTable,
   contractorsTable,
-} from "../schemas";
+} from "../db/schemas";
 
 export async function usersCompanies(userId: number): Promise<true | false> {
   const [result] = await db
