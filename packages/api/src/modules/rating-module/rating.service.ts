@@ -2,7 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
-import { UserCompanyRole } from "../../constants/magic-numbers.utils";
+import { UserCompanyRole } from "../../constants/company-emuns";
 import { db } from "../../db/db";
 import {
   RateableType,
@@ -13,15 +13,12 @@ import {
   ratingsTableSchemaInsert,
 } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
-import {
-  userIsContractor,
-  usersCompanies,
-} from "../../services/checks.service";
 import { validateCompanyUser } from "../company-module/company-auth.middleware";
 import {
   DeleteType,
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
+import { userIsContractor, usersCompanies } from "./checks.service";
 import { ratingsRules } from "./rating.rule";
 
 export type Rating = Required<z.infer<typeof ratingsRules>>;

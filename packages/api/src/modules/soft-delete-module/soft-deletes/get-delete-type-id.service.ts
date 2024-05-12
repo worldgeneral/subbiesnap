@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { UserCompanyRole } from "../../../constants/magic-numbers.utils";
+import { UserCompanyRole } from "../../../constants/company-emuns";
 import { db } from "../../../db/db";
 import { companiesUsersTable, contractorsTable } from "../../../db/schemas";
 

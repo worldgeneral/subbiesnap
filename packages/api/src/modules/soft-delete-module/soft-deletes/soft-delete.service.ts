@@ -15,7 +15,7 @@ import { RequireExactlyOne } from "type-fest";
 import {
   CompanyStatus,
   UserCompanyRole,
-} from "../../../constants/magic-numbers.utils";
+} from "../../../constants/company-emuns";
 import { db } from "../../../db/db";
 import {
   JobPostsSchemaInsert,

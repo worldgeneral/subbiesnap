@@ -1,10 +1,10 @@
 import { and, eq } from "drizzle-orm";
-import { db } from "../db/db";
+import { db } from "../../db/db";
 import {
   companiesTable,
   companiesUsersTable,
   contractorsTable,
-} from "../db/schemas";
+} from "../../db/schemas";
 
 export async function usersCompanies(userId: number): Promise<true | false> {
   const [result] = await db

@@ -1,9 +1,6 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
-import {
-  CompanyStatus,
-  UserCompanyRole,
-} from "../../constants/magic-numbers.utils";
+import { CompanyStatus, UserCompanyRole } from "../../constants/company-emuns";
 import { db } from "../../db/db";
 import { companiesTable, companiesUsersTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";

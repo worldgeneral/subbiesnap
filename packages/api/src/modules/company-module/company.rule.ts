@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserCompanyRole } from "../../constants/magic-numbers.utils";
+import { UserCompanyRole } from "../../constants/company-emuns";
 
 export const companySchema = z.object({
   id: z.number(),

@@ -1,5 +1,5 @@
 import { Request, Router } from "express";
-import { UserCompanyRole } from "../../constants/magic-numbers.utils";
+import { UserCompanyRole } from "../../constants/company-emuns";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";

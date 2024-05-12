@@ -6,7 +6,7 @@ import z from "zod";
 import {
   SESSION_TOKEN_EXPIRE_DAYS,
   SESSION_TOKEN_STRING_LENGTH,
-} from "../../constants/magic-numbers.utils";
+} from "../../constants/session-token";
 import { db } from "../../db/db";
 import { sessionsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
