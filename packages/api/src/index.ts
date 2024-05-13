@@ -1,15 +1,16 @@
-import "dotenv/config";
-import express, { NextFunction } from "express";
-import { AppError } from "./utils/express.error";
-import { usersRoutes } from "./routes/users.router";
-import { errorHandler } from "./middleware/error-handler.middleware";
-import { authRoutes } from "./routes/auth.router";
 import cookieParser from "cookie-parser";
-import { companiesRoutes } from "./routes/companies.router";
-import { contractorsRoutes } from "./routes/contractors.router";
-import { jobsRoutes } from "./routes/jobs.router";
-import { ratingsRoutes } from "./routes/ratings.router";
-import { client } from "./db";
+import "dotenv/config";
+import express from "express";
+import { HttpStatus } from "./constants/https";
+import { client } from "./db/db";
+import { errorHandler } from "./errors/error-handler.middleware";
+import { AppError } from "./errors/express-error";
+import { authRoutes } from "./modules/auth-module/auth.router";
+import { companiesRoutes } from "./modules/company-module/companies.router";
+import { contractorsRoutes } from "./modules/contractor-module/contractors.router";
+import { jobsRoutes } from "./modules/job-module/jobs.router";
+import { ratingsRoutes } from "./modules/rating-module/ratings.router";
+import { usersRoutes } from "./modules/user-module/users.router";
 
 const app = express();
 
@@ -27,7 +28,7 @@ async function main() {
   app.use(ratingsRoutes);
 
   app.all("*", (req, res, next) => {
-    next(new AppError("page not found", 404));
+    next(new AppError("page not found", HttpStatus.NotFound));
   });
 
   app.use(errorHandler);
