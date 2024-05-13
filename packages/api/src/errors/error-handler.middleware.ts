@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { HttpStatus } from "../constants/https";
 import { AppError } from "./express-error";
 
 export const errorHandler = (
@@ -11,7 +12,7 @@ export const errorHandler = (
   console.log(err);
   if (err instanceof ZodError) {
     return res
-      .status(400)
+      .status(HttpStatus.BadRequest)
       .json({ errorMessage: "Validation Error", issues: err.issues, err });
   }
 
@@ -22,7 +23,7 @@ export const errorHandler = (
     });
   }
 
-  return res.status(500).json({
+  return res.status(HttpStatus.InternalServerError).json({
     message: "Something went wrong",
     err,
   });

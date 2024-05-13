@@ -1,4 +1,5 @@
 import { Request, Router } from "express";
+import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
@@ -57,7 +58,7 @@ contractorsRoutes.post(
       contractorData,
       req.user!.id
     );
-    res.json(newContractor).status(201);
+    res.json(newContractor).status(HttpStatus.Created);
   })
 );
 

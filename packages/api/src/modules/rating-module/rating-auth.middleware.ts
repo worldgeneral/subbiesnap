@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import { UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { RateableType, ratingsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
@@ -36,7 +37,10 @@ export async function validateRating(userId: number, ratingId: number) {
       : await validateContractor(userId, rating.reviewerTypeId);
 
   if (!reviewer) {
-    throw new AppError("Error user does not have permission", 403);
+    throw new AppError(
+      "Error user does not have permission",
+      HttpStatus.Forbidden
+    );
   }
   return;
 }

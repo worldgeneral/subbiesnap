@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express from "express";
+import { HttpStatus } from "./constants/https";
 import { client } from "./db/db";
 import { errorHandler } from "./errors/error-handler.middleware";
 import { AppError } from "./errors/express-error";
@@ -27,7 +28,7 @@ async function main() {
   app.use(ratingsRoutes);
 
   app.all("*", (req, res, next) => {
-    next(new AppError("page not found", 404));
+    next(new AppError("page not found", HttpStatus.NotFound));
   });
 
   app.use(errorHandler);

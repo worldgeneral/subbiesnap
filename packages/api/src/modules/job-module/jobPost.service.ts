@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { AppError } from "../../errors/express-error";
 import {
@@ -44,7 +45,7 @@ export async function getJobPost(jobPostId: number): Promise<Job> {
       )
     );
   if (!jobPost) {
-    throw new AppError("Error unable to find job", 400);
+    throw new AppError("Error unable to find job", HttpStatus.BadRequest);
   }
 
   return normalizeJobPost(jobPost);
@@ -115,7 +116,7 @@ export async function updateJobPost(
     .returning();
 
   if (!jobPost) {
-    throw new AppError("unable to update job post data", 400);
+    throw new AppError("unable to update job post data", HttpStatus.BadRequest);
   }
 
   return normalizeJobPost(jobPost);

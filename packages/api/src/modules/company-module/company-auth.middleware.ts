@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import { CompanyStatus, UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { companiesTable, companiesUsersTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
@@ -34,11 +35,14 @@ export async function validateCompanyUser(
     );
 
   if (!userCompany) {
-    throw new AppError("user does not have access to this company", 403);
+    throw new AppError(
+      "user does not have access to this company",
+      HttpStatus.Forbidden
+    );
   }
 
   if (role < userCompany.role) {
-    throw new AppError("user requires permissions", 403);
+    throw new AppError("user requires permissions", HttpStatus.Forbidden);
   }
 
   const [companyData] = await db
@@ -47,7 +51,7 @@ export async function validateCompanyUser(
     .where(eq(companiesTable.id, companyId));
 
   if (companyData.status === CompanyStatus.Deleted) {
-    throw new AppError("company no loner exists", 404);
+    throw new AppError("company no loner exists", HttpStatus.NotFound);
   }
   return companyData;
 }

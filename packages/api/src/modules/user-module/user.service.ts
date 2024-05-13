@@ -3,6 +3,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { AppError } from "../../errors/express-error";
 import {
@@ -33,7 +34,7 @@ export async function getUser(userId: number): Promise<User> {
     .from(usersTable)
     .where(eq(usersTable.id, userId));
   if (!user) {
-    throw new AppError("user does not exist", 404);
+    throw new AppError("user does not exist", HttpStatus.NotFound);
   }
 
   return normalizeUser(user);
@@ -60,7 +61,7 @@ export async function registerUser(
     return normalizeUser(user);
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {
-      throw new AppError("User is already registered", 400);
+      throw new AppError("User is already registered", HttpStatus.BadRequest);
     }
     throw err;
   }
@@ -77,7 +78,7 @@ export async function updateUser(
     .returning();
 
   if (!user) {
-    throw new AppError("Error unable to update user", 400);
+    throw new AppError("Error unable to update user", HttpStatus.BadRequest);
   }
   return normalizeUser(user);
 }

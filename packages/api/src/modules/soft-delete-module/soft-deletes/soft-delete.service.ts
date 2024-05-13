@@ -16,6 +16,7 @@ import {
   CompanyStatus,
   UserCompanyRole,
 } from "../../../constants/company-emuns";
+import { HttpStatus } from "../../../constants/https";
 import { db } from "../../../db/db";
 import {
   JobPostsSchemaInsert,
@@ -168,7 +169,7 @@ async function markAsDeleted<
   table: T,
   where: SQL | undefined,
   msg: string,
-  statusCode = 500
+  statusCode = HttpStatus.InternalServerError
 ): Promise<R> {
   const data = await tx
     .update(table)
@@ -210,7 +211,10 @@ async function deleteSession(
     .returning();
 
   if ((data.sessionToken && !tokens) || (data.userId && tokens.length === 0)) {
-    throw new AppError("Error unable to delete session", 500);
+    throw new AppError(
+      "Error unable to delete session",
+      HttpStatus.InternalServerError
+    );
   }
   return tokens;
 }
@@ -256,7 +260,10 @@ async function deleteCompany(
       .returning();
 
     if (!deletedCompany) {
-      throw new AppError("Error unable to delete company", 500);
+      throw new AppError(
+        "Error unable to delete company",
+        HttpStatus.InternalServerError
+      );
     }
 
     return normalizeCompany(deletedCompany);
@@ -274,7 +281,10 @@ async function deleteCompany(
     .returning();
 
   if (!deletedCompanies) {
-    throw new AppError("Error unable to delete companies", 500);
+    throw new AppError(
+      "Error unable to delete companies",
+      HttpStatus.InternalServerError
+    );
   }
   return deletedCompanies.map(normalizeCompany);
 }

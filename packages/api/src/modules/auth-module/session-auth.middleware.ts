@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import moment from "moment";
+import { HttpStatus } from "../../constants/https";
 import { SESSION_TOKEN_EXPIRE_DAYS } from "../../constants/session-token";
 import { db } from "../../db/db";
 import { sessionsTable, usersTable } from "../../db/schemas";
@@ -27,7 +28,7 @@ export const sessionAuth = tryCatch(async function (
       .where(eq(sessionsTable.sessionToken, hashedSessionToken));
 
     if (!session || moment().isAfter(session.sessions.expiresAt)) {
-      throw new AppError("not authorized", 401);
+      throw new AppError("not authorized", HttpStatus.Unauthorized);
     }
 
     if (
@@ -48,5 +49,5 @@ export const sessionAuth = tryCatch(async function (
 
     return next();
   }
-  throw new AppError("not authorized", 401);
+  throw new AppError("not authorized", HttpStatus.Unauthorized);
 });

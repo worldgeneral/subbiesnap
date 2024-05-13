@@ -1,4 +1,5 @@
 import { Request, Router } from "express";
+import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
@@ -62,7 +63,7 @@ ratingsRoutes.post(
       revieweeTypeId,
       req.user!.id
     );
-    res.json(rating).status(201);
+    res.json(rating).status(HttpStatus.Created);
   })
 );
 

@@ -1,4 +1,5 @@
 import { Request, Router } from "express";
+import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { registerSchema, updateUserSchema } from "./user.rule";
@@ -26,7 +27,7 @@ usersRoutes.post(
       data.firstName,
       data.secondName
     );
-    res.json(user).status(201);
+    res.json(user).status(HttpStatus.Created);
   })
 );
 

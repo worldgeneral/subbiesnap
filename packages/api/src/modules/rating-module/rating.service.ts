@@ -3,6 +3,7 @@ import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
 import { UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import {
   RateableType,
@@ -66,7 +67,7 @@ export async function getRating(ratingId: number): Promise<Rating> {
     .where(and(eq(ratingsTable.id, ratingId), isNull(ratingsTable.deletedAt)));
 
   if (!ratings) {
-    throw new AppError("Error unable to find rating", 404);
+    throw new AppError("Error unable to find rating", HttpStatus.NotFound);
   }
 
   return normalizeRating(ratings);
@@ -99,7 +100,10 @@ export async function createRating(
           )
         );
       if (!validateContractor) {
-        throw new AppError("Error you don't have access to contractor", 403);
+        throw new AppError(
+          "Error you don't have access to contractor",
+          HttpStatus.Forbidden
+        );
       }
     }
     const table =
@@ -113,7 +117,10 @@ export async function createRating(
         : await usersCompanies(userId);
 
     if (selfRateCheck === true) {
-      throw new AppError("Error you can not rate yourself", 400);
+      throw new AppError(
+        "Error you can not rate yourself",
+        HttpStatus.BadRequest
+      );
     }
 
     const [rating] = await db
@@ -145,7 +152,10 @@ export async function createRating(
     return normalizeRating(rating);
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {
-      throw new AppError("Error user has already left a review", 409);
+      throw new AppError(
+        "Error user has already left a review",
+        HttpStatus.Conflict
+      );
     }
     throw err;
   }
@@ -163,7 +173,7 @@ export async function updateRating(
     .returning();
 
   if (!rating) {
-    throw new AppError("Error unable to update rating", 400);
+    throw new AppError("Error unable to update rating", HttpStatus.BadRequest);
   }
 
   const allRatings = await db

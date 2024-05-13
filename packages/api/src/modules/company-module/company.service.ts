@@ -2,6 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { z } from "zod";
 import { UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import {
   CompaniesSchema,
@@ -51,7 +52,7 @@ export async function getCompany(companyId: number): Promise<Company> {
     );
 
   if (!company) {
-    throw new AppError("unable to find company", 404);
+    throw new AppError("unable to find company", HttpStatus.NotFound);
   }
   return normalizeCompany(company);
 }
@@ -105,7 +106,7 @@ export async function updateCompanyData(
     .returning();
 
   if (!company) {
-    throw new AppError("unable to update company data", 400);
+    throw new AppError("unable to update company data", HttpStatus.BadRequest);
   }
   return normalizeCompany(company);
 }
@@ -166,7 +167,7 @@ export async function addCompanyUser(
     .where(eq(usersTable.email, userEmail));
 
   if (!newUser) {
-    throw new AppError("user does not exist", 404);
+    throw new AppError("user does not exist", HttpStatus.NotFound);
   }
 
   const [userCompany] = await db
@@ -211,7 +212,7 @@ export async function updateCompanyUser(
     .returning();
 
   if (!updatedCompanyUser) {
-    throw new AppError("Error can not update role", 400);
+    throw new AppError("Error can not update role", HttpStatus.BadRequest);
   }
 
   const [user] = await db

@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import {
   ContractorsAccreditationsSchema,
@@ -65,7 +66,7 @@ export async function getContractor(contractorId: number) {
     );
 
   if (!contractor) {
-    throw new AppError("unable to find contractor", 404);
+    throw new AppError("unable to find contractor", HttpStatus.NotFound);
   }
 
   return normalizeContractor(contractor);
@@ -113,7 +114,7 @@ export async function updateContractor(
     .returning();
 
   if (!contractor) {
-    throw new AppError("unable to update contractor", 400);
+    throw new AppError("unable to update contractor", HttpStatus.BadRequest);
   }
 
   return normalizeContractor(contractor);
@@ -148,7 +149,7 @@ export async function getAccreditation(
     );
 
   if (!contractorsAccreditation) {
-    throw new AppError("unable to find Accreditation", 404);
+    throw new AppError("unable to find Accreditation", HttpStatus.NotFound);
   }
 
   return normalizeAccreditation(contractorsAccreditation);
@@ -172,7 +173,7 @@ export async function getAccreditations(
     .offset(offset);
 
   if (!contractorsAccreditation) {
-    throw new AppError("unable to find Accreditations", 404);
+    throw new AppError("unable to find Accreditations", HttpStatus.NotFound);
   }
   const accreditations = contractorsAccreditation.map((accreditation) =>
     normalizeAccreditation(accreditation)
@@ -193,7 +194,10 @@ export async function addAccreditations(
     .where(eq(contractorsTable.userId, userId));
 
   if (contractor.id !== contractorId) {
-    throw new AppError("Error unable to add accreditation", 400);
+    throw new AppError(
+      "Error unable to add accreditation",
+      HttpStatus.BadRequest
+    );
   }
 
   const accreditationWithID = accreditationData.map((accreditation) => ({
@@ -225,7 +229,10 @@ export async function updateAccreditation(
     .where(eq(contractorsTable.userId, userId));
 
   if (contractor.id !== contractorId) {
-    throw new AppError("Error unable to update accreditation", 400);
+    throw new AppError(
+      "Error unable to update accreditation",
+      HttpStatus.BadRequest
+    );
   }
   const [accreditation] = await db
     .update(contractorsAccreditations)
@@ -240,7 +247,7 @@ export async function updateAccreditation(
     .returning();
 
   if (!accreditation) {
-    throw new AppError("unable to update accreditation", 400);
+    throw new AppError("unable to update accreditation", HttpStatus.BadRequest);
   }
 
   return normalizeAccreditation(accreditation);

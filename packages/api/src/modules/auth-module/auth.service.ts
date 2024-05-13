@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
+import { HttpStatus } from "../../constants/https";
 import {
   SESSION_TOKEN_EXPIRE_DAYS,
   SESSION_TOKEN_STRING_LENGTH,
@@ -26,10 +27,10 @@ export async function loginAuthUser(password: string, email: string) {
     .where(and(eq(usersTable.email, email), isNull(usersTable.deletedAt)));
 
   if (!user) {
-    throw new AppError("user does not exist", 401);
+    throw new AppError("user does not exist", HttpStatus.BadRequest);
   }
   if (!(await argon2.verify(user.password, password))) {
-    throw new AppError("password or email is wrong", 401);
+    throw new AppError("password or email is wrong", HttpStatus.Unauthorized);
   }
 
   return normalizeUser(user);

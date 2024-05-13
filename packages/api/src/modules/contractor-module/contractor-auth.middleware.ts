@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
+import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { ContractorsSchema, contractorsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
@@ -31,7 +32,10 @@ export async function validateContractor(
       )
     );
   if (!result) {
-    throw new AppError("Error user does not have permission", 403);
+    throw new AppError(
+      "Error user does not have permission",
+      HttpStatus.Forbidden
+    );
   }
   return result;
 }

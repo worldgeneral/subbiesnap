@@ -1,5 +1,6 @@
 import { Request, Router } from "express";
 import { UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
@@ -50,7 +51,7 @@ companiesRoutes.post(
   tryCatch(async (req: Request, res) => {
     const data = createCompanySchema.parse(req.body);
     const company = await registerCompany(data, req.user!.id);
-    res.json(company).status(201);
+    res.json(company).status(HttpStatus.Created);
   })
 );
 

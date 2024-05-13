@@ -1,5 +1,6 @@
 import { Request, Router } from "express";
 import { UserCompanyRole } from "../../constants/company-emuns";
+import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
@@ -59,7 +60,7 @@ jobsRoutes.post(
     const data = CreateJobPostSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const newJobPost = await createJobPost(data, companyId);
-    res.json(newJobPost).status(201);
+    res.json(newJobPost).status(HttpStatus.Created);
   })
 );
 
