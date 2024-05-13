@@ -1,4 +1,10 @@
 import { z } from "zod";
+import {
+  MIN_AMOUNT_OF_LOWER_CASE,
+  MIN_AMOUNT_OF_NUMBERS,
+  MIN_AMOUNT_OF_UPPER_CASE,
+  PASSWORD_MIN_LENGTH,
+} from "../../constants/password";
 
 export const userSchema = z.object({
   id: z.number(),
@@ -16,7 +22,7 @@ export const updateUserSchema = userSchema.omit({
 
 export const registerSchema = z
   .object({
-    password: z.string().min(8),
+    password: z.string().min(PASSWORD_MIN_LENGTH),
     confirmPassword: z.string(),
     email: z.string().email(),
     firstName: z.string(),
@@ -40,7 +46,11 @@ export const registerSchema = z
       else if (containsUppercase(ch)) countOfUpperCase++;
       else if (containsLowercase(ch)) countOfLowerCase++;
     }
-    if (countOfLowerCase < 1 || countOfUpperCase < 1 || countOfNumbers < 1) {
+    if (
+      countOfLowerCase < MIN_AMOUNT_OF_LOWER_CASE ||
+      countOfUpperCase < MIN_AMOUNT_OF_UPPER_CASE ||
+      countOfNumbers < MIN_AMOUNT_OF_NUMBERS
+    ) {
       checkPassComplexity.addIssue({
         code: "custom",
         message: "password does not meet complexity requirements",
