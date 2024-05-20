@@ -3,9 +3,16 @@ import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
+import { CONFIRM_EMAIL_ID_LENGTH, NO_REPLY } from "../../constants/emails";
 import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
+import { sendEmail } from "../../email-client/send-email";
+import {
+  confirmEmailSubject,
+  confirmEmailWrapper,
+} from "../../email-client/templates/confirm-email";
 import { AppError } from "../../errors/express-error";
+import { randomStringAsBase64Url } from "../../utils/unique-string.utils";
 import {
   companyIdFromUserId,
   contractorIdFromUserId,
@@ -48,6 +55,9 @@ export async function registerUser(
 ): Promise<User> {
   try {
     const hashPassword = await argon2.hash(password);
+    const confirmEmailId = await randomStringAsBase64Url(
+      CONFIRM_EMAIL_ID_LENGTH
+    );
     const [user] = await db
       .insert(usersTable)
       .values({
@@ -58,6 +68,34 @@ export async function registerUser(
       })
       .returning();
 
+    sendEmail({
+      FromEmailAddress: NO_REPLY,
+      Destination: {
+        ToAddresses: ["matt@mymailhost.co.uk"],
+      },
+      Simple: {
+        Subject: {
+          Data: confirmEmailSubject,
+        },
+        Body: {
+          Html: {
+            Data: confirmEmailWrapper({
+              firstName: firstName,
+              secondName: secondName,
+              emailAuthId: confirmEmailId,
+            }),
+          },
+          Text: {
+            Data: confirmEmailWrapper({
+              firstName: firstName,
+              secondName: secondName,
+              emailAuthId: confirmEmailId,
+            }),
+          },
+        },
+      },
+    });
+    console.log(1);
     return normalizeUser(user);
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {

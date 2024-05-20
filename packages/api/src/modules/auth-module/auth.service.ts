@@ -11,10 +11,10 @@ import {
 import { db } from "../../db/db";
 import { sessionsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
+import { randomStringAsBase64Url } from "../../utils/unique-string.utils";
 import { usersTable } from "../user-module/user.model";
 import { userSchema } from "../user-module/user.rule";
 import { normalizeUser } from "../user-module/user.service";
-import { randomStringAsBase64Url } from "./unique-string.utils";
 
 export type login = Required<
   Omit<z.infer<typeof userSchema>, "id" | "firstName" | "secondName">

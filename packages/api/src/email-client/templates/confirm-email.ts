@@ -1,9 +1,11 @@
+import { COMPANY_NAME } from "../../constants/branding";
+
 type confirmEmail = {
   firstName: string;
   secondName: string;
-  emailAuthId: number;
+  emailAuthId: string;
 };
-
+export const confirmEmailSubject = `${COMPANY_NAME} confirm email`;
 export function confirmEmailWrapper(input: confirmEmail) {
   return `
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -302,7 +304,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
 
                               <div style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">Thanks,</span></p>
-                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">The SubbieSnap Team</span></p>
+                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">The ${COMPANY_NAME} Team</span></p>
                               </div>
 
                             </td>

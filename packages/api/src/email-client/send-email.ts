@@ -4,8 +4,8 @@ import { ses } from "./client";
 type SendEmailType = {
   FromEmailAddress: string;
   Destination: {
-    BccAddresses: Array<string>;
-    CcAddresses: Array<string>;
+    BccAddresses?: Array<string>;
+    CcAddresses?: Array<string>;
     ToAddresses: Array<string>;
   };
   Simple: {
@@ -52,4 +52,5 @@ export async function sendEmail(email: SendEmailType) {
   };
 
   await ses.send(new SendEmailCommand(input));
+  return;
 }
