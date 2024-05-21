@@ -71,7 +71,7 @@ export async function registerUser(
     sendEmail({
       FromEmailAddress: NO_REPLY,
       Destination: {
-        ToAddresses: ["matt@mymailhost.co.uk"],
+        ToAddresses: [email],
       },
       Simple: {
         Subject: {
@@ -95,7 +95,7 @@ export async function registerUser(
         },
       },
     });
-    console.log(1);
+
     return normalizeUser(user);
   } catch (err) {
     if (err instanceof DatabaseError && err.code === "23505") {
