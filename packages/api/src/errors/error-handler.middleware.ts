@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 import { ZodError } from "zod";
 import { HttpStatus } from "../constants/https";
 import { AppError } from "./express-error";
@@ -21,6 +22,12 @@ export const errorHandler = (
       errorMessage: err.message,
       err: err.stack,
     });
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    return res
+      .status(HttpStatus.BadRequest)
+      .json({ name: err.name, message: err.message });
   }
 
   return res.status(HttpStatus.InternalServerError).json({

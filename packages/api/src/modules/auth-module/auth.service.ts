@@ -1,6 +1,7 @@
 import * as argon2 from "argon2";
 import { createHash } from "crypto";
 import { and, eq, isNull } from "drizzle-orm";
+
 import moment from "moment";
 import z from "zod";
 import { HttpStatus } from "../../constants/https";
@@ -12,6 +13,7 @@ import { db } from "../../db/db";
 import { sessionsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { randomStringAsBase64Url } from "../../utils/unique-string.utils";
+import { verifyToken } from "../../utils/verify-jwt-token";
 import { usersTable } from "../user-module/user.model";
 import { userSchema } from "../user-module/user.rule";
 import { normalizeUser } from "../user-module/user.service";
@@ -58,4 +60,18 @@ export async function userLogout(sessionToken: string) {
     .where(eq(sessionsTable.sessionToken, hashToken));
 
   return;
+}
+
+export async function emailAuth(emailToken: string) {
+  const token = await verifyToken(emailToken, process.env.JWT_SECRET!);
+  if (!token || typeof token === "string") {
+    throw new AppError("invalid decoded token", HttpStatus.InternalServerError);
+  }
+  const [user] = await db
+    .update(usersTable)
+    .set({ confirmedEmail: moment().toDate() })
+    .where(eq(usersTable.id, token.userId))
+    .returning();
+
+  return normalizeUser(user);
 }

@@ -30,4 +30,11 @@ authRoutes.post(
   })
 );
 
+authRoutes.post(
+  "/email-auth/:emailAuthId",
+  tryCatch(async (req: Request, res) => {
+    const emailAuth = await emailAuth(req.params.emailAuthId);
+  })
+);
+
 export { authRoutes };

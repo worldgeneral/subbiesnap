@@ -1,3 +1,4 @@
+import * as jwt from "jsonwebtoken";
 declare namespace Express {
   export interface Request {
     user?: {
@@ -11,5 +12,11 @@ declare namespace Express {
 declare namespace Express {
   export interface Request {
     usersCompany?: number;
+  }
+}
+
+declare module "jsonwebtoken" {
+  export interface JwtPayload extends jwt.JwtPayload {
+    userId: number;
   }
 }

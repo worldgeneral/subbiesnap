@@ -1,4 +1,4 @@
-import { boolean, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: serial("id").primaryKey().notNull(),
@@ -6,8 +6,7 @@ export const usersTable = pgTable("users", {
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),
   secondName: text("second_name").notNull(),
-  confirmedEmail: boolean("confirmed_email").notNull().default(false),
-  confirmEmailId: text("confirm_email_id"),
+  confirmedEmail: timestamp("confirmed_email"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: timestamp("deleted_at"),

@@ -31,7 +31,7 @@ export const sessionAuth = tryCatch(async function (
       throw new AppError("not authorized", HttpStatus.Unauthorized);
     }
 
-    if (session.users.confirmedEmail === false) {
+    if (session.users.confirmedEmail === null) {
       throw new AppError(
         "Error user need to confirm email address",
         HttpStatus.Unauthorized
