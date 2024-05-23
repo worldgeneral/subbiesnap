@@ -3,8 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["src/types"]
   },
   "ts-node": { "files": true },
-  "include": ["src/**/*", "src/db/drizzle.config.ts", "global.d.ts"]
+  "include": ["src/**/*", "src/db/drizzle.config.ts"]
 }

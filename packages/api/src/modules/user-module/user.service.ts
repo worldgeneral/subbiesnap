@@ -1,9 +1,10 @@
 import * as argon2 from "argon2";
 import { and, eq, isNull } from "drizzle-orm";
+import jwt from "jsonwebtoken";
 import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
-import { CONFIRM_EMAIL_ID_LENGTH, NO_REPLY } from "../../constants/emails";
+import { NO_REPLY } from "../../constants/emails";
 import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { sendEmail } from "../../email-client/send-email";
@@ -12,7 +13,6 @@ import {
   confirmEmailWrapper,
 } from "../../email-client/templates/confirm-email";
 import { AppError } from "../../errors/express-error";
-import { randomStringAsBase64Url } from "../../utils/unique-string.utils";
 import {
   companyIdFromUserId,
   contractorIdFromUserId,
@@ -55,9 +55,6 @@ export async function registerUser(
 ): Promise<User> {
   try {
     const hashPassword = await argon2.hash(password);
-    const confirmEmailId = await randomStringAsBase64Url(
-      CONFIRM_EMAIL_ID_LENGTH
-    );
     const [user] = await db
       .insert(usersTable)
       .values({
@@ -68,6 +65,10 @@ export async function registerUser(
       })
       .returning();
 
+    const confirmEmailId = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET!
+    );
     sendEmail({
       FromEmailAddress: NO_REPLY,
       Destination: {

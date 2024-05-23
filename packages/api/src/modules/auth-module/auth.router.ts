@@ -1,7 +1,12 @@
 import { Request, Router } from "express";
 import { tryCatch } from "../../errors/try-catch";
 import { authSchema } from "./auth.rule";
-import { loginAuthUser, userLogin, userLogout } from "./auth.service";
+import {
+  emailAuth,
+  loginAuthUser,
+  userLogin,
+  userLogout,
+} from "./auth.service";
 import { sessionAuth } from "./session-auth.middleware";
 
 const authRoutes = Router();
@@ -33,7 +38,8 @@ authRoutes.post(
 authRoutes.post(
   "/email-auth/:emailAuthId",
   tryCatch(async (req: Request, res) => {
-    const emailAuth = await emailAuth(req.params.emailAuthId);
+    const emailAuthUser = await emailAuth(req.params.emailAuthId);
+    res.json(emailAuthUser);
   })
 );
 
