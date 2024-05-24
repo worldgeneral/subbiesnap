@@ -35,7 +35,7 @@ authRoutes.post(
   })
 );
 
-authRoutes.post(
+authRoutes.get(
   "/email-auth/:emailAuthId",
   tryCatch(async (req: Request, res) => {
     const emailAuthUser = await emailAuth(req.params.emailAuthId);

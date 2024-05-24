@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import moment from "moment";
 import { DatabaseError } from "pg";
 import z from "zod";
-import { NO_REPLY } from "../../constants/emails";
+import { NO_REPLY_EMAIL } from "../../constants/emails";
 import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { sendEmail } from "../../email-client/send-email";
@@ -70,7 +70,7 @@ export async function registerUser(
       process.env.JWT_SECRET!
     );
     sendEmail({
-      FromEmailAddress: NO_REPLY,
+      FromEmailAddress: NO_REPLY_EMAIL,
       Destination: {
         ToAddresses: [email],
       },

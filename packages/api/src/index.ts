@@ -12,6 +12,8 @@ import { jobsRoutes } from "./modules/job-module/jobs.router";
 import { ratingsRoutes } from "./modules/rating-module/ratings.router";
 import { usersRoutes } from "./modules/user-module/users.router";
 
+console.log(process.env.NODE_ENV);
+
 const app = express();
 
 async function main() {
