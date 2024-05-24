@@ -1,7 +1,12 @@
 import { Request, Router } from "express";
 import { tryCatch } from "../../errors/try-catch";
 import { authSchema } from "./auth.rule";
-import { loginAuthUser, userLogin, userLogout } from "./auth.service";
+import {
+  emailAuth,
+  loginAuthUser,
+  userLogin,
+  userLogout,
+} from "./auth.service";
 import { sessionAuth } from "./session-auth.middleware";
 
 const authRoutes = Router();
@@ -27,6 +32,14 @@ authRoutes.post(
 
     res.clearCookie("session_id");
     res.json(req.user);
+  })
+);
+
+authRoutes.get(
+  "/email-auth/:emailAuthId",
+  tryCatch(async (req: Request, res) => {
+    const emailAuthUser = await emailAuth(req.params.emailAuthId);
+    res.json(emailAuthUser);
   })
 );
 

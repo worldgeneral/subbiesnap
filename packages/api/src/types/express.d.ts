@@ -6,10 +6,6 @@ declare namespace Express {
       firstName: string;
       secondName: string;
     };
-  }
-}
-declare namespace Express {
-  export interface Request {
     usersCompany?: number;
   }
 }
