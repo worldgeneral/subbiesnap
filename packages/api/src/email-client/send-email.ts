@@ -3,23 +3,14 @@ import { ses } from "./client";
 
 type SendEmailType = {
   FromEmailAddress: string;
-  Destination: {
-    BccAddresses?: Array<string>;
-    CcAddresses?: Array<string>;
-    ToAddresses: Array<string>;
-  };
-  Simple: {
-    Subject: {
-      Data: string;
-    };
-    Body: {
-      Html: {
-        Data: string;
-      };
-      Text: {
-        Data: string;
-      };
-    };
+
+  Bcc?: Array<string>;
+  Cc?: Array<string>;
+  To: Array<string>;
+  Subject: string;
+  Body: {
+    Html: string;
+    Text: string;
   };
 };
 
@@ -27,23 +18,23 @@ export async function sendEmail(email: SendEmailType) {
   const input = {
     FromEmailAddress: email.FromEmailAddress,
     Destination: {
-      BccAddresses: email.Destination.BccAddresses,
-      CcAddresses: email.Destination.CcAddresses,
-      ToAddresses: email.Destination.ToAddresses,
+      BccAddresses: email.Bcc,
+      CcAddresses: email.Cc,
+      ToAddresses: email.To,
     },
     Content: {
       Simple: {
         Subject: {
-          Data: email.Simple.Subject.Data,
+          Data: email.Subject,
           Charset: "UTF-8",
         },
         Body: {
           Html: {
-            Data: email.Simple.Body.Html.Data,
+            Data: email.Body.Html,
             Charset: "UTF-8",
           },
           Text: {
-            Data: email.Simple.Body.Text.Data,
+            Data: email.Body.Text,
             Charset: "UTF-8",
           },
         },
@@ -52,5 +43,4 @@ export async function sendEmail(email: SendEmailType) {
   };
 
   await ses.send(new SendEmailCommand(input));
-  return;
 }

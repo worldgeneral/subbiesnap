@@ -71,29 +71,22 @@ export async function registerUser(
     );
     sendEmail({
       FromEmailAddress: NO_REPLY_EMAIL,
-      Destination: {
-        ToAddresses: [email],
-      },
-      Simple: {
-        Subject: {
-          Data: confirmEmailSubject,
-        },
-        Body: {
-          Html: {
-            Data: confirmEmailWrapper({
-              firstName: firstName,
-              secondName: secondName,
-              emailAuthId: confirmEmailId,
-            }),
-          },
-          Text: {
-            Data: confirmEmailWrapper({
-              firstName: firstName,
-              secondName: secondName,
-              emailAuthId: confirmEmailId,
-            }),
-          },
-        },
+
+      To: [email],
+
+      Subject: confirmEmailSubject,
+
+      Body: {
+        Html: confirmEmailWrapper({
+          firstName: firstName,
+          secondName: secondName,
+          emailAuthId: confirmEmailId,
+        }),
+        Text: confirmEmailWrapper({
+          firstName: firstName,
+          secondName: secondName,
+          emailAuthId: confirmEmailId,
+        }),
       },
     });
 
