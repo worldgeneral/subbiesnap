@@ -1,15 +1,14 @@
 import { COMPANY_NAME } from "../../constants/branding";
 
-type confirmEmail = {
+type resetPasswordEmail = {
   firstName: string;
   secondName: string;
-  emailAuthId: string;
+  resetId: string;
 };
-export const confirmEmailSubject = `${COMPANY_NAME} confirm email`;
-export function confirmEmailWrapper(input: confirmEmail) {
-  return `
-    <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+export const passwordResetSubject = `${COMPANY_NAME} reset password`;
+export function passwordResetWrapper(input: resetPasswordEmail) {
+  return `<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
   <!--[if gte mso 9]>
@@ -144,7 +143,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                    <img align="center" border="0" src="https://assets.unlayer.com/projects/233908/1716232106501-Frame%202.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 69%;max-width: 400.2px;"
+                                    <img align="center" border="0" src="https://assets.unlayer.com/projects/233908/1716232106501-Frame%202.png" alt="SubbieSnap" title="SubbieSnap" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 69%;max-width: 400.2px;"
                                       width="400.2" />
 
                                   </td>
@@ -210,7 +209,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
                             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                               <div style="font-size: 14px; color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 140%;"><strong>T H A N K S&nbsp; &nbsp;F O R&nbsp; &nbsp;S I G N I N G&nbsp; &nbsp;U P !</strong></p>
+                                <p style="font-size: 14px; line-height: 140%;"><strong>Forgotten Your Password, No Problem <br></strong></p>
                               </div>
 
                             </td>
@@ -224,7 +223,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
                             <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 31px;font-family:'Cabin',sans-serif;" align="left">
 
                               <div style="font-size: 14px; color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Verify Your E-mail Address </span></strong>
+                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Reset Your Password<br></span></strong>
                                   </span>
                                 </p>
                               </div>
@@ -268,7 +267,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
 
                               <div style="font-size: 14px; line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Hi ${input.firstName} ${input.secondName}, </span></p>
-                                <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">You're almost ready to get started. Please click on the button below to verify your email address! </span></p>
+                                <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">You have requested a password reset, if this wasn't you please contact us immediately</span></p>
                               </div>
 
                             </td>
@@ -283,9 +282,9 @@ export function confirmEmailWrapper(input: confirmEmail) {
 
                               <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
                               <div align="center">
-                                <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:46px; v-text-anchor:middle; width:235px;" arcsize="8.5%"  stroke="f" fillcolor="#ff6600"><w:anchorlock/><center style="color:#FFFFFF;"><![endif]-->
-                                <a href="${process.env.WEBSITE_URL!}/email-auth/${input.emailAuthId}" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #ff6600; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:auto; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
-                                  <span style="display:block;padding:14px 44px 13px;line-height:120%;"><span style="font-size: 16px; line-height: 19.2px;"><strong><span style="line-height: 19.2px; font-size: 16px;">VERIFY YOUR EMAIL</span></strong>
+                                <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:46px; v-text-anchor:middle; width:224px;" arcsize="8.5%"  stroke="f" fillcolor="#ff6600"><w:anchorlock/><center style="color:#FFFFFF;"><![endif]-->
+                                <a href="${process.env.WEBSITE_URL!}/password-reset/${input.resetId}" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #ff6600; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:auto; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
+                                  <span style="display:block;padding:14px 44px 13px;line-height:120%;"><span style="font-size: 16px; line-height: 19.2px;"><strong><span style="line-height: 19.2px; font-size: 16px;">RESET PASSWORD<br></span></strong>
                                   </span>
                                   </span>
                                 </a>
@@ -345,7 +344,7 @@ export function confirmEmailWrapper(input: confirmEmail) {
                             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                               <div style="font-size: 14px; color: #fafafa; line-height: 180%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 180%;"><span style="font-size: 16px; line-height: 28.8px;">Copyrights © ${COMPANY_NAME} All Rights Reserved</span></p>
+                                <p style="font-size: 14px; line-height: 180%;"><span style="font-size: 16px; line-height: 28.8px;">Copyrights © SubbieSnap All Rights Reserved</span></p>
                               </div>
 
                             </td>
