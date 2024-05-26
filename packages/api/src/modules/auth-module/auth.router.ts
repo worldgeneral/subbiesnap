@@ -1,9 +1,11 @@
 import { Request, Router } from "express";
 import { tryCatch } from "../../errors/try-catch";
-import { authSchema } from "./auth.rule";
+import { authSchema, emailSchema, passwordSchema } from "./auth.rule";
 import {
   emailAuth,
   loginAuthUser,
+  passwordReset,
+  resetPasswordEmail,
   userLogin,
   userLogout,
 } from "./auth.service";
@@ -34,12 +36,31 @@ authRoutes.post(
     res.json(req.user);
   })
 );
+// needs to change to post then site is up
+authRoutes.get(
+  "/email-auth/:emailTokenId",
+  tryCatch(async (req: Request, res) => {
+    const emailAuthUser = await emailAuth(req.params.emailTokenId);
+    res.json(emailAuthUser);
+  })
+);
 
 authRoutes.get(
-  "/email-auth/:emailAuthId",
+  "/password-reset",
   tryCatch(async (req: Request, res) => {
-    const emailAuthUser = await emailAuth(req.params.emailAuthId);
-    res.json(emailAuthUser);
+    const data = emailSchema.parse(req.body);
+    const user = await resetPasswordEmail(data.email);
+    res.json(user);
+  })
+);
+
+// needs to change to post then site is up
+authRoutes.get(
+  "/password-reset/:resetTokenId",
+  tryCatch(async (req: Request, res) => {
+    const data = passwordSchema.parse(req.body);
+    const user = await passwordReset(req.params.resetTokenId, data.password);
+    res.json(user);
   })
 );
 
