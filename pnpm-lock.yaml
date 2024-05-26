@@ -13,9 +13,6 @@ importers:
       '@aws-sdk/client-sesv2':
         specifier: ^3.577.0
         version: 3.577.0
-      '@neondatabase/serverless':
-        specifier: ^0.9.0
-        version: 0.9.0
       argon2:
         specifier: ^0.40.1
         version: 0.40.1
@@ -27,7 +24,7 @@ importers:
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.29.4
-        version: 0.29.4(@neondatabase/serverless@0.9.0)(@types/pg@8.11.2)(pg@8.11.3)
+        version: 0.29.4(@types/pg@8.11.2)(pg@8.11.3)
       express:
         specifier: ^4.18.3
         version: 4.18.3
@@ -1151,12 +1148,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@neondatabase/serverless@0.9.0:
-    resolution: {integrity: sha512-mmJnUAzlzvxNSZuuhI6kgJjH+JgFdBMYUWxihtq/nj0Tjt+Y5UU3W+SvRFoucnd5NObYkuLYQzk+zV5DGFKGJg==}
-    dependencies:
-      '@types/pg': 8.6.6
-    dev: false
-
   /@next/env@14.1.1:
     resolution: {integrity: sha512-7CnQyD5G8shHxQIIg3c7/pSeYFeMhsNbpU/bmvH7ZnDql7mNRgg8O2JZrhrc/soFnfBnKP4/xXNiiSIPn2w8gA==}
     dev: false
@@ -1744,14 +1735,6 @@ packages:
       '@types/node': 20.11.24
       pg-protocol: 1.6.0
       pg-types: 4.0.2
-
-  /@types/pg@8.6.6:
-    resolution: {integrity: sha512-O2xNmXebtwVekJDD+02udOncjVcMZQuTEQEMpKJ0ZRf5E7/9JJX3izhKUcUifBkyKpljyUM6BTgy2trmviKlpw==}
-    dependencies:
-      '@types/node': 20.11.24
-      pg-protocol: 1.6.0
-      pg-types: 2.2.0
-    dev: false
 
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
@@ -2532,7 +2515,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.29.4(@neondatabase/serverless@0.9.0)(@types/pg@8.11.2)(pg@8.11.3):
+  /drizzle-orm@0.29.4(@types/pg@8.11.2)(pg@8.11.3):
     resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -2603,7 +2586,6 @@ packages:
       sqlite3:
         optional: true
     dependencies:
-      '@neondatabase/serverless': 0.9.0
       '@types/pg': 8.11.2
       pg: 8.11.3
     dev: false
