@@ -1,9 +1,9 @@
 import { SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { NO_REPLY_EMAIL } from "../constants/emails";
 import { ses } from "./client";
 
 type SendEmailType = {
-  FromEmailAddress: string;
-
+  FromEmailAddress?: string;
   Bcc?: Array<string>;
   Cc?: Array<string>;
   To: Array<string>;
@@ -16,7 +16,7 @@ type SendEmailType = {
 
 export async function sendEmail(email: SendEmailType) {
   const input = {
-    FromEmailAddress: email.FromEmailAddress,
+    FromEmailAddress: email.FromEmailAddress ?? NO_REPLY_EMAIL,
     Destination: {
       BccAddresses: email.Bcc,
       CcAddresses: email.Cc,

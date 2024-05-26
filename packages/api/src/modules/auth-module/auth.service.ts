@@ -4,7 +4,7 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import z from "zod";
-import { NO_REPLY_EMAIL } from "../../constants/emails";
+import { PASSWORD_RESET_EXPIRES_AT } from "../../constants/emails";
 import { HttpStatus } from "../../constants/https";
 import {
   SESSION_TOKEN_EXPIRE_DAYS,
@@ -104,16 +104,12 @@ export async function resetPasswordEmail(email: string) {
   }
 
   const resetEmailId = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: "1h",
+    expiresIn: PASSWORD_RESET_EXPIRES_AT,
   });
 
-  sendEmail({
-    FromEmailAddress: NO_REPLY_EMAIL,
-
+  await sendEmail({
     To: [email],
-
     Subject: passwordResetSubject,
-
     Body: {
       Html: passwordResetWrapper({
         firstName: user.firstName,
