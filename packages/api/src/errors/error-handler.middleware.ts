@@ -10,7 +10,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err);
+  console.log(err, req.path, req.header("user-agent"));
   if (err instanceof ZodError) {
     return res
       .status(HttpStatus.BadRequest)
