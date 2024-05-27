@@ -31,7 +31,9 @@ export const createRatingRules = ratingsRules
 
 export const updateRatingRules = ratingsRules.omit({
   id: true,
-  rateableType: true,
-  rateableModelId: true,
+  revieweeType: true,
+  revieweeTypeId: true,
+  reviewerType: true,
+  reviewerTypeId: true,
   userId: true,
 });

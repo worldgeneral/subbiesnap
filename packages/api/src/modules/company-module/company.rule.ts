@@ -12,14 +12,12 @@ export const companySchema = z.object({
 
 export const createCompanySchema = companySchema.omit({
   id: true,
-  ownerId: true,
   avgRating: true,
   timesRated: true,
 });
 
 export const updateCompanySchema = companySchema.omit({
   id: true,
-  ownerId: true,
 });
 
 export const companyUserSchema = z.object({

@@ -73,10 +73,7 @@ export async function getCompanies(
 }
 
 export async function registerCompany(
-  companyData: Omit<
-    CompaniesSchemaInsert,
-    "userId" | "avgRating" | "timesRated"
-  >,
+  companyData: Omit<CompaniesSchemaInsert, "avgRating" | "timesRated">,
   userId: number
 ): Promise<Company> {
   const [company] = await db
