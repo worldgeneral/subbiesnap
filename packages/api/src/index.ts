@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express from "express";
 import { HttpStatus } from "./constants/https";
-import { client } from "./db/db";
 import { errorHandler } from "./errors/error-handler.middleware";
 import { AppError } from "./errors/express-error";
 import { authRoutes } from "./modules/auth-module/auth.router";
@@ -15,8 +14,6 @@ import { usersRoutes } from "./modules/user-module/users.router";
 const app = express();
 
 async function main() {
-  await client.connect();
-
   app.use(express.json());
   app.use(cookieParser());
 
