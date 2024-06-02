@@ -13,6 +13,8 @@ import {
   usersTable,
 } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
+import { uploadFile } from "../../media-store/service";
+import { randomStringAsHEx } from "../../utils/unique-string.utils";
 import { Rating } from "../rating-module/rating.service";
 import {
   DeleteType,
@@ -74,7 +76,8 @@ export async function getCompanies(
 
 export async function registerCompany(
   companyData: Omit<CompaniesSchemaInsert, "avgRating" | "timesRated">,
-  userId: number
+  userId: number,
+  companyLogo?: Express.Multer.File | undefined
 ): Promise<Company> {
   const [company] = await db
     .insert(companiesTable)
@@ -86,6 +89,13 @@ export async function registerCompany(
     companyId: company.id,
     role: UserCompanyRole.Owner,
   });
+  if (companyLogo) {
+    await uploadFile(
+      companyLogo.buffer,
+      companyLogo.mimetype,
+      await randomStringAsHEx(30)
+    );
+  }
 
   return normalizeCompany(company);
 }

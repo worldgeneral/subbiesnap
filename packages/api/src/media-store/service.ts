@@ -3,8 +3,8 @@ import { s3 } from "./client";
 
 export async function uploadFile(
   fileBuffer: Buffer,
-  fileName: string,
-  mimetype: string
+  mimetype: string,
+  fileName: string
 ) {
   const uploadParams = {
     Bucket: process.env.AWS_BUCKET_NAME_UPLOADS,
