@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express from "express";
+import multer from "multer";
 import { HttpStatus } from "./constants/https";
 import { errorHandler } from "./errors/error-handler.middleware";
 import { AppError } from "./errors/express-error";
@@ -12,6 +13,8 @@ import { ratingsRoutes } from "./modules/rating-module/ratings.router";
 import { usersRoutes } from "./modules/user-module/users.router";
 
 const app = express();
+const storage = multer.memoryStorage();
+export const upload = multer({ storage: storage });
 
 async function main() {
   app.use(express.json());
