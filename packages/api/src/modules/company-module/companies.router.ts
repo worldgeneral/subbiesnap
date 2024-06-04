@@ -63,10 +63,12 @@ companiesRoutes.patch(
   "/companies/:companyId",
   sessionAuth,
   companyAuth(UserCompanyRole.Admin),
+  upload.single("company-logo"),
   tryCatch(async (req: Request, res) => {
+    const file = req.file;
     const data = updateCompanySchema.parse(req.body);
     const companyId = Number(req.params.companyId);
-    const company = await updateCompanyData(data, companyId);
+    const company = await updateCompanyData(data, companyId, file);
     res.json(company);
   })
 );

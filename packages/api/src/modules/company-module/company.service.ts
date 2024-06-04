@@ -26,6 +26,8 @@ import { companySchema, companyUserSchema } from "./company.rule";
 export type Company = Required<z.infer<typeof companySchema>>;
 export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;
 
+const companyLogoPath = "companies/logo/";
+
 export function normalizeCompany(company: CompaniesSchema): Company {
   return {
     id: company.id,
@@ -79,8 +81,6 @@ export async function registerCompany(
   userId: number,
   companyLogo?: Express.Multer.File | undefined
 ): Promise<Company> {
-  const companyLogoPath = "companies/logo/";
-
   if (companyLogo) {
     companyData.logo = `${companyLogoPath}${await randomStringAsHex(30)}`;
     await uploadFile(
@@ -105,7 +105,8 @@ export async function registerCompany(
 
 export async function updateCompanyData(
   companyData: Partial<CompaniesSchemaInsert>,
-  companyId: number
+  companyId: number,
+  companyLogo?: Express.Multer.File | undefined
 ): Promise<Company> {
   const [company] = await db
     .update(companiesTable)
@@ -117,6 +118,28 @@ export async function updateCompanyData(
 
   if (!company) {
     throw new AppError("unable to update company data", HttpStatus.BadRequest);
+  }
+  if (companyLogo) {
+    if (company.logo !== null) {
+      await uploadFile(companyLogo.buffer, companyLogo.mimetype, company.logo!);
+    } else {
+      companyData.logo = `${companyLogoPath}${await randomStringAsHex(30)}`;
+      await uploadFile(
+        companyLogo.buffer,
+        companyLogo.mimetype,
+        companyData.logo
+      );
+      await db
+        .update(companiesTable)
+        .set({ updatedAt: moment().toDate(), logo: companyData.logo })
+        .where(
+          and(
+            eq(companiesTable.id, companyId),
+            isNull(companiesTable.deletedAt)
+          )
+        );
+      company.logo = companyData.logo;
+    }
   }
   return normalizeCompany(company);
 }
