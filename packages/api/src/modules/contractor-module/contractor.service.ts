@@ -12,6 +12,8 @@ import {
   contractorsTable,
 } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
+import { uploadFile } from "../../media-store/service";
+import { randomStringAsHex } from "../../utils/unique-string.utils";
 import {
   DeleteType,
   softDeletesHandler,
@@ -20,6 +22,8 @@ import {
   ContractorsAccreditationSchema,
   contractorSchema,
 } from "./contractor.rule";
+
+const contractorLogoPath = "contractor/logo/";
 
 export type Contractor = Required<z.infer<typeof contractorSchema>>;
 
@@ -54,7 +58,7 @@ export function normalizeAccreditation(
   };
 }
 
-export async function getContractor(contractorId: number) {
+export async function getContractor(contractorId: number): Promise<Contractor> {
   const [contractor] = await db
     .select()
     .from(contractorsTable)
@@ -91,9 +95,21 @@ export async function getContractors(
 }
 
 export async function registerContractor(
-  contractorsData: Omit<ContractorsSchemaInsert, "avgRating" | "timesRated">,
-  userId: number
+  contractorsData: Omit<
+    ContractorsSchemaInsert,
+    "avgRating" | "timesRated" | "userId"
+  >,
+  userId: number,
+  contractorLogo?: Express.Multer.File | undefined
 ): Promise<Contractor> {
+  if (contractorLogo) {
+    contractorsData.logo = `${contractorLogoPath}${await randomStringAsHex(30)}`;
+    await uploadFile(
+      contractorLogo.buffer,
+      contractorLogo.mimetype,
+      contractorsData.logo
+    );
+  }
   const [contractor] = await db
     .insert(contractorsTable)
     .values({ ...contractorsData, userId: userId })
@@ -105,7 +121,8 @@ export async function registerContractor(
 export async function updateContractor(
   contractorsData: Partial<Omit<ContractorsSchemaInsert, "userId">>,
   contractorId: number,
-  userId: number
+  userId: number,
+  contractorLogo?: Express.Multer.File | undefined
 ): Promise<Contractor> {
   const [contractor] = await db
     .update(contractorsTable)
@@ -117,6 +134,32 @@ export async function updateContractor(
     throw new AppError("unable to update contractor", HttpStatus.BadRequest);
   }
 
+  if (contractorLogo) {
+    if (contractor.logo !== null) {
+      await uploadFile(
+        contractorLogo.buffer,
+        contractorLogo.mimetype,
+        contractor.logo!
+      );
+    } else {
+      contractorsData.logo = `${contractorLogoPath}${await randomStringAsHex(30)}`;
+      await uploadFile(
+        contractorLogo.buffer,
+        contractorLogo.mimetype,
+        contractorsData.logo
+      );
+      await db
+        .update(contractorsTable)
+        .set({ updatedAt: moment().toDate(), logo: contractorsData.logo })
+        .where(
+          and(
+            eq(contractorsTable.id, contractorId),
+            isNull(contractorsTable.deletedAt)
+          )
+        );
+      contractor.logo = contractorsData.logo;
+    }
+  }
   return normalizeContractor(contractor);
 }
 
