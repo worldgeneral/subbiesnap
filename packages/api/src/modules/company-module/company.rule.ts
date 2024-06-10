@@ -14,10 +14,14 @@ export const createCompanySchema = companySchema.omit({
   id: true,
   avgRating: true,
   timesRated: true,
+  logo: true,
 });
 
 export const updateCompanySchema = companySchema.omit({
   id: true,
+  avgRating: true,
+  timesRated: true,
+  logo: true,
 });
 
 export const companyUserSchema = z.object({

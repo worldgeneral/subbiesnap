@@ -14,14 +14,19 @@ export const contractorSchema = z.object({
 
 export const CreateContractorSchema = contractorSchema.omit({
   id: true,
+  userId: true,
   avgRating: true,
   timesRated: true,
+  logo: true,
 });
 
 export const UpdateContractorSchema = contractorSchema
   .omit({
     id: true,
     userId: true,
+    avgRating: true,
+    timesRated: true,
+    logo: true,
   })
   .partial();
 

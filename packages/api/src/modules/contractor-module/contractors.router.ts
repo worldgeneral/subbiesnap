@@ -1,6 +1,7 @@
 import { Request, Router } from "express";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
+import { upload } from "../../media-store/middleware";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { contractorAuth } from "./contractor-auth.middleware";
@@ -51,12 +52,14 @@ contractorsRoutes.get(
 contractorsRoutes.post(
   "/contractors",
   sessionAuth,
-  contractorAuth,
+  upload.single("contractor-logo"),
   tryCatch(async (req: Request, res) => {
+    const file = req.file;
     const contractorData = CreateContractorSchema.parse(req.body);
     const newContractor = await registerContractor(
       contractorData,
-      req.user!.id
+      req.user!.id,
+      file
     );
     res.json(newContractor).status(HttpStatus.Created);
   })
@@ -66,13 +69,16 @@ contractorsRoutes.patch(
   "/contractors/:contractorId",
   sessionAuth,
   contractorAuth,
+  upload.single("contractor-logo"),
   tryCatch(async (req: Request, res) => {
+    const file = req.file;
     const contractorData = UpdateContractorSchema.parse(req.body);
     const contractorId = Number(req.params.contractorId);
     const updatedContractor = await updateContractor(
       contractorData,
       contractorId,
-      req.user!.id
+      req.user!.id,
+      file
     );
     res.json(updatedContractor);
   })
