@@ -1,7 +1,9 @@
 import { Request, Router } from "express";
+
 import { UserCompanyRole } from "../../constants/company-emuns";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
+import { upload } from "../../media-store/middleware";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { companyAuth } from "./company-auth.middleware";
@@ -48,9 +50,11 @@ companiesRoutes.get(
 companiesRoutes.post(
   "/companies",
   sessionAuth,
+  upload.single("company-logo"),
   tryCatch(async (req: Request, res) => {
+    const file = req.file;
     const data = createCompanySchema.parse(req.body);
-    const company = await registerCompany(data, req.user!.id);
+    const company = await registerCompany(data, req.user!.id, file);
     res.json(company).status(HttpStatus.Created);
   })
 );
@@ -59,10 +63,12 @@ companiesRoutes.patch(
   "/companies/:companyId",
   sessionAuth,
   companyAuth(UserCompanyRole.Admin),
+  upload.single("company-logo"),
   tryCatch(async (req: Request, res) => {
+    const file = req.file;
     const data = updateCompanySchema.parse(req.body);
     const companyId = Number(req.params.companyId);
-    const company = await updateCompanyData(data, companyId);
+    const company = await updateCompanyData(data, companyId, file);
     res.json(company);
   })
 );

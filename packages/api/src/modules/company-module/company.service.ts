@@ -13,6 +13,8 @@ import {
   usersTable,
 } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
+import { uploadFile } from "../../media-store/service";
+import { randomStringAsHex } from "../../utils/unique-string.utils";
 import { Rating } from "../rating-module/rating.service";
 import {
   DeleteType,
@@ -23,6 +25,8 @@ import { companySchema, companyUserSchema } from "./company.rule";
 
 export type Company = Required<z.infer<typeof companySchema>>;
 export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;
+
+const companyLogoPath = "companies/logo/";
 
 export function normalizeCompany(company: CompaniesSchema): Company {
   return {
@@ -74,8 +78,17 @@ export async function getCompanies(
 
 export async function registerCompany(
   companyData: Omit<CompaniesSchemaInsert, "avgRating" | "timesRated">,
-  userId: number
+  userId: number,
+  companyLogo?: Express.Multer.File | undefined
 ): Promise<Company> {
+  if (companyLogo) {
+    companyData.logo = `${companyLogoPath}${await randomStringAsHex(30)}`;
+    await uploadFile(
+      companyLogo.buffer,
+      companyLogo.mimetype,
+      companyData.logo
+    );
+  }
   const [company] = await db
     .insert(companiesTable)
     .values({ ...companyData })
@@ -92,7 +105,8 @@ export async function registerCompany(
 
 export async function updateCompanyData(
   companyData: Partial<CompaniesSchemaInsert>,
-  companyId: number
+  companyId: number,
+  companyLogo?: Express.Multer.File | undefined
 ): Promise<Company> {
   const [company] = await db
     .update(companiesTable)
@@ -104,6 +118,28 @@ export async function updateCompanyData(
 
   if (!company) {
     throw new AppError("unable to update company data", HttpStatus.BadRequest);
+  }
+  if (companyLogo) {
+    if (company.logo !== null) {
+      await uploadFile(companyLogo.buffer, companyLogo.mimetype, company.logo!);
+    } else {
+      companyData.logo = `${companyLogoPath}${await randomStringAsHex(30)}`;
+      await uploadFile(
+        companyLogo.buffer,
+        companyLogo.mimetype,
+        companyData.logo
+      );
+      await db
+        .update(companiesTable)
+        .set({ updatedAt: moment().toDate(), logo: companyData.logo })
+        .where(
+          and(
+            eq(companiesTable.id, companyId),
+            isNull(companiesTable.deletedAt)
+          )
+        );
+      company.logo = companyData.logo;
+    }
   }
   return normalizeCompany(company);
 }
