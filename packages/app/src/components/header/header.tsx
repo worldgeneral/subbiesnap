@@ -1,20 +1,18 @@
-import NavBar from "./navBar"
+import NavBar from "./navBar";
 
-export default function Header(){
-    return(
+export default function Header() {
+  return (
     <>
-
+      <div>
         <div>
-            <div>
-            <img src="" alt="SubbieSnap logo" />
-            </div>
-            <div>
-                <button>signup</button>
-                <button>login</button>
-            </div>
-
+          <img src="" alt="SubbieSnap logo" />
         </div>
-        <NavBar/>
+        <div>
+          <button>signup</button>
+          <button>login</button>
+        </div>
+      </div>
+      <NavBar />
     </>
-    )
+  );
 }

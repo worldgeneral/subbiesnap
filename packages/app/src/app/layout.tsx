@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Subbie Snap",
-  description: "an app for the construction industry, where solo traders offer there time to companies",
+  description:
+    "an app for the construction industry, where solo traders offer there time to companies",
 };
 
 export default function RootLayout({
@@ -19,7 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        {children}</body>
+        {children}
+      </body>
     </html>
   );
 }
