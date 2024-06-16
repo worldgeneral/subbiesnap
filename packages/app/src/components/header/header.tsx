@@ -1,6 +1,8 @@
 import Link from "next/link";
 import NavBar from "./navBar";
 import LineLogo from "../subbieSnap/logo/logo";
+import { PrimaryButton } from "../buttons/primary/primary";
+import { SecondaryButton } from "../buttons/secondary/secondary";
 
 export default function Header() {
   return (
@@ -9,13 +11,9 @@ export default function Header() {
         <div className="w-1/4">
           <LineLogo />
         </div>
-        <div className="items-right mx-5 ml-auto">
-          <Link className="mx-4 " href="/auth/login">
-            login
-          </Link>
-          <Link className=" mx-4" href="/auth/signup">
-            signup
-          </Link>
+        <div className="items-right mx-5 ml-auto flex justify-evenly">
+          <PrimaryButton link={"/auth/login"} buttonText="Login" />
+          <SecondaryButton link="/signup" buttonText="Signup"></SecondaryButton>
         </div>
       </header>
       <NavBar />
