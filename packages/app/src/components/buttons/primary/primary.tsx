@@ -4,12 +4,17 @@ import ArrowRightIcon from "../icons/buttonIcon";
 type props = {
   link: string;
   buttonText: string;
+  className?: string;
 };
 
 export function PrimaryButton(props: props) {
+  const buttonClasses =
+    "p-4 h-10 text-white shadow-inner shadow-md bg-gradient-to-br from-button-primary-one from-50% to-button-primary-two to-50% rounded-3xl border-t-2 border-t-button-primary-two inline-block ";
   return (
     <Link
-      className="w-32 h-10 text-white shadow-inner shadow-md bg-gradient-to-br from-button-primary-one from-50% to-button-primary-two to-50% rounded-3xl border-t-2 border-t-button-primary-two"
+      className={
+        props.className ? buttonClasses.concat(props.className) : buttonClasses
+      }
       href={props.link}
     >
       <div className="flex items-center h-full">

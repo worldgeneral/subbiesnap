@@ -5,12 +5,17 @@ import ArrowRightIcon from "../icons/buttonIcon";
 type props = {
   link: string;
   buttonText: string;
+  className?: string;
 };
 
 export function SecondaryButton(props: props) {
+  const buttonClasses =
+    "w-32 h-10 text-white shadow-inner shadow-md bg-gradient-to-br from-button-secondary-one from-50% to-button-secondary-two to-50% rounded-3xl border-t-2 border-t-indigo-500 inline-block ";
   return (
     <Link
-      className="w-32 h-10 text-white shadow-inner shadow-md bg-gradient-to-br from-button-secondary-one from-50% to-button-secondary-two to-50% rounded-3xl border-t-2 border-t-indigo-500"
+      className={
+        props.className ? buttonClasses.concat(props.className) : buttonClasses
+      }
       href={props.link}
     >
       <div className="flex items-center h-full">
