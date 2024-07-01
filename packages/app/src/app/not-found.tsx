@@ -1,6 +1,5 @@
-import { PrimaryButton } from "@/components/buttons/primary/primary";
-import { ImageLoader } from "@/components/imageLoader/imageLoader";
 import underConstruction from "../images/underConstruction.png";
+import Image from "next/image";
 
 export default function NotFound() {
   return (
@@ -12,10 +11,11 @@ export default function NotFound() {
         <p className="text-3xl">Could not find requested resource</p>
       </div>
       <div className="flex justify-center">
-        <ImageLoader
-          src={underConstruction}
+        <Image
+          src="/images/notFound/underConstruction.png"
           alt="under construction"
-          className="w-1/2 "
+          width={1000}
+          height={1000}
         />
       </div>
     </main>

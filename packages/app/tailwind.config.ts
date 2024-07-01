@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -9,9 +10,10 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        constructionCartoon: "url('/images/mainPage/constructionCartoon.svg')",
+        cartoonConstructionSkyLine:
+          "url('/images/mainPage/cartoonConstructionSkyLine.svg')",
+        topography: "url('/images/mainPage/topography.svg')",
       },
       colors: {
         "button-primary-one": "#243040",
