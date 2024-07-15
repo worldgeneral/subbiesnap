@@ -2,24 +2,17 @@ import classNames from "classnames";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
 
-export enum PlayingCardSize {
-  sm = 20,
-  md = 30,
-  lg = 40,
-  xl = 50,
-}
-
 enum ImageVariant {
   heart = "/images/cardSuites/heart.svg",
   diamond = "/images/cardSuites/diamond.svg",
   club = "/images/cardSuites/club.svg",
   spade = "/images/cardSuites/spade.svg",
 }
-
+export type Variant = "heart" | "diamond" | "club" | "spade";
 type Props = PropsWithChildren<{
   className?: string;
-  variant: "heart" | "diamond" | "club" | "spade";
-  size: PlayingCardSize;
+  variant: Variant;
+  onclick?: Function;
 }>;
 
 export function PlayingCard({ children, ...props }: Props) {
@@ -53,9 +46,8 @@ export function PlayingCard({ children, ...props }: Props) {
           height={100}
         />
       </div>
-      <div className="relative flex justify-center items-center h-full z-10">
-        {children}
-      </div>
+
+      {children}
     </div>
   );
 }

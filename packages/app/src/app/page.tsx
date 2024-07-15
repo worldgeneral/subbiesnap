@@ -2,10 +2,7 @@ import { Button } from "@/components/buttons/main/button";
 import { InfoCard } from "@/components/cardsBoxes/infoCard";
 import Image from "next/image";
 import { CardWithIcon } from "@/components/cardsBoxes/cardWithIcon";
-import {
-  PlayingCard,
-  PlayingCardSize,
-} from "@/components/cardsBoxes/playingCard/playingCard";
+import { PlayingCard } from "@/components/cardsBoxes/playingCard/playingCard";
 import { Card1 } from "@/components/cardsBoxes/card1";
 
 export default function Home() {
@@ -25,7 +22,7 @@ export default function Home() {
         <div className="w-full h-96 bg-constructionCartoon bg-cover bg-center">
           <div className="h-full bg-gradient-to-r from-black/90 from-0%  to-30%">
             <div className="relative top-10 left-10 z-10 bg-white/75 w-fit p-3 shadow-md rounded-md	">
-              <h1 className=" text-5xl">Welcome to SubbieSnap</h1>
+              <h1 className="text-5xl tracking-tight">Welcome to SubbieSnap</h1>
               <span className="text-2xl pl-5">
                 Remove the hassle of agencies.
               </span>
@@ -33,13 +30,13 @@ export default function Home() {
           </div>
         </div>
         <div className="flex justify-center">
-          <div className=" relative bottom-10 bg-white p-10 shadow-md rounded-b-md ">
-            <h2 className=" ml-20 mb-2 text-3xl">Search for your next job</h2>
-            <form className="ml-20 border-2">
+          <div className="w-10/12 relative bottom-10 bg-white p-10 shadow-md rounded-b-md ">
+            <h2 className="mb-2 text-3xl">Search for your next job</h2>
+            <form className="border-2">
               <input type="text" placeholder="Search here" />
             </form>
-            <h3 className="ml-20 my-3">Popular roles</h3>
-            <div className="flex flex-wrap w-10/12 ml-20">
+            <h3 className="my-3 text-lg">Popular roles</h3>
+            <div className="flex flex-wrap w-10/12">
               {roles.map((role, index) => {
                 return (
                   <Button
@@ -59,7 +56,7 @@ export default function Home() {
       <div className="flex justify-center w-full">
         <div className="flex flex-wrap w-11/12">
           <div className="w-full md:w-1/3 p-5">
-            <PlayingCard variant="heart" size={PlayingCardSize.sm} className="">
+            <PlayingCard variant="heart" className="">
               <div className="relative w-10/12 h-full">
                 <h3 className="absolute top-[20%] text-2xl font-semibold text-center">
                   Sign up to find your next job
@@ -78,7 +75,7 @@ export default function Home() {
             </PlayingCard>
           </div>
           <div className="w-full md:w-1/3 p-5">
-            <PlayingCard variant="club" size={PlayingCardSize.sm} className="">
+            <PlayingCard variant="club" className="">
               <div className="relative w-10/12 h-full">
                 <h3 className="absolute top-[20%] text-2xl font-semibold text-center">
                   Cut out the middle man and post your job
@@ -94,11 +91,7 @@ export default function Home() {
             </PlayingCard>
           </div>
           <div className="w-full md:w-1/3 p-5">
-            <PlayingCard
-              variant="diamond"
-              size={PlayingCardSize.sm}
-              className=""
-            >
+            <PlayingCard variant="diamond" className="">
               <div className="relative w-10/12 h-full">
                 <h3 className="absolute top-[20%] text-2xl font-semibold text-center">
                   Leave a review for your past jobs
@@ -182,11 +175,12 @@ export default function Home() {
 
       <div className="py-20  flex justify-center">
         <div className="w-10/12 ">
-          <div className="">
-            <h2 className=" text-4xl font-bold">How SubbieSnap works</h2>
-            <p className="">Less time looking for job</p>
-            <p className="">More time earing money</p>
+          <div className="mb-5">
+            <h2 className="mb-5 text-4xl font-bold">How SubbieSnap works</h2>
+            <p className=" text-xl ">Less time looking for job</p>
+            <p className="text-xl">More time earing money</p>
           </div>
+
           <div className="grid grid-rows-3">
             <div className="grid grid-cols-12">
               <Card1
@@ -199,7 +193,7 @@ export default function Home() {
                 }}
                 step="one"
                 heading="browse for your next job"
-                text="search all of our jobs in a few clicks"
+                text="search all of our jobs in a few clicks."
               />
             </div>
 
@@ -221,7 +215,7 @@ export default function Home() {
                 }}
                 step="two"
                 heading="Apply for a job"
-                text="Instantly apply with your custom profile or send your cv"
+                text="Instantly apply with your custom profile or send your CV."
               />
               <Image
                 className="col-start-10 rotate-90 place-self-center"
@@ -240,12 +234,11 @@ export default function Home() {
                   width: 60,
                   height: 60,
                 }}
-                step="three"
-                heading="browse for your next job"
-                text="search all of our jobs in a few clicks"
+                step="Three"
+                heading="Browse for your next job"
+                text="Search all of our jobs in a few clicks."
               />
             </div>
-            <div className="h-[600PX] w-10/12 ml-auto mr-auto grid grid-cols-8 grid-rows-5 "></div>
           </div>
         </div>
       </div>
