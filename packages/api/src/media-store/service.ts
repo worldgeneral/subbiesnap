@@ -1,5 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "./client";
+import { env } from "../env";
 
 export async function uploadFile(
   fileBuffer: Buffer,
@@ -7,7 +8,7 @@ export async function uploadFile(
   filePath: string
 ) {
   const uploadParams = {
-    Bucket: process.env.AWS_BUCKET_NAME_UPLOADS,
+    Bucket: env.AWS_BUCKET_NAME_UPLOADS,
     Body: fileBuffer,
     Key: filePath,
     ContentType: mimetype,
