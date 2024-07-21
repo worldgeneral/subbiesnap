@@ -2,7 +2,7 @@ import z from "zod";
 import { validateEnv } from "./utils/validate-env";
 
 const schema = z.object({
-  PORT: z.coerce.number().default(3001),
+  PORT: z.coerce.number().default(3000),
   DB_HOST: z.string(),
   DB_NAME: z.string(),
   DB_USER: z.string(),

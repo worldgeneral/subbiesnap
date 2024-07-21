@@ -27,6 +27,7 @@ async function main() {
   app.use(ratingsRoutes);
 
   app.all("*", (req, res, next) => {
+    console.log(req.path);
     next(new AppError("page not found", HttpStatus.NotFound));
   });
 
