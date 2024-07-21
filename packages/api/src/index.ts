@@ -11,6 +11,8 @@ import { jobsRoutes } from "./modules/job-module/jobs.router";
 import { ratingsRoutes } from "./modules/rating-module/ratings.router";
 import { usersRoutes } from "./modules/user-module/users.router";
 
+import { env } from "./env";
+
 const app = express();
 
 async function main() {
@@ -30,8 +32,8 @@ async function main() {
 
   app.use(errorHandler);
 
-  app.listen(3001, () => {
-    console.log("http://localhost:3001");
+  app.listen(env.PORT, () => {
+    console.log(`http://localhost:${env.PORT}`);
   });
 }
 

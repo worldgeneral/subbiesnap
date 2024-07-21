@@ -22,6 +22,7 @@ import {
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { UserSchema, UserSchemaInsert, usersTable } from "./user.model";
 import { userSchema } from "./user.rule";
+import { env } from "../../env";
 
 export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
@@ -64,10 +65,7 @@ export async function registerUser(
       })
       .returning();
 
-    const confirmEmailId = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET!
-    );
+    const confirmEmailId = jwt.sign({ userId: user.id }, env.JWT_SECRET);
     sendEmail({
       To: [email],
       Subject: confirmEmailSubject,
