@@ -12,7 +12,6 @@ export type Variant = "heart" | "diamond" | "club" | "spade";
 type Props = PropsWithChildren<{
   className?: string;
   variant: Variant;
-  onclick?: Function;
 }>;
 
 export function PlayingCard({ children, ...props }: Props) {
