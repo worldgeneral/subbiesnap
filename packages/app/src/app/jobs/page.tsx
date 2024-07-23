@@ -3,9 +3,10 @@
 import { PlayingCard } from "@/components/cardsBoxes/playingCard/playingCard";
 import { Variant } from "@/components/cardsBoxes/playingCard/playingCard";
 import { DisplayInfo } from "@/components/jobs/displayInfo";
-import { Job as TypeJob } from "../../../../types/job/types";
+// import { Job as TypeJob } from "../../../../types/job/types";
 import { useMemo, useState } from "react";
 import { randomBetween } from "@/utils/randomBetween";
+import { Job as TypeJob } from "@subbiesnap/types/job";
 
 const tempJob: TypeJob = {
   id: 1,

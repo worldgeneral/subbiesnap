@@ -5,7 +5,7 @@ import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "../../rules/pagination.rule";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { companyAuth } from "../company-module/company-auth.middleware";
-import { CreateJobPostSchema, updateJobPostSchema } from "./jobPost.rule";
+import { CreateJobSchema, UpdateJobSchema } from "@subbiesnap/types/job";
 import {
   createJobPost,
   deleteJobPost,
@@ -57,7 +57,7 @@ jobsRoutes.post(
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
-    const data = CreateJobPostSchema.parse(req.body);
+    const data = CreateJobSchema.parse(req.body);
     const companyId = Number(req.params.companyId);
     const newJobPost = await createJobPost(data, companyId);
     res.json(newJobPost).status(HttpStatus.Created);
@@ -69,7 +69,7 @@ jobsRoutes.patch(
   sessionAuth,
   companyAuth(UserCompanyRole.Editor),
   tryCatch(async (req: Request, res) => {
-    const data = updateJobPostSchema.parse(req.body);
+    const data = UpdateJobSchema.parse(req.body);
     const jobPostId = Number(req.params.jobId);
     const companyId = Number(req.params.companyId);
     const updatedJobPost = await updateJobPost(data, jobPostId, companyId);

@@ -1,0 +1,16 @@
+{
+  "name": "@subbiesnap/types",
+  "version": "0.0.1",
+  "description": "types",
+  "scripts": {
+    "check-ts": "tsc --noEmit",
+    "check-format": "prettier . --check",
+    "format": "prettier . --write"
+  },
+  "keywords": [],
+  "author": "Matthew Harrison",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
