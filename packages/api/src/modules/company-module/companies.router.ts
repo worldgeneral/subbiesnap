@@ -1,5 +1,4 @@
 import { Request, Router } from "express";
-
 import { UserCompanyRole } from "../../constants/company-emuns";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
@@ -12,7 +11,7 @@ import {
   createCompanyUserSchema,
   updateCompanySchema,
   updateCompanyUserSchema,
-} from "./company.rule";
+} from "@subbiesnap/types/company";
 import {
   addCompanyUser,
   deleteCompanyData,

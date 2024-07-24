@@ -33,9 +33,8 @@ import {
   usersTable,
 } from "../../../db/schemas";
 import { AppError } from "../../../errors/express-error";
+import { Company, CompanyUser } from "@subbiesnap/types/company";
 import {
-  Company,
-  CompanyUser,
   normalizeCompany,
   normalizeCompanyUser,
 } from "../../company-module/company.service";

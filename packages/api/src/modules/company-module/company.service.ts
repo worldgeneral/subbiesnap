@@ -21,10 +21,8 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { normalizeUser } from "../user-module/user.service";
-import { companySchema, companyUserSchema } from "./company.rule";
+import { Company, CompanyUser } from "@subbiesnap/types/company";
 import { User } from "@subbiesnap/types/users";
-export type Company = Required<z.infer<typeof companySchema>>;
-export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;
 
 const companyLogoPath = "companies/logo/";
 
