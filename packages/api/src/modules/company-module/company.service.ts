@@ -15,7 +15,7 @@ import {
 import { AppError } from "../../errors/express-error";
 import { uploadFile } from "../../media-store/service";
 import { randomStringAsHex } from "../../utils/unique-string.utils";
-import { Rating } from "../rating-module/rating.service";
+import { Rating } from "@subbiesnap/types/rating";
 import {
   DeleteType,
   softDeletesHandler,

@@ -1,7 +1,6 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { DatabaseError } from "pg";
-import z from "zod";
 import { UserCompanyRole } from "../../constants/company-emuns";
 import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
@@ -20,9 +19,7 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { userIsContractor, usersCompanies } from "./checks.service";
-import { ratingsRules } from "./rating.rule";
-
-export type Rating = Required<z.infer<typeof ratingsRules>>;
+import { Rating } from "@subbiesnap/types/rating";
 
 export function normalizeRating(rating: ratingsTableSchema): Rating {
   return {

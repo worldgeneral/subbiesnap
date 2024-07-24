@@ -8,7 +8,7 @@ import {
   createRatingRules,
   ratingsRules,
   updateRatingRules,
-} from "./rating.rule";
+} from "@subbiesnap/types/rating";
 import {
   createRating,
   deleteRating,
