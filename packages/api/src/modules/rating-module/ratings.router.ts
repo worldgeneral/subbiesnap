@@ -1,7 +1,7 @@
 import { Request, Router } from "express";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
-import { paginationSchema } from "../../rules/pagination.rule";
+import { paginationSchema } from "@subbiesnap/types/pagination";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { ratingAuth } from "./rating-auth.middleware";
 import {
