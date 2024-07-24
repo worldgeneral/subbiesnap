@@ -3,7 +3,6 @@ import { and, eq, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import { DatabaseError } from "pg";
-import z from "zod";
 import { HttpStatus } from "../../constants/https";
 import { db } from "../../db/db";
 import { sendEmail } from "../../email-client/send-email";
@@ -21,10 +20,8 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { UserSchema, UserSchemaInsert, usersTable } from "./user.model";
-import { userSchema } from "./user.rule";
+import { User } from "@subbiesnap/types/users";
 import { env } from "../../env";
-
-export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
 export function normalizeUser(user: UserSchema): User {
   return {

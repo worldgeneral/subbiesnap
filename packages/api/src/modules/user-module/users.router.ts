@@ -2,7 +2,7 @@ import { Request, Router } from "express";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
-import { registerSchema, updateUserSchema } from "./user.rule";
+import { registerSchema, updateUserSchema } from "@subbiesnap/types/users";
 import { deleteUser, getUser, registerUser, updateUser } from "./user.service";
 
 const usersRoutes = Router();

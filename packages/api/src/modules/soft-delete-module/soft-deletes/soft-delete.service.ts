@@ -47,7 +47,8 @@ import {
 } from "../../contractor-module/contractor.service";
 import { normalizeJobPost } from "../../job-module/jobPost.service";
 import { normalizeRating } from "../../rating-module/rating.service";
-import { User, normalizeUser } from "../../user-module/user.service";
+import { normalizeUser } from "../../user-module/user.service";
+import { User } from "@subbiesnap/types/users";
 
 type InputData = Array<
   | null

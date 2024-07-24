@@ -4,7 +4,9 @@ import {
   MIN_AMOUNT_OF_NUMBERS,
   MIN_AMOUNT_OF_UPPER_CASE,
   PASSWORD_MIN_LENGTH,
-} from "../../constants/password";
+} from "../../api/src/constants/password";
+
+export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
 export const userSchema = z.object({
   id: z.number(),
