@@ -39,11 +39,13 @@ import {
   normalizeCompanyUser,
 } from "../../company-module/company.service";
 import {
-  Contractor,
-  ContractorsAccreditation,
   normalizeAccreditation,
   normalizeContractor,
 } from "../../contractor-module/contractor.service";
+import {
+  Contractor,
+  ContractorsAccreditation,
+} from "@subbiesnap/types/contractor";
 import { normalizeJobPost } from "../../job-module/jobPost.service";
 import { normalizeRating } from "../../rating-module/rating.service";
 import { normalizeUser } from "../../user-module/user.service";

@@ -10,7 +10,7 @@ import {
   CreateContractorSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
-} from "./contractor.rule";
+} from "@subbiesnap/types/contractor";
 import {
   addAccreditations,
   deleteAccreditation,
