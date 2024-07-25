@@ -13,9 +13,7 @@ import {
   jobsTable,
   type JobPostsSchemaInsert,
 } from "./job.model";
-import { jobPostsSchema } from "./jobPost.rule";
-
-export type Job = Required<z.infer<typeof jobPostsSchema>>;
+import { Job } from "@subbiesnap/types/job";
 
 export function normalizeJobPost(job: JobPostsSchema): Job {
   return {

@@ -6,7 +6,7 @@ import { db } from "../../db/db";
 import { companiesTable, companiesUsersTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { tryCatch } from "../../errors/try-catch";
-import { companyAuthId } from "../auth-module/auth.rule";
+import { companyAuthId } from "@subbiesnap/types/auth";
 
 export const companyAuth = (role: UserCompanyRole) =>
   tryCatch(async function (req: Request, Res: Response, next: NextFunction) {

@@ -2,7 +2,7 @@ import { Request, Router } from "express";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { upload } from "../../media-store/middleware";
-import { paginationSchema } from "../../rules/pagination.rule";
+import { paginationSchema } from "@subbiesnap/types/pagination";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { contractorAuth } from "./contractor-auth.middleware";
 import {
@@ -10,7 +10,7 @@ import {
   CreateContractorSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
-} from "./contractor.rule";
+} from "@subbiesnap/types/contractor";
 import {
   addAccreditations,
   deleteAccreditation,

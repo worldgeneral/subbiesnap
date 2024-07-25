@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "@subbiesnap/app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@subbiesnap/types": "workspace:^",
     "classnames": "^2.5.1",
     "dotenv": "^16.4.5",
     "next": "14.2.5",

@@ -6,7 +6,7 @@ import { db } from "../../db/db";
 import { RateableType, ratingsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { tryCatch } from "../../errors/try-catch";
-import { companyAuthId } from "../auth-module/auth.rule";
+import { companyAuthId } from "@subbiesnap/types/auth";
 import { validateCompanyUser } from "../company-module/company-auth.middleware";
 import { validateContractor } from "../contractor-module/contractor-auth.middleware";
 

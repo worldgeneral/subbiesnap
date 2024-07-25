@@ -33,21 +33,23 @@ import {
   usersTable,
 } from "../../../db/schemas";
 import { AppError } from "../../../errors/express-error";
+import { Company, CompanyUser } from "@subbiesnap/types/company";
 import {
-  Company,
-  CompanyUser,
   normalizeCompany,
   normalizeCompanyUser,
 } from "../../company-module/company.service";
 import {
-  Contractor,
-  ContractorsAccreditation,
   normalizeAccreditation,
   normalizeContractor,
 } from "../../contractor-module/contractor.service";
+import {
+  Contractor,
+  ContractorsAccreditation,
+} from "@subbiesnap/types/contractor";
 import { normalizeJobPost } from "../../job-module/jobPost.service";
 import { normalizeRating } from "../../rating-module/rating.service";
-import { User, normalizeUser } from "../../user-module/user.service";
+import { normalizeUser } from "../../user-module/user.service";
+import { User } from "@subbiesnap/types/users";
 
 type InputData = Array<
   | null

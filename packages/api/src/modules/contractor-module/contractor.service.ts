@@ -19,17 +19,11 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import {
-  ContractorsAccreditationSchema,
-  contractorSchema,
-} from "./contractor.rule";
+  Contractor,
+  ContractorsAccreditation,
+} from "@subbiesnap/types/contractor";
 
 const contractorLogoPath = "contractor/logo/";
-
-export type Contractor = Required<z.infer<typeof contractorSchema>>;
-
-export type ContractorsAccreditation = Required<
-  z.infer<typeof ContractorsAccreditationSchema>
->;
 
 export function normalizeContractor(
   contractors: ContractorsSchema

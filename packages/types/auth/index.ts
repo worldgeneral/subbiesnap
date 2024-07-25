@@ -1,4 +1,9 @@
+import { userSchema } from "../users";
 import { z } from "zod";
+
+export type login = Required<
+  Omit<z.infer<typeof userSchema>, "id" | "firstName" | "secondName">
+>;
 
 export const authSchema = z.object({
   password: z.string(),

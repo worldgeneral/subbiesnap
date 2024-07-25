@@ -1,5 +1,7 @@
 import { nativeEnum, number, union, z } from "zod";
-import { RateableType } from "../../db/schemas";
+import { RateableType } from "../../api/src/modules/rating-module/rating.model";
+
+export type Rating = Required<z.infer<typeof ratingsRules>>;
 
 export const ratingsRules = z.object({
   id: number(),

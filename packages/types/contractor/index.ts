@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export type Contractor = Required<z.infer<typeof contractorSchema>>;
+
+export type ContractorsAccreditation = Required<
+  z.infer<typeof ContractorsAccreditationSchema>
+>;
+
 export const contractorSchema = z.object({
   id: z.number(),
   userId: z.number(),

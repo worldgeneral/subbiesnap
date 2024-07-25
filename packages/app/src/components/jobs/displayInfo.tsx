@@ -1,4 +1,4 @@
-import { Job } from "../../../../types/job/types";
+import { Job } from "@subbiesnap/types/job";
 type Props = {
   job: Job;
 };

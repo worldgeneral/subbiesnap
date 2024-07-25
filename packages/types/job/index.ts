@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const jobPostsSchema = z.object({
+export const JobSchema = z.object({
   id: z.number(),
   companyId: z.coerce.number(),
   title: z.string(),
@@ -14,12 +14,14 @@ export const jobPostsSchema = z.object({
   fulfilledAt: z.coerce.date().nullable().optional(),
 });
 
-export const CreateJobPostSchema = jobPostsSchema.omit({
+export type Job = Required<z.infer<typeof JobSchema>>;
+
+export const CreateJobSchema = JobSchema.omit({
   id: true,
   companyId: true,
 });
 
-export const updateJobPostSchema = jobPostsSchema.omit({
+export const UpdateJobSchema = JobSchema.omit({
   id: true,
   companyId: true,
 });

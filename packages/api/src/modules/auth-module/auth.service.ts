@@ -3,7 +3,6 @@ import { createHash } from "crypto";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import moment from "moment";
-import z from "zod";
 import { PASSWORD_RESET_EXPIRES_AT } from "../../constants/emails";
 import { HttpStatus } from "../../constants/https";
 import {
@@ -21,13 +20,8 @@ import { AppError } from "../../errors/express-error";
 import { randomStringAsBase64Url } from "../../utils/unique-string.utils";
 import { verifyToken } from "../../utils/verify-jwt-token";
 import { usersTable } from "../user-module/user.model";
-import { userSchema } from "../user-module/user.rule";
 import { normalizeUser } from "../user-module/user.service";
 import { env } from "../../env";
-
-export type login = Required<
-  Omit<z.infer<typeof userSchema>, "id" | "firstName" | "secondName">
->;
 
 export async function loginAuthUser(password: string, email: string) {
   const [user] = await db

@@ -5,7 +5,7 @@ import { db } from "../../db/db";
 import { ContractorsSchema, contractorsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { tryCatch } from "../../errors/try-catch";
-import { companyAuthId } from "../auth-module/auth.rule";
+import { companyAuthId } from "@subbiesnap/types/auth";
 
 export const contractorAuth = tryCatch(async function (
   req: Request,

@@ -1,10 +1,9 @@
 import { Request, Router } from "express";
-
 import { UserCompanyRole } from "../../constants/company-emuns";
 import { HttpStatus } from "../../constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { upload } from "../../media-store/middleware";
-import { paginationSchema } from "../../rules/pagination.rule";
+import { paginationSchema } from "@subbiesnap/types/pagination";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { companyAuth } from "./company-auth.middleware";
 import {
@@ -12,7 +11,7 @@ import {
   createCompanyUserSchema,
   updateCompanySchema,
   updateCompanyUserSchema,
-} from "./company.rule";
+} from "@subbiesnap/types/company";
 import {
   addCompanyUser,
   deleteCompanyData,
