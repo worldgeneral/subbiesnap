@@ -1,5 +1,5 @@
 import { Request, Router } from "express";
-import { HttpStatus } from "../../constants/https";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { registerSchema, updateUserSchema } from "@subbiesnap/types/users";

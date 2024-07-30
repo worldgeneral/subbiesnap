@@ -4,7 +4,7 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import { PASSWORD_RESET_EXPIRES_AT } from "../../constants/emails";
-import { HttpStatus } from "../../constants/https";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import {
   SESSION_TOKEN_EXPIRE_DAYS,
   SESSION_TOKEN_STRING_LENGTH,

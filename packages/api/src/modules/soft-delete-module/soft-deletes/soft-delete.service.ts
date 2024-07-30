@@ -15,8 +15,8 @@ import { RequireExactlyOne } from "type-fest";
 import {
   CompanyStatus,
   UserCompanyRole,
-} from "../../../constants/company-emuns";
-import { HttpStatus } from "../../../constants/https";
+} from "@subbiesnap/constants/company-emuns";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { db } from "../../../db/db";
 import {
   JobPostsSchemaInsert,

@@ -1,7 +1,7 @@
 {
-  "name": "@subbiesnap/types",
+  "name": "@subbiesnap/constants",
   "version": "0.0.1",
-  "description": "types",
+  "description": "constants",
   "scripts": {
     "check-ts": "tsc --noEmit",
     "check-format": "prettier . --check",
@@ -10,12 +10,9 @@
   "keywords": [],
   "author": "Matthew Harrison",
   "license": "ISC",
-  "dependencies": {
-    "@subbiesnap/constants": "workspace:^",
-    "zod": "^3.23.8"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.4",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@tsconfig/node20": "^20.1.4"
   }
 }

@@ -1,7 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
-import { HttpStatus } from "../../constants/https";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { db } from "../../db/db";
 import {
   ContractorsAccreditationsSchema,
