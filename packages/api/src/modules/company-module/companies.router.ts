@@ -1,6 +1,6 @@
 import { Request, Router } from "express";
-import { UserCompanyRole } from "../../../../constants/company-emuns";
-import { HttpStatus } from "../../../../constants/https";
+import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { upload } from "../../media-store/middleware";
 import { paginationSchema } from "@subbiesnap/types/pagination";

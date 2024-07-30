@@ -3,8 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import {
   CompanyStatus,
   UserCompanyRole,
-} from "../../../../constants/company-emuns";
-import { HttpStatus } from "../../../../constants/https";
+} from "@subbiesnap/constants/company-emuns";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { db } from "../../db/db";
 import { companiesTable, companiesUsersTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserCompanyRole } from "../../constants/company-emuns";
+import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
 
 export type Company = Required<z.infer<typeof companySchema>>;
 export type CompanyUser = Required<z.infer<typeof companyUserSchema>>;

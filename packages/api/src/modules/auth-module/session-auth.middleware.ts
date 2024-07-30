@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 import moment from "moment";
-import { HttpStatus } from "../../../../constants/https";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { SESSION_TOKEN_EXPIRE_DAYS } from "../../constants/session-token";
 import { db } from "../../db/db";
 import { sessionsTable, usersTable } from "../../db/schemas";

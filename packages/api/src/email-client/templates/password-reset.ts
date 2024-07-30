@@ -1,5 +1,5 @@
 import { env } from "../../env";
-import { COMPANY_NAME } from "../../../../constants/branding";
+import { COMPANY_NAME } from "@subbiesnap/constants/branding";
 
 type resetPasswordEmail = {
   firstName: string;

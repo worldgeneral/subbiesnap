@@ -1,5 +1,5 @@
 import { Request, Router } from "express";
-import { HttpStatus } from "../../../../constants/https";
+import { HttpStatus } from "@subbiesnap/constants/https";
 import { tryCatch } from "../../errors/try-catch";
 import { paginationSchema } from "@subbiesnap/types/pagination";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
