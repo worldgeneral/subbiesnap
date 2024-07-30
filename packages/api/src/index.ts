@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import express from "express";
-import { HttpStatus } from "./constants/https";
+import { HttpStatus } from "../../constants/https";
 import { errorHandler } from "./errors/error-handler.middleware";
 import { AppError } from "./errors/express-error";
 import { authRoutes } from "./modules/auth-module/auth.router";

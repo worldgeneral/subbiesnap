@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
-import { UserCompanyRole } from "../../constants/company-emuns";
-import { HttpStatus } from "../../constants/https";
+import { UserCompanyRole } from "../../../../constants/company-emuns";
+import { HttpStatus } from "../../../../constants/https";
 import { db } from "../../db/db";
 import { RateableType, ratingsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";

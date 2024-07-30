@@ -20,6 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.616.0",
     "@aws-sdk/client-sesv2": "^3.616.0",
+    "@subbiesnap/constants": "workspace:^",
     "@subbiesnap/types": "workspace:^",
     "argon2": "^0.40.3",
     "cookie-parser": "^1.4.6",
