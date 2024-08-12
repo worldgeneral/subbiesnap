@@ -63,7 +63,7 @@ export async function registerUser(
       .returning();
 
     const confirmEmailId = jwt.sign({ userId: user.id }, env.JWT_SECRET);
-    sendEmail({
+    await sendEmail({
       To: [email],
       Subject: confirmEmailSubject,
       Body: {

@@ -21,7 +21,7 @@ export default function Header() {
             <Button
               variation="secondary"
               className="m-1"
-              link="/signup"
+              link="/auth/signup"
               buttonText="Signup"
             />
           </div>

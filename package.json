@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "subbie site monorepo",
   "scripts": {
+    "subbiesnap": "pnpm --filter=@subbiesnap/app --filter=@subbiesnap/api run dev",
     "check-format": "pnpm -r check-format",
     "check-ts": "pnpm -r check-ts",
     "format": "pnpm -r format"

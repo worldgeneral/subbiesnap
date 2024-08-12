@@ -92,6 +92,9 @@ importers:
 
   packages/app:
     dependencies:
+      '@subbiesnap/constants':
+        specifier: workspace:^
+        version: link:../constants
       '@subbiesnap/types':
         specifier: workspace:^
         version: link:../types
