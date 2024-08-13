@@ -4,12 +4,14 @@ import { useState } from "react";
 import { authSchema } from "@subbiesnap/types/auth";
 import { User } from "@subbiesnap/types/users";
 import api from "@/utils/fetch";
+import { useRouter } from "next/navigation";
 
 export default function LoginIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState<User>();
   const [authSchemaError, setAuthSchemaError] = useState("");
+  const router = useRouter();
 
   const onButtonClick = async () => {
     setAuthSchemaError("");
@@ -27,13 +29,12 @@ export default function LoginIn() {
     if (response == typeof String) {
       return setAuthSchemaError(response);
     } else {
-      setUser(await response);
+      router.push("/");
     }
   };
 
   return (
     <div>
-      {user && <p>{JSON.stringify(user)}</p>}
       <h1>Please log in to SubbieSnap</h1>
       <div>
         {authSchemaError && <span>{authSchemaError}</span>}

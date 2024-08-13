@@ -1,5 +1,6 @@
 import { HttpStatus } from "@subbiesnap/constants/https";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 type api = {
   url: string;
@@ -9,6 +10,7 @@ type api = {
 };
 
 export default async function api(request: api) {
+  const router = useRouter();
   const response = await fetch("/api/login", {
     method: request.method ? request.method : "POST",
     headers: request.headers
@@ -21,7 +23,7 @@ export default async function api(request: api) {
     return response.json();
   }
   if (response.status == HttpStatus.InternalServerError) {
-    redirect("/error");
+    router.push("/error");
   } else {
     const error = await response.json();
     return error.errorMessage;
