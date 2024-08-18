@@ -5,11 +5,16 @@ import { authSchema } from "@subbiesnap/types/auth";
 import { User } from "@subbiesnap/types/users";
 import api from "@/utils/fetch";
 import { useRouter } from "next/navigation";
+import { getQueryClient } from "@/app/get-query-client";
+import {
+  HydrationBoundary,
+  dehydrate,
+  queryOptions,
+} from "@tanstack/react-query";
 
 export default function LoginIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState<User>();
   const [authSchemaError, setAuthSchemaError] = useState("");
   const router = useRouter();
 
