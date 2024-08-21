@@ -19,7 +19,7 @@ const jobsRoutes = Router();
 
 jobsRoutes.get(
   "/jobs",
-  sessionAuth,
+
   tryCatch(async (req: Request, res) => {
     const pagination = paginationSchema.parse(req.query);
     const jobPosts = await getJobPosts(pagination.limit, pagination.offset);

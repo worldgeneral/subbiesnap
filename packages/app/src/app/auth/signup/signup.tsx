@@ -4,15 +4,7 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import Error from "@/components/error/error";
 import ConfirmEmail from "@/components/confirmEmail/confirmEmail";
 import { useSignup } from "./useSignup";
-
-const ErrorMessages = ({ errors }: Record<"errors", string[] | undefined>) =>
-  errors ? (
-    <ul>
-      {errors.map((err, index) => (
-        <li key={index}>{err}</li>
-      ))}
-    </ul>
-  ) : null;
+import { ErrorMessages } from "@/components/error/errorMessages";
 
 export default function SignUp() {
   const {
