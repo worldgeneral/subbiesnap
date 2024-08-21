@@ -1,62 +1,37 @@
 "use client";
 
-import {
-  HydrationBoundary,
-  dehydrate,
-  useMutation,
-} from "@tanstack/react-query";
-import { useState } from "react";
-import { signUpQueryOptions } from "./query";
-import { getQueryClient } from "@/app/get-query-client";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import Error from "@/components/error/error";
-import { User, registerSchema } from "@subbiesnap/types/users";
 import ConfirmEmail from "@/components/confirmEmail/confirmEmail";
-import { ZodError } from "zod";
-import { z } from "zod";
+import { useSignup } from "./useSignup";
+
+const ErrorMessages = ({ errors }: Record<"errors", string[] | undefined>) =>
+  errors ? (
+    <ul>
+      {errors.map((err, index) => (
+        <li key={index}>{err}</li>
+      ))}
+    </ul>
+  ) : null;
 
 export default function SignUp() {
-  const queryClient = getQueryClient();
-
-  const [user, setUser] = useState<User>();
-
-  const mutation = useMutation({
-    mutationFn: signUpQueryOptions,
-    onSuccess: (data) => {
-      setUser(data);
-    },
-  });
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    secondName: "",
-  });
-
-  const [authSchemaError, setAuthSchemaError] = useState();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const onSubmission = () => {
-    setAuthSchemaError(undefined);
-    try {
-      const validation = registerSchema.parse(formData);
-      mutation.mutate(validation);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.log(error);
-      }
-      return;
-    }
-  };
+  const {
+    queryClient,
+    mutation,
+    user,
+    formData,
+    errors,
+    showPassword,
+    setShowPassword,
+    onSubmission,
+    onChange,
+  } = useSignup();
 
   if (mutation.error) {
-    console.log(user, mutation);
     return <Error error={mutation.error.message} />;
   }
 
   if (mutation.data) {
-    console.log(user, mutation);
     return (
       <ConfirmEmail
         email={user!.email}
@@ -71,39 +46,40 @@ export default function SignUp() {
       <div>
         <h1>Sign up for SubbieSnap</h1>
         <div className="grid col-1">
-          <input
-            value={formData.email}
-            placeholder="Enter your email here"
-            onChange={(ev) =>
-              setFormData({
-                ...formData,
-                email: ev.target.value,
-              })
-            }
-            className={authSchemaError ? "bg-red-600" : ""}
-          />
-          <input
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
-            placeholder="Enter your password here"
-            onChange={(ev) =>
-              setFormData({
-                ...formData,
-                password: ev.target.value,
-              })
-            }
-          />
-          <input
-            type={showPassword ? "text" : "password"}
-            value={formData.confirmPassword}
-            placeholder="Confirm your password here"
-            onChange={(ev) =>
-              setFormData({
-                ...formData,
-                confirmPassword: ev.target.value,
-              })
-            }
-          />
+          <div>
+            <input
+              name="email"
+              value={formData.email}
+              placeholder="Enter your email here"
+              className={errors?.email?._errors.length ? "bg-red-600" : ""}
+              onChange={onChange}
+            />
+            <ErrorMessages errors={errors?.email?._errors} />
+          </div>
+          <div>
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              placeholder="Enter your password here"
+              className={errors?.password?._errors.length ? "bg-red-600" : ""}
+              onChange={onChange}
+            />
+            <ErrorMessages errors={errors?.password?._errors} />
+          </div>
+          <div>
+            <input
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              value={formData.confirmPassword}
+              placeholder="Confirm your password here"
+              className={
+                errors?.confirmPassword?._errors.length ? "bg-red-600" : ""
+              }
+              onChange={onChange}
+            />
+            <ErrorMessages errors={errors?.confirmPassword?._errors} />
+          </div>
           <input
             type="button"
             value="show password"
@@ -111,28 +87,28 @@ export default function SignUp() {
               setShowPassword(!showPassword);
             }}
           />
-          <input
-            type="text"
-            value={formData.firstName}
-            placeholder="First name"
-            onChange={(ev) =>
-              setFormData({
-                ...formData,
-                firstName: ev.target.value,
-              })
-            }
-          />
-          <input
-            type="text"
-            value={formData.secondName}
-            placeholder="First name"
-            onChange={(ev) =>
-              setFormData({
-                ...formData,
-                secondName: ev.target.value,
-              })
-            }
-          />
+          <div>
+            <input
+              name="firstName"
+              type="text"
+              value={formData.firstName}
+              placeholder="First name"
+              className={errors?.firstName?._errors.length ? "bg-red-600" : ""}
+              onChange={onChange}
+            />
+            <ErrorMessages errors={errors?.firstName?._errors} />
+          </div>
+          <div>
+            <input
+              name="secondName"
+              type="text"
+              value={formData.secondName}
+              placeholder="Second name"
+              className={errors?.secondName?._errors.length ? "bg-red-600" : ""}
+              onChange={onChange}
+            />
+            <ErrorMessages errors={errors?.secondName?._errors} />
+          </div>
 
           <input type="button" value="submit" onClick={() => onSubmission()} />
         </div>
