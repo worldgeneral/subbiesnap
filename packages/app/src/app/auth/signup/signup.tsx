@@ -25,10 +25,8 @@ export default function SignUp() {
   }
 
   if (mutation.data) {
-    console.log(mutation.data);
     if (mutation.data.issues && !errors) {
       setErrors(mutation.data.issues);
-      console.log(10);
     }
     if (!mutation.data.issues) {
       return (
