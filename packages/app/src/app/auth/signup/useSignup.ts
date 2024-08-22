@@ -35,6 +35,7 @@ export const useSignup = () => {
   });
 
   const onSubmission = () => {
+    setErrors(undefined);
     const { success, error } = registerSchema.safeParse(formData);
     if (success) {
       return mutation.mutate(formData);
@@ -57,6 +58,7 @@ export const useSignup = () => {
     user,
     formData,
     errors,
+    setErrors,
     showPassword,
     setShowPassword,
     onSubmission,

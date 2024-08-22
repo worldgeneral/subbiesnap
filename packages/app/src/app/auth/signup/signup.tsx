@@ -13,6 +13,7 @@ export default function SignUp() {
     user,
     formData,
     errors,
+    setErrors,
     showPassword,
     setShowPassword,
     onSubmission,
@@ -24,13 +25,20 @@ export default function SignUp() {
   }
 
   if (mutation.data) {
-    return (
-      <ConfirmEmail
-        email={user!.email}
-        firstName={user!.firstName}
-        secondName={user!.secondName}
-      />
-    );
+    console.log(mutation.data);
+    if (mutation.data.issues && !errors) {
+      setErrors(mutation.data.issues);
+      console.log(10);
+    }
+    if (!mutation.data.issues) {
+      return (
+        <ConfirmEmail
+          email={user!.email}
+          firstName={user!.firstName}
+          secondName={user!.secondName}
+        />
+      );
+    }
   }
 
   return (
@@ -43,7 +51,7 @@ export default function SignUp() {
               name="email"
               value={formData.email}
               placeholder="Enter your email here"
-              className={errors?.email?._errors.length ? "bg-red-600" : ""}
+              className={errors?.email?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
             <ErrorMessages errors={errors?.email?._errors} />
@@ -54,7 +62,7 @@ export default function SignUp() {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               placeholder="Enter your password here"
-              className={errors?.password?._errors.length ? "bg-red-600" : ""}
+              className={errors?.password?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
             <ErrorMessages errors={errors?.password?._errors} />
@@ -65,9 +73,7 @@ export default function SignUp() {
               type={showPassword ? "text" : "password"}
               value={formData.confirmPassword}
               placeholder="Confirm your password here"
-              className={
-                errors?.confirmPassword?._errors.length ? "bg-red-600" : ""
-              }
+              className={errors?.confirmPassword?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
             <ErrorMessages errors={errors?.confirmPassword?._errors} />
@@ -85,7 +91,7 @@ export default function SignUp() {
               type="text"
               value={formData.firstName}
               placeholder="First name"
-              className={errors?.firstName?._errors.length ? "bg-red-600" : ""}
+              className={errors?.firstName?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
             <ErrorMessages errors={errors?.firstName?._errors} />
@@ -96,7 +102,7 @@ export default function SignUp() {
               type="text"
               value={formData.secondName}
               placeholder="Second name"
-              className={errors?.secondName?._errors.length ? "bg-red-600" : ""}
+              className={errors?.secondName?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
             <ErrorMessages errors={errors?.secondName?._errors} />

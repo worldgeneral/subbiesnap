@@ -14,7 +14,7 @@ export const errorHandler = (
   if (err instanceof ZodError) {
     return res
       .status(HttpStatus.BadRequest)
-      .json({ errorMessage: "Validation Error", issues: err.issues, err });
+      .json({ errorMessage: "Validation Error", issues: err.format(), err });
   }
 
   if (err instanceof AppError) {
