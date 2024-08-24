@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { Job } from "@subbiesnap/types/job";
+import { Job } from "@subbiesnap/types";
 
 export const jobsQueryOptions = queryOptions<Job[]>({
   queryKey: ["jobs"],

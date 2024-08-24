@@ -1,4 +1,4 @@
-import { User } from "@subbiesnap/types/users";
+import { User } from "@subbiesnap/types";
 import { getAppInstance } from "@/utils/api";
 import { Fields } from "./useSignup";
 

@@ -1,10 +1,6 @@
 import { Request, Router } from "express";
 import { tryCatch } from "../../errors/try-catch";
-import {
-  authSchema,
-  emailSchema,
-  passwordSchema,
-} from "@subbiesnap/types/auth";
+import { authSchema, emailSchema, passwordSchema } from "@subbiesnap/types";
 import {
   emailAuth,
   loginAuthUser,

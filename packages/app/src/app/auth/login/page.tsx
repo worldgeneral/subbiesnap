@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { authSchema } from "@subbiesnap/types/auth";
-import { User } from "@subbiesnap/types/users";
+import { authSchema, User } from "@subbiesnap/types";
 import api from "@/utils/fetch";
 import { useRouter } from "next/navigation";
 import { getQueryClient } from "@/app/get-query-client";

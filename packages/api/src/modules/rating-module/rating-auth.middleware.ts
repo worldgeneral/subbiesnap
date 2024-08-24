@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
-import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { UserCompanyRole } from "@subbiesnap/constants";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import { RateableType, ratingsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { tryCatch } from "../../errors/try-catch";
-import { companyAuthId } from "@subbiesnap/types/auth";
+import { companyAuthId } from "@subbiesnap/types";
 import { validateCompanyUser } from "../company-module/company-auth.middleware";
 import { validateContractor } from "../contractor-module/contractor-auth.middleware";
 

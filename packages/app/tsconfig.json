@@ -18,7 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@subbiesnap/constants": ["../constants"],
+      "@subbiesnap/types": ["../types"]
     },
     "incremental": true
   },

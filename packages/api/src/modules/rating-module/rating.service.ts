@@ -1,8 +1,8 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import { DatabaseError } from "pg";
-import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { UserCompanyRole } from "@subbiesnap/constants";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import {
   RateableType,
@@ -19,7 +19,7 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { userIsContractor, usersCompanies } from "./checks.service";
-import { Rating } from "@subbiesnap/types/rating";
+import { Rating } from "@subbiesnap/types";
 
 export function normalizeRating(rating: ratingsTableSchema): Rating {
   return {

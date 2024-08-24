@@ -1,8 +1,8 @@
 import { Request, Router } from "express";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { tryCatch } from "../../errors/try-catch";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
-import { registerSchema, updateUserSchema } from "@subbiesnap/types/users";
+import { registerSchema, updateUserSchema } from "@subbiesnap/types";
 import { deleteUser, getUser, registerUser, updateUser } from "./user.service";
 
 const usersRoutes = Router();

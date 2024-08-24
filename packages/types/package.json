@@ -2,9 +2,16 @@
   "name": "@subbiesnap/types",
   "version": "0.0.1",
   "description": "types",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "check-ts": "tsc --noEmit",
     "check-format": "prettier . --check",
+    "clean": "rimraf ./dist",
+    "dev": "tsc",
     "format": "prettier . --write"
   },
   "keywords": [],
@@ -12,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@subbiesnap/constants": "workspace:^",
+    "rimraf": "^6.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {

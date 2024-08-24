@@ -3,12 +3,18 @@
   "version": "0.0.1",
   "description": "subbie site monorepo",
   "scripts": {
-    "subbiesnap": "pnpm --filter=@subbiesnap/app --filter=@subbiesnap/api run dev",
-    "check-format": "pnpm -r check-format",
-    "check-ts": "pnpm -r check-ts",
-    "format": "pnpm -r format"
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "check-format": "turbo run check-format",
+    "check-ts": "turbo run check-ts",
+    "format": "turbo run format",
+    "dev": "turbo run dev"
   },
   "keywords": [],
   "author": "Matthew Harrison",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^2.0.14"
+  },
+  "packageManager": "pnpm@9.3.0"
 }

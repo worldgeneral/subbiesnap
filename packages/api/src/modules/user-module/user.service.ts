@@ -3,7 +3,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import { DatabaseError } from "pg";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import { sendEmail } from "../../email-client/send-email";
 import {
@@ -20,7 +20,7 @@ import {
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { UserSchema, UserSchemaInsert, usersTable } from "./user.model";
-import { User } from "@subbiesnap/types/users";
+import { User } from "@subbiesnap/types";
 import { env } from "../../env";
 
 export function normalizeUser(user: UserSchema): User {

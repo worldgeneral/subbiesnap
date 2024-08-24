@@ -5,7 +5,7 @@ import {
   Variant,
 } from "@/components/cardsBoxes/playingCard/playingCard";
 import { useState } from "react";
-import { Job as TypeJob } from "@subbiesnap/types/job";
+import { Job as TypeJob } from "@subbiesnap/types";
 import { DisplayInfo } from "@/components/jobs/displayInfo";
 import {
   HydrationBoundary,

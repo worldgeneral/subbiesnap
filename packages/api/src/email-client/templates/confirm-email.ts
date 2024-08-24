@@ -1,5 +1,5 @@
 import { env } from "../../env";
-import { COMPANY_NAME } from "@subbiesnap/constants/branding";
+import { COMPANY_NAME } from "@subbiesnap/constants";
 
 type confirmEmail = {
   firstName: string;

@@ -2,17 +2,26 @@
   "name": "@subbiesnap/constants",
   "version": "0.0.1",
   "description": "constants",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "check-ts": "tsc --noEmit",
     "check-format": "prettier . --check",
+    "clean": "rimraf ./dist",
+    "dev": "tsc --watch",
     "format": "prettier . --write"
   },
   "keywords": [],
   "author": "Matthew Harrison",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "rimraf": "^6.0.1"
+  },
   "devDependencies": {
-    "typescript": "^5.5.4",
-    "@tsconfig/node20": "^20.1.4"
+    "@tsconfig/node20": "^20.1.4",
+    "typescript": "^5.5.4"
   }
 }

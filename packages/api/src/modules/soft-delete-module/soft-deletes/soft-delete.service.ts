@@ -15,8 +15,8 @@ import { RequireExactlyOne } from "type-fest";
 import {
   CompanyStatus,
   UserCompanyRole,
-} from "@subbiesnap/constants/company-emuns";
-import { HttpStatus } from "@subbiesnap/constants/https";
+  HttpStatus,
+} from "@subbiesnap/constants";
 import { db } from "../../../db/db";
 import {
   JobPostsSchemaInsert,
@@ -33,7 +33,7 @@ import {
   usersTable,
 } from "../../../db/schemas";
 import { AppError } from "../../../errors/express-error";
-import { Company, CompanyUser } from "@subbiesnap/types/company";
+import { Company, CompanyUser } from "@subbiesnap/types";
 import {
   normalizeCompany,
   normalizeCompanyUser,
@@ -42,14 +42,11 @@ import {
   normalizeAccreditation,
   normalizeContractor,
 } from "../../contractor-module/contractor.service";
-import {
-  Contractor,
-  ContractorsAccreditation,
-} from "@subbiesnap/types/contractor";
+import { Contractor, ContractorsAccreditation } from "@subbiesnap/types";
 import { normalizeJobPost } from "../../job-module/jobPost.service";
 import { normalizeRating } from "../../rating-module/rating.service";
 import { normalizeUser } from "../../user-module/user.service";
-import { User } from "@subbiesnap/types/users";
+import { User } from "@subbiesnap/types";
 
 type InputData = Array<
   | null

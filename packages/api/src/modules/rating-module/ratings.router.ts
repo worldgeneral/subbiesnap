@@ -1,14 +1,14 @@
 import { Request, Router } from "express";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { tryCatch } from "../../errors/try-catch";
-import { paginationSchema } from "@subbiesnap/types/pagination";
+import { paginationSchema } from "@subbiesnap/types";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { ratingAuth } from "./rating-auth.middleware";
 import {
   createRatingRules,
   ratingsRules,
   updateRatingRules,
-} from "@subbiesnap/types/rating";
+} from "@subbiesnap/types";
 import {
   createRating,
   deleteRating,

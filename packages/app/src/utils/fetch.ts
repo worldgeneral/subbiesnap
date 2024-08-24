@@ -1,4 +1,4 @@
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 

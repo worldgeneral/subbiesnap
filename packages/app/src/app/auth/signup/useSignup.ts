@@ -1,12 +1,15 @@
 import { getQueryClient } from "@/app/get-query-client";
-import { User, registerSchema } from "@subbiesnap/types/users";
+import {
+  User,
+  registerSchema,
+  ValidationErrorResponseData,
+} from "@subbiesnap/types";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEventHandler, useState } from "react";
 import { ZodFormattedError, z } from "zod";
 import { signUpQueryOptions } from "./query";
 import { AxiosError, AxiosResponse } from "axios";
-import { ValidationErrorResponseData } from "@subbiesnap/types/errorHandler";
-import { ApiResponseError } from "@subbiesnap/constants/api-response-errors";
+import { ApiResponseError } from "@subbiesnap/constants";
 
 export type Fields = z.infer<typeof registerSchema>;
 

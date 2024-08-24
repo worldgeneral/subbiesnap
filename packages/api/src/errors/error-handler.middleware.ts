@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { ZodError } from "zod";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { AppError } from "./express-error";
-import { ApiResponseError } from "@subbiesnap/constants/api-response-errors";
+import { ApiResponseError } from "@subbiesnap/constants";
 
 export const errorHandler = (
   err: Error | unknown,
