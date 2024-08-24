@@ -13,6 +13,7 @@
     "@subbiesnap/types": "workspace:^",
     "@tanstack/react-query": "^5.51.23",
     "@tanstack/react-query-devtools": "^5.51.23",
+    "axios": "^1.7.5",
     "classnames": "^2.5.1",
     "dotenv": "^16.4.5",
     "next": "14.2.5",

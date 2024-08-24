@@ -1,10 +1,16 @@
 "use client";
 
-import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
 import Error from "@/components/error/error";
 import ConfirmEmail from "@/components/confirmEmail/confirmEmail";
-import { useSignup } from "./useSignup";
+import { Fields, useSignup } from "./useSignup";
 import { ErrorMessages } from "@/components/error/errorMessages";
+import { ZodFormattedError } from "zod";
+import { ChangeEventHandler, Dispatch, SetStateAction } from "react";
 
 export default function SignUp() {
   const {
@@ -13,30 +19,26 @@ export default function SignUp() {
     user,
     formData,
     errors,
-    setErrors,
     showPassword,
     setShowPassword,
     onSubmission,
     onChange,
   } = useSignup();
 
-  if (mutation.error) {
-    return <Error error={mutation.error.message} />;
+  if (mutation.error && !errors) {
+    return (
+      <Error error={mutation.error.response?.data.errorMessage.toString()} />
+    );
   }
 
   if (mutation.data) {
-    if (mutation.data.issues && !errors) {
-      setErrors(mutation.data.issues);
-    }
-    if (!mutation.data.issues) {
-      return (
-        <ConfirmEmail
-          email={user!.email}
-          firstName={user!.firstName}
-          secondName={user!.secondName}
-        />
-      );
-    }
+    return (
+      <ConfirmEmail
+        email={user!.email}
+        firstName={user!.firstName}
+        secondName={user!.secondName}
+      />
+    );
   }
 
   return (
@@ -44,15 +46,16 @@ export default function SignUp() {
       <div>
         <h1>Sign up for SubbieSnap</h1>
         <div className="grid col-1">
+          {errors?.apiError ? <span>{errors.apiError}</span> : null}
           <div>
             <input
               name="email"
               value={formData.email}
               placeholder="Enter your email here"
-              className={errors?.email?._errors ? "bg-red-600" : ""}
+              className={errors?.formError?.email?._errors ? "bg-red-600" : ""}
               onChange={onChange}
             />
-            <ErrorMessages errors={errors?.email?._errors} />
+            <ErrorMessages errors={errors?.formError?.email?._errors} />
           </div>
           <div>
             <input
@@ -60,10 +63,12 @@ export default function SignUp() {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               placeholder="Enter your password here"
-              className={errors?.password?._errors ? "bg-red-600" : ""}
+              className={
+                errors?.formError?.password?._errors ? "bg-red-600" : ""
+              }
               onChange={onChange}
             />
-            <ErrorMessages errors={errors?.password?._errors} />
+            <ErrorMessages errors={errors?.formError?.password?._errors} />
           </div>
           <div>
             <input
@@ -71,10 +76,14 @@ export default function SignUp() {
               type={showPassword ? "text" : "password"}
               value={formData.confirmPassword}
               placeholder="Confirm your password here"
-              className={errors?.confirmPassword?._errors ? "bg-red-600" : ""}
+              className={
+                errors?.formError?.confirmPassword?._errors ? "bg-red-600" : ""
+              }
               onChange={onChange}
             />
-            <ErrorMessages errors={errors?.confirmPassword?._errors} />
+            <ErrorMessages
+              errors={errors?.formError?.confirmPassword?._errors}
+            />
           </div>
           <input
             type="button"
@@ -89,10 +98,12 @@ export default function SignUp() {
               type="text"
               value={formData.firstName}
               placeholder="First name"
-              className={errors?.firstName?._errors ? "bg-red-600" : ""}
+              className={
+                errors?.formError?.firstName?._errors ? "bg-red-600" : ""
+              }
               onChange={onChange}
             />
-            <ErrorMessages errors={errors?.firstName?._errors} />
+            <ErrorMessages errors={errors?.formError?.firstName?._errors} />
           </div>
           <div>
             <input
@@ -100,13 +111,106 @@ export default function SignUp() {
               type="text"
               value={formData.secondName}
               placeholder="Second name"
-              className={errors?.secondName?._errors ? "bg-red-600" : ""}
+              className={
+                errors?.formError?.secondName?._errors ? "bg-red-600" : ""
+              }
               onChange={onChange}
             />
-            <ErrorMessages errors={errors?.secondName?._errors} />
+            <ErrorMessages errors={errors?.formError?.secondName?._errors} />
           </div>
 
           <input type="button" value="submit" onClick={() => onSubmission()} />
+        </div>
+      </div>
+    </HydrationBoundary>
+  );
+}
+
+type Props = {
+  queryClient: QueryClient;
+  formData: Fields;
+  errors: ZodFormattedError<Fields> | undefined;
+  showPassword: boolean;
+  setShowPassword: Dispatch<SetStateAction<boolean>>;
+  onSubmission: () => void;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+};
+
+function SignUpForm(props: Props) {
+  return (
+    <HydrationBoundary state={dehydrate(props.queryClient)}>
+      <div>
+        <h1>Sign up for SubbieSnap</h1>
+        <div className="grid col-1">
+          <div>
+            <input
+              name="email"
+              value={props.formData.email}
+              placeholder="Enter your email here"
+              className={props.errors?.email?._errors ? "bg-red-600" : ""}
+              onChange={props.onChange}
+            />
+            <ErrorMessages errors={props.errors?.email?._errors} />
+          </div>
+          <div>
+            <input
+              name="password"
+              type={props.showPassword ? "text" : "password"}
+              value={props.formData.password}
+              placeholder="Enter your password here"
+              className={props.errors?.password?._errors ? "bg-red-600" : ""}
+              onChange={props.onChange}
+            />
+            <ErrorMessages errors={props.errors?.password?._errors} />
+          </div>
+          <div>
+            <input
+              name="confirmPassword"
+              type={props.showPassword ? "text" : "password"}
+              value={props.formData.confirmPassword}
+              placeholder="Confirm your password here"
+              className={
+                props.errors?.confirmPassword?._errors ? "bg-red-600" : ""
+              }
+              onChange={props.onChange}
+            />
+            <ErrorMessages errors={props.errors?.confirmPassword?._errors} />
+          </div>
+          <input
+            type="button"
+            value="show password"
+            onClick={() => {
+              props.setShowPassword(!props.showPassword);
+            }}
+          />
+          <div>
+            <input
+              name="firstName"
+              type="text"
+              value={props.formData.firstName}
+              placeholder="First name"
+              className={props.errors?.firstName?._errors ? "bg-red-600" : ""}
+              onChange={props.onChange}
+            />
+            <ErrorMessages errors={props.errors?.firstName?._errors} />
+          </div>
+          <div>
+            <input
+              name="secondName"
+              type="text"
+              value={props.formData.secondName}
+              placeholder="Second name"
+              className={props.errors?.secondName?._errors ? "bg-red-600" : ""}
+              onChange={props.onChange}
+            />
+            <ErrorMessages errors={props.errors?.secondName?._errors} />
+          </div>
+
+          <input
+            type="button"
+            value="submit"
+            onClick={() => props.onSubmission()}
+          />
         </div>
       </div>
     </HydrationBoundary>

@@ -1,16 +1,7 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
-import { User, registerSchema } from "@subbiesnap/types/users";
-import { z } from "zod";
+import { User } from "@subbiesnap/types/users";
+import { getAppInstance } from "@/utils/api";
+import { Fields } from "./useSignup";
 
-export const signUpQueryOptions = async (
-  formData: z.infer<typeof registerSchema>
-) => {
-  const res = await fetch("/api/users", {
-    method: "POST",
-    body: JSON.stringify(formData),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return res.json();
+export const signUpQueryOptions = async (formData: Fields) => {
+  return getAppInstance().post<User>("/users", formData);
 };

@@ -4,29 +4,50 @@ import { useMutation } from "@tanstack/react-query";
 import { ChangeEventHandler, useState } from "react";
 import { ZodFormattedError, z } from "zod";
 import { signUpQueryOptions } from "./query";
+import { AxiosError, AxiosResponse } from "axios";
+import { ValidationErrorResponseData } from "@subbiesnap/types/errorHandler";
+import { ApiResponseError } from "@subbiesnap/constants/api-response-errors";
 
-type Fields = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  secondName: string;
-};
+export type Fields = z.infer<typeof registerSchema>;
 
 export const useSignup = () => {
   const queryClient = getQueryClient();
 
-  const mutation = useMutation({
+  const mutation = useMutation<
+    AxiosResponse<User>,
+    AxiosError<ValidationErrorResponseData>,
+    Fields
+  >({
     mutationFn: signUpQueryOptions,
-    onSuccess: (data) => {
-      setUser(data);
+    onSuccess: (response) => {
+      setUser(response.data);
+    },
+    onError: (errors) => {
+      const validationIssues = errors.response?.data;
+      const errorType = errors.response?.data.errorType;
+      if (errorType === ApiResponseError.validation) {
+        return setErrors((preVal) => ({
+          ...preVal,
+          formError: validationIssues!.issues,
+        }));
+      }
+      if (errorType === ApiResponseError.appError) {
+        setErrors((preVal) => ({
+          ...preVal,
+          apiError: validationIssues?.errorMessage,
+        }));
+      }
     },
   });
 
+  type err = {
+    formError?: ZodFormattedError<Fields>;
+    apiError?: string;
+  };
   const [user, setUser] = useState<User>();
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<ZodFormattedError<Fields>>();
-  const [formData, setFormData] = useState({
+  const [errors, setErrors] = useState<err>();
+  const [formData, setFormData] = useState<Fields>({
     email: "",
     password: "",
     confirmPassword: "",
@@ -40,12 +61,18 @@ export const useSignup = () => {
     if (success) {
       return mutation.mutate(formData);
     }
-    setErrors(error.format());
+    setErrors((preVal) => ({
+      ...preVal,
+      formError: error.format(),
+    }));
   };
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     const name = ev.target.name;
-    setErrors((preVal) => ({ ...preVal, _errors: [], [name]: [] }));
+    setErrors((preVal) => ({
+      ...preVal,
+      formError: { ...preVal?.formError, _errors: [], [name]: [] },
+    }));
     setFormData((preVal) => ({
       ...preVal,
       [name]: ev.target.value,

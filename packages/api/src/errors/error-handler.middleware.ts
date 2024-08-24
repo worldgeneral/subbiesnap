@@ -3,6 +3,7 @@ import { JsonWebTokenError } from "jsonwebtoken";
 import { ZodError } from "zod";
 import { HttpStatus } from "@subbiesnap/constants/https";
 import { AppError } from "./express-error";
+import { ApiResponseError } from "@subbiesnap/constants/api-response-errors";
 
 export const errorHandler = (
   err: Error | unknown,
@@ -12,13 +13,17 @@ export const errorHandler = (
 ) => {
   console.log(err, req.path, req.header("user-agent"));
   if (err instanceof ZodError) {
-    return res
-      .status(HttpStatus.BadRequest)
-      .json({ errorMessage: "Validation Error", issues: err.format(), err });
+    return res.status(HttpStatus.BadRequest).json({
+      errorType: ApiResponseError.validation,
+      errorMessage: "Validation Error",
+      issues: err.format(),
+      err,
+    });
   }
 
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
+      errorType: ApiResponseError.appError,
       errorMessage: err.message,
       err: err.stack,
     });
@@ -31,7 +36,8 @@ export const errorHandler = (
   }
 
   return res.status(HttpStatus.InternalServerError).json({
-    message: "Something went wrong",
+    errorType: ApiResponseError.serverError,
+    errorMessage: "Something went wrong",
     err,
   });
 };
