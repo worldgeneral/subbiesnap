@@ -7,12 +7,5 @@
     "typeRoots": ["src/types"]
   },
   "ts-node": { "files": true },
-  "include": [
-    "src/**/*",
-    "src/db/drizzle.config.ts",
-    "../constants/password.ts",
-    "../constants/https.ts",
-    "../constants/company-emuns.ts",
-    "../constants/branding.ts"
-  ]
+  "include": ["src/**/*", "src/db/drizzle.config.ts"]
 }
