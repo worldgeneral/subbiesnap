@@ -4,6 +4,8 @@
   "description": "subbie site monorepo",
   "scripts": {
     "build": "turbo run build",
+    "build:api": "turbo run build --filter=\"@subbiesnap/api\"",
+    "build:app": "turbo run build --filter=\"@subbiesnap/app\"",
     "clean": "turbo run clean",
     "check-format": "turbo run check-format",
     "check-ts": "turbo run check-ts",
