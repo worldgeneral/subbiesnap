@@ -30,7 +30,6 @@ jobs:
       - name: Setup PNPM & Install Packages
         uses: pnpm/action-setup@v4
         with:
-          version: 9
           run_install: true
       - name: Check Format
         run: pnpm check-format
