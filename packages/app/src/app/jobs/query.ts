@@ -5,7 +5,7 @@ export const jobsQueryOptions = queryOptions<Job[]>({
   queryKey: ["jobs"],
   queryFn: async () => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/jobs`
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL ?? "https://subbiesnap.com"}/api/jobs`
     );
 
     return response.json();
