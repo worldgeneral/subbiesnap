@@ -41,7 +41,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
-          file: Dockerfile
+          file: packages/api/Dockerfile
           context: .
           tags: ${{ steps.meta.outputs.tags }}
       # - name: Deploy the app
