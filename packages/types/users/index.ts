@@ -4,7 +4,7 @@ import {
   MIN_AMOUNT_OF_NUMBERS,
   MIN_AMOUNT_OF_UPPER_CASE,
   PASSWORD_MIN_LENGTH,
-} from "@subbiesnap/constants/password";
+} from "@subbiesnap/constants";
 
 export type User = Required<Omit<z.infer<typeof userSchema>, "password">>;
 
@@ -27,8 +27,8 @@ export const registerSchema = z
     password: z.string().min(PASSWORD_MIN_LENGTH),
     confirmPassword: z.string(),
     email: z.string().email(),
-    firstName: z.string(),
-    secondName: z.string(),
+    firstName: z.string().min(2),
+    secondName: z.string().min(2),
   })
   .refine((fields) => fields.password === fields.confirmPassword, {
     path: ["confirmPassword"],
@@ -56,6 +56,7 @@ export const registerSchema = z
       checkPassComplexity.addIssue({
         code: "custom",
         message: "password does not meet complexity requirements",
+        path: ["password"],
       });
     }
   });

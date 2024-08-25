@@ -6,7 +6,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { CompanyStatus } from "@subbiesnap/constants/company-emuns";
+import { CompanyStatus } from "@subbiesnap/constants";
 import { usersTable } from "../user-module/user.model";
 
 export const companiesTable = pgTable("companies", {

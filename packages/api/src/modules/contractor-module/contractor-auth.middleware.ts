@@ -1,11 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import { ContractorsSchema, contractorsTable } from "../../db/schemas";
 import { AppError } from "../../errors/express-error";
 import { tryCatch } from "../../errors/try-catch";
-import { companyAuthId } from "@subbiesnap/types/auth";
+import { companyAuthId } from "@subbiesnap/types";
 
 export const contractorAuth = tryCatch(async function (
   req: Request,

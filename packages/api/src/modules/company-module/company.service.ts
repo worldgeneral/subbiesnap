@@ -1,7 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
-import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { UserCompanyRole } from "@subbiesnap/constants";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import {
   CompaniesSchema,
@@ -14,14 +14,14 @@ import {
 import { AppError } from "../../errors/express-error";
 import { uploadFile } from "../../media-store/service";
 import { randomStringAsHex } from "../../utils/unique-string.utils";
-import { Rating } from "@subbiesnap/types/rating";
+import { Rating } from "@subbiesnap/types";
 import {
   DeleteType,
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
 import { normalizeUser } from "../user-module/user.service";
-import { Company, CompanyUser } from "@subbiesnap/types/company";
-import { User } from "@subbiesnap/types/users";
+import { Company, CompanyUser } from "@subbiesnap/types";
+import { User } from "@subbiesnap/types";
 
 const companyLogoPath = "companies/logo/";
 

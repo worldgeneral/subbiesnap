@@ -1,7 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import {
   ContractorsAccreditationsSchema,
@@ -18,10 +18,7 @@ import {
   DeleteType,
   softDeletesHandler,
 } from "../soft-delete-module/soft-deletes/soft-delete.service";
-import {
-  Contractor,
-  ContractorsAccreditation,
-} from "@subbiesnap/types/contractor";
+import { Contractor, ContractorsAccreditation } from "@subbiesnap/types";
 
 const contractorLogoPath = "contractor/logo/";
 

@@ -1,4 +1,4 @@
-import { Job } from "@subbiesnap/types/job";
+import { Job } from "@subbiesnap/types";
 type Props = {
   job: Job;
 };

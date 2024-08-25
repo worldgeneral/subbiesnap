@@ -1,4 +1,3 @@
-import { ImageLoader } from "../imageLoader/imageLoader";
 import copyRight from "../../images/copyright.svg";
 
 export function CopyRightFooter() {

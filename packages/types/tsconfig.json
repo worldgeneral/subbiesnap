@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true
   },
   "include": ["**/*.ts"]
 }

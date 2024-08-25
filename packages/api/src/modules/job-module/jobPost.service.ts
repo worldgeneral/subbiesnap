@@ -1,7 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import moment from "moment";
 import z from "zod";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { db } from "../../db/db";
 import { AppError } from "../../errors/express-error";
 import {
@@ -13,7 +13,7 @@ import {
   jobsTable,
   type JobPostsSchemaInsert,
 } from "./job.model";
-import { Job } from "@subbiesnap/types/job";
+import { Job } from "@subbiesnap/types";
 
 export function normalizeJobPost(job: JobPostsSchema): Job {
   return {

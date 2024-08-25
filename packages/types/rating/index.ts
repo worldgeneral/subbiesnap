@@ -1,5 +1,9 @@
 import { nativeEnum, number, union, z } from "zod";
-import { RateableType } from "../../api/src/modules/rating-module/rating.model";
+
+export enum RateableType {
+  Contractors = "contractors",
+  Companies = "companies",
+}
 
 export type Rating = Required<z.infer<typeof ratingsRules>>;
 

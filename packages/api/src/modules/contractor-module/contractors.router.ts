@@ -1,8 +1,8 @@
 import { Request, Router } from "express";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { HttpStatus } from "@subbiesnap/constants";
 import { tryCatch } from "../../errors/try-catch";
 import { upload } from "../../media-store/middleware";
-import { paginationSchema } from "@subbiesnap/types/pagination";
+import { paginationSchema } from "@subbiesnap/types";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { contractorAuth } from "./contractor-auth.middleware";
 import {
@@ -10,7 +10,7 @@ import {
   CreateContractorSchema,
   UpdateContractorSchema,
   UpdateContractorsAccreditationSchema,
-} from "@subbiesnap/types/contractor";
+} from "@subbiesnap/types";
 import {
   addAccreditations,
   deleteAccreditation,

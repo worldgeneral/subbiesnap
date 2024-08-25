@@ -1,11 +1,11 @@
 import { Request, Router } from "express";
-import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
-import { HttpStatus } from "@subbiesnap/constants/https";
+import { UserCompanyRole } from "@subbiesnap/constants";
+import { HttpStatus } from "@subbiesnap/constants";
 import { tryCatch } from "../../errors/try-catch";
-import { paginationSchema } from "@subbiesnap/types/pagination";
+import { paginationSchema } from "@subbiesnap/types";
 import { sessionAuth } from "../auth-module/session-auth.middleware";
 import { companyAuth } from "../company-module/company-auth.middleware";
-import { CreateJobSchema, UpdateJobSchema } from "@subbiesnap/types/job";
+import { CreateJobSchema, UpdateJobSchema } from "@subbiesnap/types";
 import {
   createJobPost,
   deleteJobPost,
@@ -19,7 +19,7 @@ const jobsRoutes = Router();
 
 jobsRoutes.get(
   "/jobs",
-  sessionAuth,
+
   tryCatch(async (req: Request, res) => {
     const pagination = paginationSchema.parse(req.query);
     const jobPosts = await getJobPosts(pagination.limit, pagination.offset);

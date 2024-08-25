@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { UserCompanyRole } from "@subbiesnap/constants/company-emuns";
+import { UserCompanyRole } from "@subbiesnap/constants";
 import { db } from "../../../db/db";
 import { companiesUsersTable, contractorsTable } from "../../../db/schemas";
 
