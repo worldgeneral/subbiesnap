@@ -25,7 +25,6 @@ export const errorHandler = (
     return res.status(err.statusCode).json({
       errorType: ApiResponseError.appError,
       errorMessage: err.message,
-      err: err.stack,
     });
   }
 
