@@ -7,7 +7,7 @@ WORKDIR /app
 
 # ==
 
-FROM node as base
+FROM node AS base
 
 RUN apk update && apk add --no-cache libc6-compat
 RUN npm install --global pnpm
