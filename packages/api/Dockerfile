@@ -25,16 +25,17 @@ RUN turbo prune @subbiesnap/api --docker
 
 FROM base AS installer
 
-COPY --from=setup /app/out/json/ .
+COPY --from=setup /app/out/json .
 COPY --from=setup /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=setup /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 RUN pnpm i
 
-# Build the project
 COPY --from=setup /app/out/full/ .
 
 RUN pnpm turbo run build --filter=@subbiesnap/api
+
+RUN pnpm i --prod
 
 # ==
 
