@@ -4,9 +4,7 @@ import { Job } from "@subbiesnap/types";
 export const jobsQueryOptions = queryOptions<Job[]>({
   queryKey: ["jobs"],
   queryFn: async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL ?? "https://subbiesnap.com"}/api/jobs`
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs`);
 
     return response.json();
   },
