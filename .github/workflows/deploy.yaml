@@ -31,7 +31,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v4
         with:
-          images: worldgeneral/subbiesnap
+          images: ghcr.io/worldgeneral/subbiesnap
           tags: |
             type=sha,format=long
             type=ref,event=branch
