@@ -10,14 +10,14 @@ import { contractorsRoutes } from "./modules/contractor-module/contractors.route
 import { jobsRoutes } from "./modules/job-module/jobs.router";
 import { ratingsRoutes } from "./modules/rating-module/ratings.router";
 import { usersRoutes } from "./modules/user-module/users.router";
-
 import { env } from "./env";
-
+import cors from "express";
 const app = express();
 
 async function main() {
   app.use(express.json());
   app.use(cookieParser());
+  app.use(cors());
 
   app.use(usersRoutes);
   app.use(authRoutes);
