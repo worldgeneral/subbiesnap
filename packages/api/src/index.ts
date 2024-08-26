@@ -11,7 +11,8 @@ import { jobsRoutes } from "./modules/job-module/jobs.router";
 import { ratingsRoutes } from "./modules/rating-module/ratings.router";
 import { usersRoutes } from "./modules/user-module/users.router";
 import { env } from "./env";
-import cors from "express";
+import cors from "cors";
+
 const app = express();
 
 async function main() {
