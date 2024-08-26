@@ -6,9 +6,9 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import Error from "@/components/error/error";
-import ConfirmEmail from "@/components/confirmEmail/confirmEmail";
-import { Fields, useSignup } from "./useSignup";
-import { ErrorMessages } from "@/components/error/errorMessages";
+import ConfirmEmail from "@/components/confirm-email/confirm-email";
+import { Fields, useSignup } from "./use-signup";
+import { ErrorMessages } from "@/components/error/error-messages";
 import { ZodFormattedError } from "zod";
 import { ChangeEventHandler, Dispatch, SetStateAction } from "react";
 

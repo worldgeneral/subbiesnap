@@ -1,9 +1,9 @@
 import { Button } from "@/components/buttons/main/button";
-import { InfoCard } from "@/components/cardsBoxes/infoCard";
+import { InfoCard } from "@/components/cards-boxes/info-card";
 import Image from "next/image";
-import { CardWithIcon } from "@/components/cardsBoxes/cardWithIcon";
-import { PlayingCard } from "@/components/cardsBoxes/playingCard/playingCard";
-import { Card1 } from "@/components/cardsBoxes/card1";
+import { CardWithIcon } from "@/components/cards-boxes/card-with-icon";
+import { PlayingCard } from "@/components/cards-boxes/playing-card/playing-card";
+import { Card1 } from "@/components/cards-boxes/card-1";
 
 export default function Home() {
   const roles = [
@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <main className="bg-topography bg-repeat	">
       <div className="flex justify-center flex-col">
-        <div className="w-full h-96 bg-constructionCartoon bg-cover bg-center">
+        <div className="w-full h-96 bg-construction-cartoon bg-cover bg-center">
           <div className="h-full bg-gradient-to-r from-black/90 from-0%  to-30%">
             <div className="relative top-10 left-10 z-10 bg-white/75 w-fit p-3 shadow-md rounded-md	">
               <h1 className="text-5xl tracking-tight">Welcome to SubbieSnap</h1>
@@ -124,7 +124,7 @@ export default function Home() {
               <CardWithIcon
                 className=" content-between"
                 image={{
-                  src: "/images/mainPage/constructionWorker.svg",
+                  src: "/images/main-page/construction-worker.svg",
                   alt: "construction worker icon",
                   width: 80,
                   height: 80,
@@ -136,7 +136,7 @@ export default function Home() {
               <CardWithIcon
                 className=""
                 image={{
-                  src: "/images/mainPage/flatMouse.svg",
+                  src: "/images/main-page/flat-mouse.svg",
                   alt: "hand snapping fingers",
                   width: 80,
                   height: 80,
@@ -148,7 +148,7 @@ export default function Home() {
               <CardWithIcon
                 className=""
                 image={{
-                  src: "/images/mainPage/gpsTag.svg",
+                  src: "/images/main-page/gps-tag.svg",
                   alt: "gps tag",
                   width: 80,
                   height: 80,
@@ -160,7 +160,7 @@ export default function Home() {
               <CardWithIcon
                 className=""
                 image={{
-                  src: "/images/mainPage/star.svg",
+                  src: "/images/main-page/star.svg",
                   alt: "",
                   width: 80,
                   height: 80,
@@ -186,7 +186,7 @@ export default function Home() {
               <Card1
                 className="col-start-1 col-span-5"
                 image={{
-                  src: "/images/mainPage/searchIcon.svg",
+                  src: "/images/main-page/search-icon.svg",
                   alt: "search icon",
                   width: 60,
                   height: 60,
@@ -200,7 +200,7 @@ export default function Home() {
             <div className="grid grid-cols-12">
               <Image
                 className=" col-start-2  place-self-center"
-                src="/images/mainPage/twistedArrowBlueIcon.svg"
+                src="/images/main-page/twisted-arrow-blue-icon.svg"
                 alt="arrow pointing right"
                 width={100}
                 height={100}
@@ -208,7 +208,7 @@ export default function Home() {
               <Card1
                 className="col-start-4 col-span-5"
                 image={{
-                  src: "/images/mainPage/personalInformationIcon.svg",
+                  src: "/images/main-page/personal-information-icon.svg",
                   alt: "personal information icon",
                   width: 60,
                   height: 60,
@@ -219,7 +219,7 @@ export default function Home() {
               />
               <Image
                 className="col-start-10 rotate-90 place-self-center"
-                src="/images/mainPage/twisted-arrow-right-blue-icon.svg"
+                src="/images/main-page/twisted-arrow-right-blue-icon.svg"
                 alt="arrow pointing right"
                 width={100}
                 height={100}
@@ -229,7 +229,7 @@ export default function Home() {
               <Card1
                 className="col-end-12 col-span-5"
                 image={{
-                  src: "/images/mainPage/excellenceHonorIcon.svg",
+                  src: "/images/main-page/excellence-honor-icon.svg",
                   alt: "excellence honor icon",
                   width: 60,
                   height: 60,
@@ -244,7 +244,7 @@ export default function Home() {
       </div>
 
       <div className="w-full flex justify-center bg-white">
-        <div className="w-full h-[450px] bg-cartoonConstructionSkyLine bg-cover bg-top bg-no-repeat"></div>
+        <div className="w-full h-[450px] bg-cartoon-construction-sky-line bg-cover bg-top bg-no-repeat"></div>
       </div>
     </main>
   );

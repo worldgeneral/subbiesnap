@@ -1,4 +1,3 @@
-import underConstruction from "../images/underConstruction.png";
 import Image from "next/image";
 
 export default function NotFound() {
@@ -12,7 +11,7 @@ export default function NotFound() {
       </div>
       <div className="flex justify-center">
         <Image
-          src="/images/notFound/underConstruction.png"
+          src="/images/not-found/under-construction.png"
           alt="under construction"
           width={1000}
           height={1000}

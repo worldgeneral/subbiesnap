@@ -5,7 +5,7 @@ export default function LineLogo() {
     <Image
       width={350}
       height={40}
-      src="/images/logo/singleLineLogo.svg"
+      src="/images/logo/single-line-logo.svg"
       alt="Subbie Snap logo"
     />
   );

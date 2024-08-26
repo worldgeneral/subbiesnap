@@ -15,10 +15,11 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        constructionCartoon: "url('/images/mainPage/constructionCartoon.svg')",
-        cartoonConstructionSkyLine:
-          "url('/images/mainPage/cartoonConstructionSkyLine.svg')",
-        topography: "url('/images/mainPage/topography.svg')",
+        "construction-cartoon":
+          "url('/images/main-page/construction-cartoon.svg')",
+        "cartoon-construction-sky-line":
+          "url('/images/main-page/cartoon-construction-sky-line.svg')",
+        topography: "url('/images/main-page/topography.svg')",
       },
       colors: {
         "button-primary-one": "#243040",
