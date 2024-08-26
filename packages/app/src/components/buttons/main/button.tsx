@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ArrowRightIcon from "../icons/buttonIcon";
+import ArrowRightIcon from "../icons/button-icon";
 import classNames from "classnames";
 
 type props = {

@@ -3,10 +3,10 @@ import Image from "next/image";
 import { PropsWithChildren } from "react";
 
 enum ImageVariant {
-  heart = "/images/cardSuites/heart.svg",
-  diamond = "/images/cardSuites/diamond.svg",
-  club = "/images/cardSuites/club.svg",
-  spade = "/images/cardSuites/spade.svg",
+  heart = "/images/card-suits/heart.svg",
+  diamond = "/images/card-suits/diamond.svg",
+  club = "/images/card-suits/club.svg",
+  spade = "/images/card-suits/spade.svg",
 }
 export type Variant = "heart" | "diamond" | "club" | "spade";
 type Props = PropsWithChildren<{
@@ -32,7 +32,7 @@ export function PlayingCard({ children, ...props }: Props) {
         />
         <Image
           className="w-[80%] opacity-25 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
-          src="/images/playingCard/circleCity.svg"
+          src="/images/playing-card/circle-city.svg"
           alt="dark city around a circle"
           width={100}
           height={100}

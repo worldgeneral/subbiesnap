@@ -3,10 +3,10 @@
 import {
   PlayingCard,
   Variant,
-} from "@/components/cardsBoxes/playingCard/playingCard";
+} from "@/components/cards-boxes/playing-card/playing-card";
 import { useState } from "react";
 import { Job as TypeJob } from "@subbiesnap/types";
-import { DisplayInfo } from "@/components/jobs/displayInfo";
+import { DisplayInfo } from "@/components/jobs/display-info";
 import {
   HydrationBoundary,
   dehydrate,

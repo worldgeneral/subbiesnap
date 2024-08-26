@@ -1,6 +1,6 @@
 import Link from "next/link";
-import NavBar from "./navBar";
-import LineLogo from "../subbieSnap/logo/logo";
+import NavBar from "./nav-bar";
+import LineLogo from "../subbiesnap/logo/logo";
 import { Button } from "../buttons/main/button";
 
 export default function Header() {
