@@ -13,7 +13,7 @@
       "dependsOn": ["^build"]
     },
     "dev": {
-      "dependsOn": ["^clean", "^build"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

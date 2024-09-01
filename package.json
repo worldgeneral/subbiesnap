@@ -10,7 +10,7 @@
     "check-format": "turbo run check-format",
     "check-ts": "turbo run check-ts",
     "format": "turbo run format",
-    "dev": "turbo run dev"
+    "dev": "pnpm clean && turbo run dev"
   },
   "keywords": [],
   "author": "Matthew Harrison",
