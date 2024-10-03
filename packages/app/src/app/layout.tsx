@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Header from "@/components/header/header";
-import PageWrap from "@/components/containers/page-wrap";
-import { CopyRightFooter } from "@/components/footer/copy-right-footer";
-import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+import { Providers } from "./providers";
+import "../assets/scss/tailwind.scss";
+import "../assets/@iconscout/unicons/css/line.css";
+import "../assets/@mdi/font/css/materialdesignicons.min.css";
 
 export const metadata: Metadata = {
   title: "Subbie Snap",
@@ -21,14 +18,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <PageWrap>
-            <Header />
-            {children}
-            <CopyRightFooter />
-          </PageWrap>
-        </Providers>
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
