@@ -1,5 +1,6 @@
 import JobBanner from "@/components/cards/job-banner";
 import { Job } from "../../../types/dist";
+import CategoryCard from "@/components/cards/category-card";
 
 export default function () {
   return (
@@ -202,166 +203,9 @@ export default function () {
               </div>
             </div>
             <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Human Resource
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-grid-one.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  It &amp; Networking
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-grid-two.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Sales &amp; Marketing
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-grid-three.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Accounting
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-list-three.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Delivery Boy
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-list-two.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Data Science
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-list-one.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Project Manager
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-list-one.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Engineering
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-list-two.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Help Center
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-grid-two.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
-              <div className="group p-4 rounded-md shadow dark:shadow-gray-700 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-600 dark:hover:bg-indigo-600 transition-all duration-500">
-                <h5 className="text-lg font-semibold group-hover:text-white">
-                  Full Stack Developer
-                </h5>
-                <span className="block text-slate-400 group-hover:text-white/50 text-sm mt-1">
-                  90 Jobs Available
-                </span>
-                <div className="mt-2">
-                  <a
-                    href="job-grid-one.html"
-                    className="text-indigo-600 dark:text-white/80 group-hover:text-white font-medium"
-                  >
-                    Explore Jobs <i className="uil uil-arrow-right" />
-                  </a>
-                </div>
-              </div>
+              {categories.map((cat, index) => {
+                return <CategoryCard category={cat} jobs={290} key={index} />;
+              })}
             </div>
             <div className="grid md:grid-cols-12 grid-cols-1 md:hidden mt-8">
               <div className="md:col-span-12 text-center">
@@ -890,4 +734,17 @@ const jobs: Job[] = [
     location: "Pakistan",
     description: "$4,000 - $4,500",
   },
+];
+
+const categories = [
+  "Human Resource",
+  "IT & Networking",
+  "Sales & Marketing",
+  "Accounting",
+  "Delivery Boy",
+  "Data Science",
+  "Project Manager",
+  "Engineering",
+  "Help Center",
+  "Full Stack Developer",
 ];
