@@ -1,6 +1,7 @@
 import JobBanner from "@/components/cards/job-banner";
-import { Job } from "../../../types/dist";
+import { Company, Job } from "../../../types/dist";
 import CategoryCard from "@/components/cards/category-card";
+import CompanyCard from "@/components/cards/company-card";
 
 export default function () {
   return (
@@ -231,230 +232,11 @@ export default function () {
               </p>
             </div>
             <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/spotify.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Spotify
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> Australia
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/facebook-logo.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Facebook
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> USA
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/google-logo.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Google
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> China
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/android.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Android
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> Dubai
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/lenovo-logo.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Lenovo
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> Pakistan
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/shree-logo.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Shreethemes
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> India
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/skype.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Skype
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> Rush
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
-              <div className="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                <div className="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                  <img
-                    src="/images/company/snapchat.png"
-                    className="size-8"
-                    alt=""
-                  />
-                </div>
-                <div className="mt-4">
-                  <a
-                    href=""
-                    className="text-lg hover:text-indigo-600 font-semibold"
-                  >
-                    Snapchat
-                  </a>
-                  <p className="text-slate-400 mt-2">
-                    Digital Marketing Solutions for Tomorrow
-                  </p>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                  <span className="text-slate-400">
-                    <i className="uil uil-map-marker" /> Turkey
-                  </span>
-                  <span className="block font-semibold text-indigo-600">
-                    6 Jobs
-                  </span>
-                </div>
-              </div>
+              {companies.map((comp) => {
+                return (
+                  <CompanyCard company={comp} totalJobs={10} key={comp.id} />
+                );
+              })}
             </div>
             <div className="grid md:grid-cols-12 grid-cols-1 mt-6">
               <div className="md:col-span-12 text-center">
@@ -465,174 +247,6 @@ export default function () {
                   See More Companies{" "}
                   <i className="uil uil-arrow-right align-middle" />
                 </a>
-              </div>
-            </div>
-          </div>
-          <div className="container md:mt-24 mt-16">
-            <div className="grid grid-cols-1 pb-8 text-center">
-              <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-                Latest Blog or News
-              </h3>
-              <p className="text-slate-400 max-w-xl mx-auto">
-                Search all the open positions on the web. Get your own
-                personalized salary estimate. Read reviews on over 30000+
-                companies worldwide.
-              </p>
-            </div>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-              <div className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                <div className="relative overflow-hidden">
-                  <img
-                    src="/images/blog/01.jpg"
-                    className="scale-110 group-hover:scale-100 transition-all duration-500"
-                    alt=""
-                  />
-                </div>
-                <div className="relative p-6">
-                  <div className="absolute start-6 -top-4">
-                    <span className="bg-indigo-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">
-                      Arts
-                    </span>
-                  </div>
-                  <div className="">
-                    <div className="flex mb-4">
-                      <span className="text-slate-400 text-sm">
-                        <i className="uil uil-calendar-alt text-slate-900 dark:text-white me-2" />
-                        20th February, 2023
-                      </span>
-                      <span className="text-slate-400 text-sm ms-3">
-                        <i className="uil uil-clock text-slate-900 dark:text-white me-2" />
-                        5 min read
-                      </span>
-                    </div>
-                    <a
-                      href="blog-detail.html"
-                      className="title text-lg font-semibold hover:text-indigo-600 duration-500 ease-in-out"
-                    >
-                      11 Tips to Help You Get New Clients Through Cold Calling
-                    </a>
-                    <div className="flex justify-between items-center mt-3">
-                      <a
-                        href="blog-detail.html"
-                        className="btn btn-link hover:text-indigo-600 after:bg-indigo-600 duration-500 ease-in-out"
-                      >
-                        Read More <i className="uil uil-arrow-right" />
-                      </a>
-                      <span className="text-slate-400 text-sm">
-                        by
-                        <a
-                          href=""
-                          className="text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-600 font-medium"
-                        >
-                          Google
-                        </a>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                <div className="relative overflow-hidden">
-                  <img
-                    src="/images/blog/02.jpg"
-                    className="scale-110 group-hover:scale-100 transition-all duration-500"
-                    alt=""
-                  />
-                </div>
-                <div className="relative p-6">
-                  <div className="absolute start-6 -top-4">
-                    <span className="bg-indigo-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">
-                      Illustration
-                    </span>
-                  </div>
-                  <div className="">
-                    <div className="flex mb-4">
-                      <span className="text-slate-400 text-sm">
-                        <i className="uil uil-calendar-alt text-slate-900 dark:text-white me-2" />
-                        20th February, 2023
-                      </span>
-                      <span className="text-slate-400 text-sm ms-3">
-                        <i className="uil uil-clock text-slate-900 dark:text-white me-2" />
-                        5 min read
-                      </span>
-                    </div>
-                    <a
-                      href="blog-detail.html"
-                      className="title text-lg font-semibold hover:text-indigo-600 duration-500 ease-in-out"
-                    >
-                      DigitalOcean launches first Canadian data centre in
-                      Toronto
-                    </a>
-                    <div className="flex justify-between items-center mt-3">
-                      <a
-                        href="blog-detail.html"
-                        className="btn btn-link hover:text-indigo-600 after:bg-indigo-600 duration-500 ease-in-out"
-                      >
-                        Read More <i className="uil uil-arrow-right" />
-                      </a>
-                      <span className="text-slate-400 text-sm">
-                        by
-                        <a
-                          href=""
-                          className="text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-600 font-medium"
-                        >
-                          Facebook
-                        </a>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                <div className="relative overflow-hidden">
-                  <img
-                    src="/images/blog/03.jpg"
-                    className="scale-110 group-hover:scale-100 transition-all duration-500"
-                    alt=""
-                  />
-                </div>
-                <div className="relative p-6">
-                  <div className="absolute start-6 -top-4">
-                    <span className="bg-indigo-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">
-                      Music
-                    </span>
-                  </div>
-                  <div className="">
-                    <div className="flex mb-4">
-                      <span className="text-slate-400 text-sm">
-                        <i className="uil uil-calendar-alt text-slate-900 dark:text-white me-2" />
-                        20th February, 2023
-                      </span>
-                      <span className="text-slate-400 text-sm ms-3">
-                        <i className="uil uil-clock text-slate-900 dark:text-white me-2" />
-                        5 min read
-                      </span>
-                    </div>
-                    <a
-                      href="blog-detail.html"
-                      className="title text-lg font-semibold hover:text-indigo-600 duration-500 ease-in-out"
-                    >
-                      Using Banner Stands To Increase Trade Show Traffic
-                    </a>
-                    <div className="flex justify-between items-center mt-3">
-                      <a
-                        href="blog-detail.html"
-                        className="btn btn-link hover:text-indigo-600 after:bg-indigo-600 duration-500 ease-in-out"
-                      >
-                        Read More <i className="uil uil-arrow-right" />
-                      </a>
-                      <span className="text-slate-400 text-sm">
-                        by
-                        <a
-                          href=""
-                          className="text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-600 font-medium"
-                        >
-                          Linkedin
-                        </a>
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -747,4 +361,71 @@ const categories = [
   "Engineering",
   "Help Center",
   "Full Stack Developer",
+];
+
+const companies: Company[] = [
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Spotify",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Facebook",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Google",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Android",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Lenovo",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Shreethemes",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Skype",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
+  {
+    id: 10,
+    avgRating: 5,
+    timesRated: 10,
+    name: "Snapchat",
+    blurb: "Digital Marketing Solutions for Tomorrow",
+    logo: null,
+  },
 ];
