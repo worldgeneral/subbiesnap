@@ -2,6 +2,7 @@ import JobBanner from "@/components/cards/job-banner";
 import { Company, Job } from "../../../types/dist";
 import CategoryCard from "@/components/cards/category-card";
 import CompanyCard from "@/components/cards/company-card";
+import TileWithText from "@/components/headers/title-with-text";
 
 export default function () {
   return (
@@ -144,16 +145,11 @@ export default function () {
 
       {/* How it's Work? */}
       <div className="container md:mt-24 mt-16">
-        <div className="grid grid-cols-1 pb-8 text-center">
-          <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            How it's Work?
-          </h3>
-
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Get your own personalized
-            salary estimate. Read reviews on over 30000+ companies worldwide.
-          </p>
-        </div>
+        <TileWithText
+          title="How does it Work?"
+          text="Search all the open positions on the web. Get your own personalized
+            salary estimate. Read reviews on over 30000+ companies worldwide."
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 mt-6 gap-[30px]">
           <div className="p-6 hover:shadow-xl hover:shadow-gray-100 dark:hover:shadow-gray-800 transition duration-500 rounded-2xl mt-6 text-center">
@@ -244,15 +240,12 @@ export default function () {
 
       {/* Popular Jobs */}
       <div className="container md:mt-24 mt-16">
-        <div className="grid grid-cols-1 pb-8 text-center">
-          <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            Popular Jobs
-          </h3>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Get your own personalized
-            salary estimate. Read reviews on over 30000+ companies worldwide.
-          </p>
-        </div>
+        <TileWithText
+          title="Popular Jobs"
+          text="Search all the open positions on the web. Get your own personalized
+            salary estimate. Read reviews on over 30000+ companies worldwide."
+        />
+
         <div className="grid grid-cols-1 mt-8 gap-[30px]">
           {jobs.map((job) => {
             return (
@@ -286,24 +279,11 @@ export default function () {
 
       {/* Browse by Categories */}
       <div className="container md:mt-24 mt-16">
-        <div className="grid md:grid-cols-12 grid-cols-1 pb-8 items-end">
-          <div className="lg:col-span-8 md:col-span-6 md:text-start text-center">
-            <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-              Browse by Categories
-            </h3>
-            <p className="text-slate-400 max-w-xl">
-              Search your career opportunity with our categories
-            </p>
-          </div>
-          <div className="lg:col-span-4 md:col-span-6 md:text-end hidden md:block">
-            <a
-              href=""
-              className="btn btn-link text-slate-400 hover:text-indigo-600 after:bg-indigo-600 duration-500 ease-in-out"
-            >
-              All Categories <i className="uil uil-arrow-right align-middle" />
-            </a>
-          </div>
-        </div>
+        <TileWithText
+          title="Browse by Categories"
+          text="Search your career opportunity with our categories"
+        />
+
         <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
           {categories.map((cat, index) => {
             return <CategoryCard category={cat} jobs={290} key={index} />;
@@ -319,19 +299,24 @@ export default function () {
             </a>
           </div>
         </div>
+        <div className="lg:col-span-4 md:col-span-6 md:text-end hidden md:block">
+          <a
+            href=""
+            className="btn btn-link text-slate-400 hover:text-indigo-600 after:bg-indigo-600 duration-500 ease-in-out"
+          >
+            All Categories <i className="uil uil-arrow-right align-middle" />
+          </a>
+        </div>
       </div>
 
       {/* Find Best Companies */}
       <div className="container md:mt-24 mt-16">
-        <div className="grid grid-cols-1 pb-8 text-center">
-          <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            Find Best Companies
-          </h3>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Get your own personalized
-            salary estimate. Read reviews on over 30000+ companies worldwide.
-          </p>
-        </div>
+        <TileWithText
+          title="Find Best Companies"
+          text="Search all the open positions on the web. Get your own personalized
+            salary estimate. Read reviews on over 30000+ companies worldwide."
+        />
+
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
           {companies.map((comp) => {
             return <CompanyCard company={comp} totalJobs={10} key={comp.id} />;
@@ -423,16 +408,11 @@ export default function () {
 
       {/* Questions & Answers */}
       <div className="container md:mt-24 mt-16">
-        <div className="grid grid-cols-1 pb-8 text-center">
-          <h3 className="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">
-            Questions & Answers
-          </h3>
-
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Search all the open positions on the web. Get your own personalized
-            salary estimate. Read reviews on over 30000+ companies worldwide.
-          </p>
-        </div>
+        <TileWithText
+          title="Questions & Answers"
+          text="Search all the open positions on the web. Get your own personalized
+            salary estimate. Read reviews on over 30000+ companies worldwide."
+        />
 
         <div className="grid md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
           <div className="flex">
