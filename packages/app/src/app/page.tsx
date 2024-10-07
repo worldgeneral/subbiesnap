@@ -3,6 +3,9 @@ import { Company, Job } from "../../../types/dist";
 import CategoryCard from "@/components/cards/category-card";
 import CompanyCard from "@/components/cards/company-card";
 import TileWithText from "@/components/headers/title-with-text";
+import JobSummaryList from "@/components/lists/job-summary-list";
+import CompanySummaryList from "@/components/lists/compnay-summery-list";
+import CategoriesList from "@/components/lists/categories-list";
 
 export default function () {
   return (
@@ -246,7 +249,7 @@ export default function () {
             salary estimate. Read reviews on over 30000+ companies worldwide."
         />
 
-        <div className="grid grid-cols-1 mt-8 gap-[30px]">
+        <JobSummaryList>
           {jobs.map((job) => {
             return (
               <JobBanner
@@ -264,7 +267,8 @@ export default function () {
               />
             );
           })}
-        </div>
+        </JobSummaryList>
+
         <div className="grid md:grid-cols-1 grid-cols-1 mt-8">
           <div className="md:col-span-12 text-center">
             <a
@@ -284,11 +288,12 @@ export default function () {
           text="Search your career opportunity with our categories"
         />
 
-        <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
+        <CategoriesList>
           {categories.map((cat, index) => {
             return <CategoryCard category={cat} jobs={290} key={index} />;
           })}
-        </div>
+        </CategoriesList>
+
         <div className="grid md:grid-cols-12 grid-cols-1 md:hidden mt-8">
           <div className="md:col-span-12 text-center">
             <a
@@ -317,11 +322,12 @@ export default function () {
             salary estimate. Read reviews on over 30000+ companies worldwide."
         />
 
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
+        <CompanySummaryList>
           {companies.map((comp) => {
             return <CompanyCard company={comp} totalJobs={10} key={comp.id} />;
           })}
-        </div>
+        </CompanySummaryList>
+
         <div className="grid md:grid-cols-12 grid-cols-1 mt-6">
           <div className="md:col-span-12 text-center">
             <a
